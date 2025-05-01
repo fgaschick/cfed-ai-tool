@@ -50,7 +50,7 @@ st.markdown("""
         © 2025 Chemonics International Inc. | Contact: Climate Finance Team
     </div>
     <div class='header-bar'>
-        <img src='https://raw.githubusercontent.com/fgaschick/cfed-ai-tool/main/Chemonics_RGB_Horizontal_BLUE-WHITE.png' alt='Chemonics Logo'/>
+        <img src='https://brandfetch.com/chemonics.com' alt='Chemonics Logo'/>
     </div>
     <br><br><br><br>
 """, unsafe_allow_html=True)
