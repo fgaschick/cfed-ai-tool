@@ -3,6 +3,7 @@ import openai
 import os
 import base64
 import pandas as pd
+from fpdf import FPDF
 
 # Set your OpenAI API key
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -29,20 +30,20 @@ st.markdown("""
         background-color: #005670;
         padding: 1em;
         text-align: center;
-        z-index: 999;
+        z-index: 1000;
     }
     .header-bar img {
         width: 200px;
     }
     .live-score {
         position: fixed;
-        top: 120px;
+        top: 150px;
         right: 30px;
         background-color: #ffffff;
         border: 2px solid #005670;
         padding: 10px;
         border-radius: 8px;
-        z-index: 1000;
+        z-index: 1001;
     }
     </style>
     <div class='custom-footer'>
@@ -54,8 +55,8 @@ st.markdown("""
     <br><br><br><br>
 """, unsafe_allow_html=True)
 
-st.title("Climate Finance Ecosystem Diagnostic (CFED)")
-st.subheader("AI-Assisted Maturity Scoring Tool – Full Prototype")
+st.title("Chemonics Climate Finance Ecosystem Diagnostic (CFED)")
+st.subheader("AI-Assisted Climate Finance Ecosystem Maturity Scoring Tool – Prototype")
 with st.expander("📘 Walkthrough Guide – How to Use This Tool"):
     st.markdown("""
     Start with **Enabling Environment**.
@@ -281,15 +282,3 @@ st.markdown("""
   position: fixed;
   bottom: 0;
   width: 100%;
-  background-color: #005670;
-  color: white;
-  text-align: center;
-  padding: 10px;
-  font-size: 13px;
-  z-index: 1000;
-}
-</style>
-<div class='sticky-footer'>
-  © 2025 Chemonics International Inc. | Contact: Climate Finance Team
-</div>
-""", unsafe_allow_html=True)
