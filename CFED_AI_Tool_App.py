@@ -55,7 +55,7 @@ with st.expander("📘 Walkthrough Guide – How to Use This Tool"):
     
     Move to **Ecosystem Infrastructure**, **Finance Providers**, and **Finance Seekers** the same way.
     
-    Scroll down to **Results Summary** to view your scores and the average maturity level.
+    Scores in the upper right will update as you provide responses. Scroll down to see recommended actions once you completed the assessment.
     
     Click the download links to **export results** as a PDF or CSV.
     
