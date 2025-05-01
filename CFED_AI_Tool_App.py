@@ -75,7 +75,7 @@ st.markdown("""
 
 # Title
 st.title("Climate Finance Ecosystem Diagnostic (CFED)")
-st.subheader("AI-Assisted Maturity Scoring Tool – Full Prototype")
+st.subheader("AI-Assisted Climate Finance Ecosystem Maturity Scoring Tool – Prototype")
 
 # Walkthrough Guide
 with st.expander("📘 Walkthrough Guide – How to Use This Tool"):
