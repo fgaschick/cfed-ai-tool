@@ -9,9 +9,53 @@ from fpdf import FPDF
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # Page configuration
-st.set_page_config(page_title="CFED AI Diagnostic Tool", layout="wide")
+st.set_page_config(page_title="CFED AI Diagnostic Tool", layout="wide", initial_sidebar_state="expanded")
+st.markdown("""
+    <style>
+    body {
+        background-color: #005670;
+        color: white;
+    }
+    .css-18e3th9 {
+        background-color: #005670;
+    }
+    .stApp {
+        background-color: #ffffff;
+    }
+    footer {
+        visibility: hidden;
+    }
+    .custom-footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        background-color: #005670;
+        color: white;
+        text-align: center;
+        padding: 10px;
+        font-size: 13px;
+    }
+    </style>
+    <div class='custom-footer'>
+        © 2025 Chemonics International Inc. | Contact: Climate Finance Team
+    </div>
+""", unsafe_allow_html=True)
+st.image("https://chemonics.com/wp-content/themes/chemonics/assets/img/logo.svg", width=200)
 st.title("Climate Finance Ecosystem Diagnostic (CFED)")
 st.subheader("AI-Assisted Maturity Scoring Tool – Full Prototype")
+with st.expander("ℹ️ About this tool"):
+    st.markdown("""
+    This tool is designed by Chemonics International to help governments, donors, and implementing partners rapidly assess the maturity of a country's climate finance ecosystem.
+    
+    Users can choose either AI-generated scoring or manual scoring for four key areas:
+    - Enabling Environment
+    - Ecosystem Infrastructure
+    - Finance Providers
+    - Finance Seekers
+
+    The tool helps identify maturity gaps, prioritize investments, and track progress over time. Results can be exported in PDF and CSV formats.
+    """)
 
 st.markdown("""
 This interactive tool estimates the maturity of a country’s climate finance ecosystem across all four CFED dimensions. You can either use AI-generated scoring (by describing the situation) or answer simple questions.
@@ -30,6 +74,10 @@ def get_ai_score(prompt, user_input):
             ]
         )
         return response.choices[0].message.content
+    except openai.OpenAIError as e:
+        if hasattr(e, 'http_status') and e.http_status == 429:
+            return "⚠️ Your OpenAI quota has been exceeded. Please use manual scoring."
+        return f"Error from OpenAI: {e}"
     except Exception as e:
         return f"Error from OpenAI: {e}"
 
@@ -160,15 +208,28 @@ if not score_df.empty:
     st.markdown(href_csv, unsafe_allow_html=True)
 
     # --- Downloadable PDF ---
+    import requests
+    logo_url = "https://chemonics.com/wp-content/uploads/2022/07/chemonics-logo.png"
+    logo_file = "chemonics-logo.png"
+    with open(logo_file, "wb") as f:
+        f.write(requests.get(logo_url).content)
+
     pdf = FPDF()
     pdf.add_page()
+    pdf.image(logo_file, x=10, y=8, w=50)
     pdf.set_font("Arial", size=12)
+    pdf.ln(30)
     pdf.cell(200, 10, txt="CFED Maturity Assessment Summary", ln=True, align="C")
     pdf.ln(10)
     for index, row in score_df.iterrows():
         pdf.cell(200, 10, txt=f"{row['Dimension']}: {row['Score']}/4", ln=True)
     pdf.ln(10)
     pdf.cell(200, 10, txt=f"Average Maturity Score: {total_average}/4", ln=True)
+pdf.ln(20)
+pdf.set_font("Arial", style="I", size=11)
+pdf.multi_cell(0, 10, "Climate Finance Team
+Chemonics International
+2025")
     pdf_output = "cfed_scores.pdf"
     pdf.output(pdf_output)
     with open(pdf_output, "rb") as pdf_file:
