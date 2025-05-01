@@ -12,6 +12,11 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 st.set_page_config(page_title="CFED AI Diagnostic Tool", layout="wide", initial_sidebar_state="expanded")
 st.markdown("""
     <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+    body {
+        font-family: 'Roboto', sans-serif;
+        background-color: #f5f5f5;
+    }
     .custom-footer { 
         position: fixed; 
         left: 0; 
@@ -44,6 +49,17 @@ st.markdown("""
         padding: 10px;
         border-radius: 8px;
         z-index: 1001;
+    }
+    h1, h2, h3, h4, h5, h6 {
+        color: #005670;
+    }
+    .stButton>button {
+        background-color: #005670;
+        color: white;
+        border-radius: 5px;
+    }
+    .stButton>button:hover {
+        background-color: #003f4f;
     }
     </style>
     <div class='custom-footer'>
