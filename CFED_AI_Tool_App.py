@@ -96,14 +96,14 @@ st.markdown("""
     - Ecosystem Infrastructure
     - Finance Providers
     - Finance Seekers
+
     The tool helps identify maturity gaps, prioritize investments, and track progress over time. Results can be exported in PDF and CSV formats.
 """)
 
 # --- Helper: AI scoring function ---
 def get_ai_score(prompt, user_input):
     try:
-        client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-        response = client.chat.completions.create(
+        response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",  # Use your desired model
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
@@ -111,7 +111,7 @@ def get_ai_score(prompt, user_input):
             ],
             max_tokens=150  # Limit the number of tokens for response
         )
-        return response['choices']['message']['content'].strip()  # Extract the AI-generated score
+        return response.choices.message['content'].strip()  # Extract the AI-generated score
     except openai.OpenAIError as e:  # Handle specific OpenAI errors
         if hasattr(e, 'http_status') and e.http_status == 429:
             return "⚠️ Your OpenAI quota has been exceeded. Please use manual scoring."
