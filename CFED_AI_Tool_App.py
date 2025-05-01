@@ -113,7 +113,7 @@ def get_ai_score(prompt, user_input):
             max_tokens=150  # Limit the number of tokens for response
         )
         return response.choices[0].message['content'].strip()  # Extract the AI-generated score
-    except openai.error.OpenAIError as e:  # Handle specific OpenAI errors
+    except Exception as e:  # Handle specific OpenAI errors
         if e.http_status == 429:
             return "⚠️ Your OpenAI quota has been exceeded. Please use manual scoring."
         return f"Error from OpenAI: {e}"
