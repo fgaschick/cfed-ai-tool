@@ -210,7 +210,6 @@ else:
     scores_data.append(["Finance Providers", providers_score])
 
 # --- 4. Finance Seekers ---
-[... existing content ...]
 scores_data.append(["Finance Seekers", seekers_score])
 
 # --- Results Section ---
