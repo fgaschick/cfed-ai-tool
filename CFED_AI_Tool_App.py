@@ -36,10 +36,104 @@ def get_ai_score(prompt, user_input):
 # --- Scoring Data ---
 scores_data = []
 
-# --- Section Handlers (omitted for brevity, same as before) ---
-# Keep the full dimension sections as they are (AI/manual)
+# --- 1. Enabling Environment ---
+st.header("1. Enabling Environment")
+if st.checkbox("Use AI to score Enabling Environment"):
+    text_ee = st.text_area("Describe the enabling environment (e.g., NDCs, enforcement, sector policies):", height=200)
+    if text_ee:
+        with st.spinner("Scoring with AI..."):
+            result_ee = get_ai_score("You are a climate finance expert. Score the enabling environment from 1 to 4 based on the country description. Justify the score.", text_ee)
+            st.markdown("**AI Suggested Score and Rationale:**")
+            st.markdown(result_ee)
+    enabling_score = None
+else:
+    has_ndc = st.radio("Has the country submitted an NDC?", ["Yes", "No"])
+    ndc_quality = st.selectbox("How ambitious is the NDC?", ["High", "Medium", "Low"])
+    has_sector_policies = st.radio("Are there sector-specific climate policies?", ["Yes", "No"])
+    has_enforcement = st.radio("Are climate laws and policies enforced predictably?", ["Yes", "No"])
+    enabling_score = 1
+    if has_ndc == "Yes":
+        enabling_score += 1
+        if ndc_quality == "High":
+            enabling_score += 1
+    if has_sector_policies == "Yes":
+        enabling_score += 1
+    if has_enforcement == "Yes":
+        enabling_score += 1
+    enabling_score = min(enabling_score, 4)
+    scores_data.append(["Enabling Environment", enabling_score])
 
-# ... [all scoring sections stay unchanged] ...
+# --- 2. Ecosystem Infrastructure ---
+st.header("2. Ecosystem Infrastructure")
+if st.checkbox("Use AI to score Ecosystem Infrastructure"):
+    text_ei = st.text_area("Describe the ecosystem infrastructure (e.g., MRV systems, data, institutional capacity):", height=200)
+    if text_ei:
+        with st.spinner("Scoring with AI..."):
+            result_ei = get_ai_score("You are a climate finance expert. Score the ecosystem infrastructure from 1 to 4 based on the country description. Justify the score.", text_ei)
+            st.markdown("**AI Suggested Score and Rationale:**")
+            st.markdown(result_ei)
+    infra_score = None
+else:
+    has_mrv = st.radio("Are MRV systems and climate data tools in place?", ["Yes", "No"])
+    has_partnerships = st.radio("Are there active stakeholder networks and partnerships?", ["Yes", "No"])
+    has_climate_capacity = st.radio("Do institutions have adequate climate finance capacity?", ["Yes", "No"])
+    infra_score = 1
+    if has_mrv == "Yes":
+        infra_score += 1
+    if has_partnerships == "Yes":
+        infra_score += 1
+    if has_climate_capacity == "Yes":
+        infra_score += 1
+    infra_score = min(infra_score, 4)
+    scores_data.append(["Ecosystem Infrastructure", infra_score])
+
+# --- 3. Finance Providers ---
+st.header("3. Finance Providers")
+if st.checkbox("Use AI to score Finance Providers"):
+    text_fp = st.text_area("Describe the finance providers landscape (e.g., public/private climate finance, carbon markets):", height=200)
+    if text_fp:
+        with st.spinner("Scoring with AI..."):
+            result_fp = get_ai_score("You are a climate finance expert. Score the finance provider ecosystem from 1 to 4 based on the country description. Justify the score.", text_fp)
+            st.markdown("**AI Suggested Score and Rationale:**")
+            st.markdown(result_fp)
+    providers_score = None
+else:
+    has_public_climate_funding = st.radio("Is there domestic public funding for climate?", ["Yes", "No"])
+    has_carbon_market = st.radio("Is the country active in voluntary or compliance carbon markets?", ["Yes", "No"])
+    has_private_investment = st.radio("Is commercial/private capital flowing into climate sectors?", ["Yes", "No"])
+    providers_score = 1
+    if has_public_climate_funding == "Yes":
+        providers_score += 1
+    if has_carbon_market == "Yes":
+        providers_score += 1
+    if has_private_investment == "Yes":
+        providers_score += 1
+    providers_score = min(providers_score, 4)
+    scores_data.append(["Finance Providers", providers_score])
+
+# --- 4. Finance Seekers ---
+st.header("4. Finance Seekers")
+if st.checkbox("Use AI to score Finance Seekers"):
+    text_fs = st.text_area("Describe the finance seekers (e.g., project pipeline, diversity, inclusion):", height=200)
+    if text_fs:
+        with st.spinner("Scoring with AI..."):
+            result_fs = get_ai_score("You are a climate finance expert. Score the finance seeker readiness from 1 to 4 based on the country description. Justify the score.", text_fs)
+            st.markdown("**AI Suggested Score and Rationale:**")
+            st.markdown(result_fs)
+    seekers_score = None
+else:
+    has_project_pipeline = st.radio("Is there a robust pipeline of fundable climate projects?", ["Yes", "No"])
+    has_project_diversity = st.radio("Do projects span adaptation, mitigation, and nature-based solutions?", ["Yes", "No"])
+    inclusive_targeting = st.radio("Are vulnerable or underserved groups targeted in project design?", ["Yes", "No"])
+    seekers_score = 1
+    if has_project_pipeline == "Yes":
+        seekers_score += 1
+    if has_project_diversity == "Yes":
+        seekers_score += 1
+    if inclusive_targeting == "Yes":
+        seekers_score += 1
+    seekers_score = min(seekers_score, 4)
+    scores_data.append(["Finance Seekers", seekers_score])
 
 # --- Results Section ---
 st.markdown("---")
