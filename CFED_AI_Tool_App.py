@@ -211,7 +211,34 @@ else:
 
 # --- 4. Finance Seekers ---
 scores_data.append(["Finance Seekers", seekers_score])
+st.markdown("""
+<div style='background-color:#E5F3F8;padding:1.2em;border-radius:10px;'>
+<h3 style='color:#005670'>4. Finance Seekers</h3>
+</div>
+""", unsafe_allow_html=True)
 
+if st.checkbox("Use AI to score Finance Seekers", value=False):
+    text_fs = st.text_area("Describe the finance seekers landscape (e.g., project pipelines, capacity to prepare bankable projects):", height=200)
+    if text_fs:
+        with st.spinner("Scoring with AI..."):
+            result_fs = get_ai_score("You are a climate finance expert. Score the finance seekers ecosystem from 1 to 4 based on the country description. Justify the score.", text_fs)
+            st.markdown("**AI Suggested Score and Rationale:**")
+            st.markdown(result_fs)
+            seekers_score = 2  # Default or parsed from AI result if numeric extraction desired
+else:
+    has_pipeline = st.radio("Is there a robust pipeline of bankable climate projects?", ["No", "Yes"], index=1)
+    has_seeker_capacity = st.radio("Do project developers have capacity to access and manage climate finance?", ["No", "Yes"], index=1)
+    has_innovation = st.radio("Are innovative finance approaches used by seekers (e.g., green bonds, PPPs)?", ["No", "Yes"], index=1)
+    seekers_score = 1
+    if has_pipeline == "Yes":
+        seekers_score += 1
+    if has_seeker_capacity == "Yes":
+        seekers_score += 1
+    if has_innovation == "Yes":
+        seekers_score += 1
+    seekers_score = min(seekers_score, 4)
+
+scores_data.append(["Finance Seekers", seekers_score])
 # --- Results Section ---
 st.markdown("---")
 st.markdown("""
