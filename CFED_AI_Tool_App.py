@@ -206,13 +206,9 @@ if not score_df.empty:
     pdf = FPDF()
     pdf.add_page()
     import requests
-    logo_url = "https://chemonics.com/wp-content/uploads/2022/07/chemonics-logo.png"
+    logo_file = "Chemonics_RGB_Horizontal_BLUE-WHITE.png"
     logo_file = "chemonics-logo.png"
-    response = requests.get(logo_url)
-    if response.status_code == 200 and "image" in response.headers.get("Content-Type", ""):
-        with open(logo_file, "wb") as f:
-            f.write(response.content)
-        pdf.image(logo_file, x=10, y=8, w=50)
+    pdf.image(logo_file, x=10, y=8, w=50)
     else:
         pdf.set_font("Arial", "B", 12)
         pdf.cell(200, 10, "Chemonics International", ln=True)
