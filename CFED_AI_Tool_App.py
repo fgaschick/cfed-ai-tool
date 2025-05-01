@@ -49,15 +49,16 @@ st.title("Climate Finance Ecosystem Diagnostic (CFED)")
 st.subheader("AI-Assisted Maturity Scoring Tool – Full Prototype")
 with st.expander("📘 Walkthrough Guide – How to Use This Tool"):
     st.markdown("""
-    1. Start with **Enabling Environment**.
-       - Use **AI Scoring** to type a short description, or **Manual Scoring** to answer yes/no questions.
-
-    2. Move to **Ecosystem Infrastructure**, **Finance Providers**, and **Finance Seekers** the same way.
-
-    3. Scroll down to **Results Summary** to view your scores and the average maturity level.
-
-    4. Click the download links to **export results** as a PDF or CSV.
-
+    Start with **Enabling Environment**.
+    
+    Use **AI Scoring** to type a short description, or **Manual Scoring** to answer yes/no questions.
+    
+    Move to **Ecosystem Infrastructure**, **Finance Providers**, and **Finance Seekers** the same way.
+    
+    Scroll down to **Results Summary** to view your scores and the average maturity level.
+    
+    Click the download links to **export results** as a PDF or CSV.
+    
     You can go back and edit your responses at any time.
     """)
 
@@ -69,6 +70,7 @@ st.markdown("""
     - Ecosystem Infrastructure
     - Finance Providers
     - Finance Seekers
+
     The tool helps identify maturity gaps, prioritize investments, and track progress over time. Results can be exported in PDF and CSV formats.
     """)
 
@@ -113,10 +115,10 @@ if st.checkbox("Use AI to score Enabling Environment"):
             st.markdown("**AI Suggested Score and Rationale:**")
             st.markdown(result_ee)
 else:
-    has_ndc = st.radio("Has the country submitted an NDC?", ["Yes", "No"], help="NDC refers to a Nationally Determined Contribution under the Paris Agreement. This indicates whether the country has committed to climate targets.")
-    ndc_quality = st.selectbox("How ambitious is the NDC?", ["High", "Medium", "Low"], help="Refers to how clearly the NDC outlines its goals, targets, and implementation measures. High ambition includes measurable climate outcomes and financing strategies.")
-    has_sector_policies = st.radio("Are there sector-specific climate policies?", ["Yes", "No"], help="Considers whether climate adaptation or mitigation plans exist in key sectors such as energy, transport, agriculture, and health.")
-    has_enforcement = st.radio("Are climate laws and policies enforced predictably?", ["Yes", "No"], help="Refers to how reliably climate-related regulations and policies are applied, monitored, and enforced by government institutions.")
+    has_ndc = st.radio("Has the country submitted an NDC?", ["No", "Yes"], help="NDC refers to a Nationally Determined Contribution under the Paris Agreement. This indicates whether the country has committed to climate targets.")
+    ndc_quality = st.selectbox("How ambitious is the NDC?", ["Low", "Medium", "High"], help="Refers to how clearly the NDC outlines its goals, targets, and implementation measures. High ambition includes measurable climate outcomes and financing strategies.")
+    has_sector_policies = st.radio("Are there sector-specific climate policies?", ["No", "Yes"], help="Considers whether climate adaptation or mitigation plans exist in key sectors such as energy, transport, agriculture, and health.")
+    has_enforcement = st.radio("Are climate laws and policies enforced predictably?", ["No", "Yes"], help="Refers to how reliably climate-related regulations and policies are applied, monitored, and enforced by government institutions.")
     enabling_score = 1
     if has_ndc == "Yes":
         enabling_score += 1
@@ -143,9 +145,9 @@ if st.checkbox("Use AI to score Ecosystem Infrastructure"):
             st.markdown("**AI Suggested Score and Rationale:**")
             st.markdown(result_ei)
 else:
-    has_mrv = st.radio("Are MRV systems and climate data tools in place?", ["Yes", "No"], help="MRV refers to Monitoring, Reporting, and Verification systems that track emissions, adaptation actions, or finance flows.")
-    has_partnerships = st.radio("Are there active stakeholder networks and partnerships?", ["Yes", "No"], help="Refers to formal or informal collaboration among government, private sector, academia, and civil society on climate finance or policy.")
-    has_climate_capacity = st.radio("Do institutions have adequate climate finance capacity?", ["Yes", "No"], help="Assesses whether national or subnational institutions have technical, administrative, and financial skills to design, implement, and monitor climate finance.")
+    has_mrv = st.radio("Are MRV systems and climate data tools in place?", ["No", "Yes"], help="MRV refers to Monitoring, Reporting, and Verification systems that track emissions, adaptation actions, or finance flows.")
+    has_partnerships = st.radio("Are there active stakeholder networks and partnerships?", ["No", "Yes"], help="Refers to formal or informal collaboration among government, private sector, academia, and civil society on climate finance or policy.")
+    has_climate_capacity = st.radio("Do institutions have adequate climate finance capacity?", ["No", "Yes"], help="Assesses whether national or subnational institutions have technical, administrative, and financial skills to design, implement, and monitor climate finance.")
     infra_score = 1
     if has_mrv == "Yes":
         infra_score += 1
@@ -170,9 +172,9 @@ if st.checkbox("Use AI to score Finance Providers"):
             st.markdown("**AI Suggested Score and Rationale:**")
             st.markdown(result_fp)
 else:
-    has_public_climate_funding = st.radio("Is there domestic public funding for climate?", ["Yes", "No"], help="Checks if the national budget or public financial institutions allocate domestic funds to climate action.")
-    has_carbon_market = st.radio("Is the country active in voluntary or compliance carbon markets?", ["Yes", "No"], help="Carbon markets enable trading of emissions reductions, including domestic or international credits.")
-    has_private_investment = st.radio("Is commercial/private capital flowing into climate sectors?", ["Yes", "No"], help="Determines whether banks, companies, or investors are financing climate-relevant activities such as renewable energy or resilience.")
+    has_public_climate_funding = st.radio("Is there domestic public funding for climate?", ["No", "Yes"], help="Checks if the national budget or public financial institutions allocate domestic funds to climate action.")
+    has_carbon_market = st.radio("Is the country active in voluntary or compliance carbon markets?", ["No", "Yes"], help="Carbon markets enable trading of emissions reductions, including domestic or international credits.")
+    has_private_investment = st.radio("Is commercial/private capital flowing into climate sectors?", ["No", "Yes"], help="Determines whether banks, companies, or investors are financing climate-relevant activities such as renewable energy or resilience.")
     providers_score = 1
     if has_public_climate_funding == "Yes":
         providers_score += 1
@@ -197,9 +199,9 @@ if st.checkbox("Use AI to score Finance Seekers"):
             st.markdown("**AI Suggested Score and Rationale:**")
             st.markdown(result_fs)
 else:
-    has_project_pipeline = st.radio("Is there a robust pipeline of fundable climate projects?", ["Yes", "No"], help="Assesses if there are well-developed, ready-to-implement projects aligned with climate goals and financing requirements.")
-    has_project_diversity = st.radio("Do projects span adaptation, mitigation, and nature-based solutions?", ["Yes", "No"], help="This means the project pipeline addresses multiple themes: climate adaptation, emission reductions, and ecosystem-based solutions.")
-    inclusive_targeting = st.radio("Are vulnerable or underserved groups targeted in project design?", ["Yes", "No"], help="Considers whether projects prioritize or include groups such as women, youth, Indigenous Peoples, or the poor, who are disproportionately affected by climate change.")
+    has_project_pipeline = st.radio("Is there a robust pipeline of fundable climate projects?", ["No", "Yes"], help="Assesses if there are well-developed, ready-to-implement projects aligned with climate goals and financing requirements.")
+    has_project_diversity = st.radio("Do projects span adaptation, mitigation, and nature-based solutions?", ["No", "Yes"], help="This means the project pipeline addresses multiple themes: climate adaptation, emission reductions, and ecosystem-based solutions.")
+    inclusive_targeting = st.radio("Are vulnerable or underserved groups targeted in project design?", ["No", "Yes"], help="Considers whether projects prioritize or include groups such as women, youth, Indigenous Peoples, or the poor, who are disproportionately affected by climate change.")
     seekers_score = 1
     if has_project_pipeline == "Yes":
         seekers_score += 1
