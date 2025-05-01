@@ -1,4 +1,9 @@
 import streamlit as st
+import openai
+import os
+
+# Set your OpenAI API key
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # Page configuration
 st.set_page_config(page_title="CFED AI Diagnostic Tool", layout="wide")
@@ -7,33 +12,54 @@ st.subheader("AI-Assisted Maturity Scoring Tool – Full Prototype")
 
 st.markdown("""
 This interactive tool estimates the maturity of a country’s climate finance ecosystem across all four CFED dimensions:
-1. Enabling Environment
+1. Enabling Environment (AI-driven)
 2. Ecosystem Infrastructure
 3. Finance Providers
 4. Finance Seekers
 
-Answer the questions below to receive a diagnostic score and tailored recommendations.
+For Enabling Environment, you may now provide a written summary instead of answering checkboxes.
 """)
 
 st.markdown("---")
 
-# --- 1. Enabling Environment ---
+# --- 1. Enabling Environment (AI-Based Option) ---
 st.header("1. Enabling Environment")
-has_ndc = st.radio("Has the country submitted an NDC?", ["Yes", "No"])
-ndc_quality = st.selectbox("How ambitious is the NDC?", ["High", "Medium", "Low"])
-has_sector_policies = st.radio("Are there sector-specific climate policies?", ["Yes", "No"])
-has_enforcement = st.radio("Are climate laws and policies enforced predictably?", ["Yes", "No"])
+use_ai_input = st.checkbox("Use AI to score based on written input instead of answering questions")
 
-enabling_score = 1
-if has_ndc == "Yes":
-    enabling_score += 1
-    if ndc_quality == "High":
+if use_ai_input:
+    user_input = st.text_area("Describe the enabling environment (e.g., NDCs, enforcement, sector policies):", height=200)
+    if user_input:
+        with st.spinner("Scoring with AI..."):
+            try:
+                completion = openai.ChatCompletion.create(
+                    model="gpt-4",
+                    messages=[
+                        {"role": "system", "content": "You are a climate finance expert. Score the enabling environment from 1 to 4 based on the country description. Justify the score."},
+                        {"role": "user", "content": user_input}
+                    ]
+                )
+                ai_output = completion.choices[0].message.content
+                st.markdown("**AI Suggested Score and Rationale:**")
+                st.markdown(ai_output)
+            except Exception as e:
+                st.error(f"Error from OpenAI: {e}")
+        enabling_score = None  # Leave undefined for now
+else:
+    has_ndc = st.radio("Has the country submitted an NDC?", ["Yes", "No"])
+    ndc_quality = st.selectbox("How ambitious is the NDC?", ["High", "Medium", "Low"])
+    has_sector_policies = st.radio("Are there sector-specific climate policies?", ["Yes", "No"])
+    has_enforcement = st.radio("Are climate laws and policies enforced predictably?", ["Yes", "No"])
+
+    enabling_score = 1
+    if has_ndc == "Yes":
         enabling_score += 1
-if has_sector_policies == "Yes":
-    enabling_score += 1
-if has_enforcement == "Yes":
-    enabling_score += 1
-enabling_score = min(enabling_score, 4)
+        if ndc_quality == "High":
+            enabling_score += 1
+    if has_sector_policies == "Yes":
+        enabling_score += 1
+    if has_enforcement == "Yes":
+        enabling_score += 1
+    enabling_score = min(enabling_score, 4)
 
 # --- 2. Ecosystem Infrastructure ---
 st.header("2. Ecosystem Infrastructure")
@@ -86,22 +112,24 @@ st.header("Results Summary")
 
 col1, col2 = st.columns(2)
 with col1:
-    st.metric("Enabling Environment", f"{enabling_score}/4")
+    if enabling_score is not None:
+        st.metric("Enabling Environment", f"{enabling_score}/4")
     st.metric("Finance Providers", f"{providers_score}/4")
 with col2:
     st.metric("Ecosystem Infrastructure", f"{infra_score}/4")
     st.metric("Finance Seekers", f"{seekers_score}/4")
 
-total_average = round((enabling_score + infra_score + providers_score + seekers_score) / 4, 2)
-st.markdown(f"### 🧮 Average Ecosystem Maturity Score: {total_average}/4")
+if enabling_score is not None:
+    total_average = round((enabling_score + infra_score + providers_score + seekers_score) / 4, 2)
+    st.markdown(f"### 🧮 Average Ecosystem Maturity Score: {total_average}/4")
 
-st.markdown("**Suggested Actions:**")
-if total_average < 2:
-    st.warning("Foundational support needed: Start with policy frameworks, MRV systems, and project pipeline development.")
-elif 2 <= total_average < 3:
-    st.info("Moderate maturity: Expand partnerships, deepen private finance engagement, and strengthen enforcement.")
-else:
-    st.success("Strong ecosystem: Prioritize scaling solutions, regional leadership, and blended finance innovation.")
+    st.markdown("**Suggested Actions:**")
+    if total_average < 2:
+        st.warning("Foundational support needed: Start with policy frameworks, MRV systems, and project pipeline development.")
+    elif 2 <= total_average < 3:
+        st.info("Moderate maturity: Expand partnerships, deepen private finance engagement, and strengthen enforcement.")
+    else:
+        st.success("Strong ecosystem: Prioritize scaling solutions, regional leadership, and blended finance innovation.")
 
 st.markdown("---")
 st.caption("Prototype built for CFED AI tool – All Four Dimensions.")
