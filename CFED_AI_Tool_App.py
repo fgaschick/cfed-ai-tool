@@ -31,14 +31,14 @@ if use_ai_input:
     if user_input:
         with st.spinner("Scoring with AI..."):
             try:
-                completion = openai.ChatCompletion.create(
+                response = openai.chat.completions.create(
                     model="gpt-4",
                     messages=[
                         {"role": "system", "content": "You are a climate finance expert. Score the enabling environment from 1 to 4 based on the country description. Justify the score."},
                         {"role": "user", "content": user_input}
                     ]
                 )
-                ai_output = completion.choices[0].message.content
+                ai_output = response.choices[0].message.content
                 st.markdown("**AI Suggested Score and Rationale:**")
                 st.markdown(ai_output)
             except Exception as e:
@@ -112,14 +112,14 @@ st.header("Results Summary")
 
 col1, col2 = st.columns(2)
 with col1:
-    if enabling_score is not None:
+    if 'enabling_score' in locals() and enabling_score is not None:
         st.metric("Enabling Environment", f"{enabling_score}/4")
     st.metric("Finance Providers", f"{providers_score}/4")
 with col2:
     st.metric("Ecosystem Infrastructure", f"{infra_score}/4")
     st.metric("Finance Seekers", f"{seekers_score}/4")
 
-if enabling_score is not None:
+if 'enabling_score' in locals() and enabling_score is not None:
     total_average = round((enabling_score + infra_score + providers_score + seekers_score) / 4, 2)
     st.markdown(f"### 🧮 Average Ecosystem Maturity Score: {total_average}/4")
 
