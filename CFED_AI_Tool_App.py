@@ -113,7 +113,6 @@ if st.checkbox("Use AI to score Enabling Environment"):
             result_ee = get_ai_score("You are a climate finance expert. Score the enabling environment from 1 to 4 based on the country description. Justify the score.", text_ee)
             st.markdown("**AI Suggested Score and Rationale:**")
             st.markdown(result_ee)
-    enabling_score = None
 else:
     has_ndc = st.radio("Has the country submitted an NDC?", ["Yes", "No"], help="NDC refers to a Nationally Determined Contribution under the Paris Agreement. This indicates whether the country has committed to climate targets.")
     ndc_quality = st.selectbox("How ambitious is the NDC?", ["High", "Medium", "Low"], help="Refers to how clearly the NDC outlines its goals, targets, and implementation measures. High ambition includes measurable climate outcomes and financing strategies.")
@@ -144,7 +143,6 @@ if st.checkbox("Use AI to score Ecosystem Infrastructure"):
             result_ei = get_ai_score("You are a climate finance expert. Score the ecosystem infrastructure from 1 to 4 based on the country description. Justify the score.", text_ei)
             st.markdown("**AI Suggested Score and Rationale:**")
             st.markdown(result_ei)
-    infra_score = None
 else:
     has_mrv = st.radio("Are MRV systems and climate data tools in place?", ["Yes", "No"], help="MRV refers to Monitoring, Reporting, and Verification systems that track emissions, adaptation actions, or finance flows.")
     has_partnerships = st.radio("Are there active stakeholder networks and partnerships?", ["Yes", "No"], help="Refers to formal or informal collaboration among government, private sector, academia, and civil society on climate finance or policy.")
@@ -172,7 +170,6 @@ if st.checkbox("Use AI to score Finance Providers"):
             result_fp = get_ai_score("You are a climate finance expert. Score the finance provider ecosystem from 1 to 4 based on the country description. Justify the score.", text_fp)
             st.markdown("**AI Suggested Score and Rationale:**")
             st.markdown(result_fp)
-    providers_score = None
 else:
     has_public_climate_funding = st.radio("Is there domestic public funding for climate?", ["Yes", "No"], help="Checks if the national budget or public financial institutions allocate domestic funds to climate action.")
     has_carbon_market = st.radio("Is the country active in voluntary or compliance carbon markets?", ["Yes", "No"], help="Carbon markets enable trading of emissions reductions, including domestic or international credits.")
@@ -200,7 +197,6 @@ if st.checkbox("Use AI to score Finance Seekers"):
             result_fs = get_ai_score("You are a climate finance expert. Score the finance seeker readiness from 1 to 4 based on the country description. Justify the score.", text_fs)
             st.markdown("**AI Suggested Score and Rationale:**")
             st.markdown(result_fs)
-    seekers_score = None
 else:
     has_project_pipeline = st.radio("Is there a robust pipeline of fundable climate projects?", ["Yes", "No"], help="Assesses if there are well-developed, ready-to-implement projects aligned with climate goals and financing requirements.")
     has_project_diversity = st.radio("Do projects span adaptation, mitigation, and nature-based solutions?", ["Yes", "No"], help="This means the project pipeline addresses multiple themes: climate adaptation, emission reductions, and ecosystem-based solutions.")
