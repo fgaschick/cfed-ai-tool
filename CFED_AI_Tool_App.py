@@ -16,7 +16,11 @@ st.markdown("""
         © 2025 Chemonics International Inc. | Contact: Climate Finance Team
     </div>
 """, unsafe_allow_html=True)
-st.image("https://raw.githubusercontent.com/fgaschick/cfed-ai-tool/main/Chemonics_RGB_Horizontal_BLUE-WHITE.png", width=200)
+st.markdown("""
+<div style='background-color:#005670;padding:1em;border-radius:8px;text-align:center;'>
+    <img src='https://raw.githubusercontent.com/fgaschick/cfed-ai-tool/main/Chemonics_RGB_Horizontal_BLUE-WHITE.png' width='200'/>
+</div>
+""", unsafe_allow_html=True)
 st.title("Climate Finance Ecosystem Diagnostic (CFED)")
 st.subheader("AI-Assisted Maturity Scoring Tool – Full Prototype")
 with st.expander("ℹ️ About this tool"):
@@ -28,13 +32,16 @@ with st.expander("ℹ️ About this tool"):
     - Ecosystem Infrastructure
     - Finance Providers
     - Finance Seekers
-    
+
     The tool helps identify maturity gaps, prioritize investments, and track progress over time. Results can be exported in PDF and CSV formats.
     """)
+
 st.markdown("""
 This interactive tool estimates the maturity of a country’s climate finance ecosystem across all four CFED dimensions. You can either use AI-generated scoring (by describing the situation) or answer simple questions.
 """)
+
 st.markdown("---")
+
 # --- Helper: AI scoring function ---
 def get_ai_score(prompt, user_input):
     try:
@@ -52,8 +59,10 @@ def get_ai_score(prompt, user_input):
         return f"Error from OpenAI: {e}"
     except Exception as e:
         return f"Error from OpenAI: {e}"
+
 # --- Scoring Data ---
 scores_data = []
+
 # --- 1. Enabling Environment ---
 st.markdown("""
 <div style='background-color:#E5F3F8;padding:1.2em;border-radius:10px;'>
@@ -84,6 +93,7 @@ else:
         enabling_score += 1
     enabling_score = min(enabling_score, 4)
     scores_data.append(["Enabling Environment", enabling_score])
+
 # --- 2. Ecosystem Infrastructure ---
 st.markdown("""
 <div style='background-color:#E5F3F8;padding:1.2em;border-radius:10px;'>
@@ -111,6 +121,7 @@ else:
         infra_score += 1
     infra_score = min(infra_score, 4)
     scores_data.append(["Ecosystem Infrastructure", infra_score])
+
 # --- 3. Finance Providers ---
 st.markdown("""
 <div style='background-color:#E5F3F8;padding:1.2em;border-radius:10px;'>
@@ -138,6 +149,7 @@ else:
         providers_score += 1
     providers_score = min(providers_score, 4)
     scores_data.append(["Finance Providers", providers_score])
+
 # --- 4. Finance Seekers ---
 st.markdown("""
 <div style='background-color:#E5F3F8;padding:1.2em;border-radius:10px;'>
@@ -165,6 +177,7 @@ else:
         seekers_score += 1
     seekers_score = min(seekers_score, 4)
     scores_data.append(["Finance Seekers", seekers_score])
+
 # --- Results Section ---
 st.markdown("---")
 st.markdown("""
@@ -172,11 +185,13 @@ st.markdown("""
 <h3 style='color:#005670'>Results Summary</h3>
 </div>
 """, unsafe_allow_html=True)
+
 score_df = pd.DataFrame(scores_data, columns=["Dimension", "Score"])
 if not score_df.empty:
     st.dataframe(score_df, use_container_width=True)
     total_average = round(score_df["Score"].mean(), 2)
     st.markdown(f"### 🧮 Average Ecosystem Maturity Score: {total_average}/4")
+
     st.markdown("**Suggested Actions:**")
     if total_average < 2:
         st.warning("Foundational support needed: Start with policy frameworks, MRV systems, and project pipeline development.")
@@ -184,11 +199,13 @@ if not score_df.empty:
         st.info("Moderate maturity: Expand partnerships, deepen private finance engagement, and strengthen enforcement.")
     else:
         st.success("Strong ecosystem: Prioritize scaling solutions, regional leadership, and blended finance innovation.")
+
     # --- Downloadable CSV ---
     csv = score_df.to_csv(index=False)
     b64_csv = base64.b64encode(csv.encode()).decode()
     href_csv = f'<a href="data:file/csv;base64,{b64_csv}" download="cfed_scores.csv">📥 Download scores as CSV</a>'
     st.markdown(href_csv, unsafe_allow_html=True)
+
     # --- Downloadable PDF ---
     pdf = FPDF()
     pdf.add_page()
@@ -213,5 +230,6 @@ if not score_df.empty:
         b64_pdf = base64.b64encode(pdf_file.read()).decode()
         href_pdf = f'<a href="data:application/pdf;base64,{b64_pdf}" download="cfed_scores.pdf">📄 Download scores as PDF</a>'
         st.markdown(href_pdf, unsafe_allow_html=True)
+
 st.markdown("---")
 st.caption("Prototype built for CFED AI tool – All Four Dimensions. To view a walkthrough of how to use this tool, visit: https://cfed-tool-guide.streamlit.app")
