@@ -11,17 +11,40 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 # Page configuration
 st.set_page_config(page_title="CFED AI Diagnostic Tool", layout="wide", initial_sidebar_state="expanded")
 st.markdown("""
-    <style>.custom-footer { position: fixed; left: 0; bottom: 0; width: 100%; background-color: #005670; color: white; text-align: center; padding: 10px; font-size: 13px; }</style>
+    <style>
+    .custom-footer { 
+        position: fixed; 
+        left: 0; 
+        bottom: 0; 
+        width: 100%; 
+        background-color: #005670; 
+        color: white; 
+        text-align: center; 
+        padding: 10px; 
+        font-size: 13px; 
+    }
+    .header-bar {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        background-color: #005670;
+        padding: 1em;
+        text-align: center;
+        z-index: 999;
+    }
+    .header-bar img {
+        width: 200px;
+    }
+    </style>
     <div class='custom-footer'>
         © 2025 Chemonics International Inc. | Contact: Climate Finance Team
     </div>
+    <div class='header-bar'>
+        <img src='https://raw.githubusercontent.com/fgaschick/cfed-ai-tool/main/Chemonics_RGB_Horizontal_BLUE-WHITE.png' alt='Chemonics Logo'/>
+    </div>
+    <br><br><br><br>
 """, unsafe_allow_html=True)
-st.markdown("""
-<div style='position:fixed;top:0;width:100%;background-color:#005670;padding:1em;text-align:center;z-index:999;'>
-  <img src='https://raw.githubusercontent.com/fgaschick/cfed-ai-tool/main/Chemonics_RGB_Horizontal_BLUE-WHITE.png' width='200'/>
-</div>
-<br><br><br><br>
-""", unsafe_allow_html=True)
+
 st.title("Climate Finance Ecosystem Diagnostic (CFED)")
 st.subheader("AI-Assisted Maturity Scoring Tool – Full Prototype")
 with st.expander("📘 Walkthrough Guide – How to Use This Tool"):
@@ -224,7 +247,6 @@ st.markdown(href_csv, unsafe_allow_html=True)
 # --- Downloadable PDF ---
 pdf = FPDF()
 pdf.add_page()
-import requests
 logo_file = "Chemonics_RGB_Horizontal_BLUE-WHITE.png"
 pdf.image(logo_file, x=10, y=8, w=50)
 pdf.set_font("Arial", size=12)
@@ -246,7 +268,7 @@ with open(pdf_output, "rb") as pdf_file:
 st.markdown(href_pdf, unsafe_allow_html=True)
 
 st.markdown("---")
-st.caption("Prototype built for CFED AI tool – All Four Dimensions. To view a walkthrough of how to use this tool, visit: https://cfed-tool-guide.streamlit.app. For definitions, see the https://github.com/fgaschick/cfed-ai-tool/blob/main/CFED_Glossary.pdf.")
+st.caption("Prototype built for CFED AI tool – All Four Dimensions. To view a walkthrough of how to use this tool, visit: https://cfed-tool-guide.streamlit.app. For definitions, see the CFED Glossary.")
 st.markdown("""
 <style>
 .sticky-footer {
