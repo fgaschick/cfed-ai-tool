@@ -276,7 +276,7 @@ st.markdown(href_pdf, unsafe_allow_html=True)
 
 st.markdown("---")
 st.caption("Prototype built for CFED AI tool – All Four Dimensions. To view a walkthrough of how to use this tool, visit: https://cfed-tool-guide.streamlit.app. For definitions, see the CFED Glossary.")
-st.markdown(""
+st.markdown("""
 <style>
 .sticky-footer {
   position: fixed;
