@@ -12,11 +12,6 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 st.set_page_config(page_title="CFED AI Diagnostic Tool", layout="wide", initial_sidebar_state="expanded")
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-    body {
-        font-family: 'Roboto', sans-serif;
-        background-color: #f5f5f5;
-    }
     .custom-footer { 
         position: fixed; 
         left: 0; 
@@ -35,56 +30,34 @@ st.markdown("""
         background-color: #005670;
         padding: 1em;
         text-align: center;
-        z-index: 1000;
+        z-index: 999;
     }
     .header-bar img {
         width: 200px;
-    }
-    .live-score {
-        position: fixed;
-        top: 120px;
-        right: 30px;
-        background-color: #ffffff;
-        border: 2px solid #005670;
-        padding: 10px;
-        border-radius: 8px;
-        z-index: 1001;
-    }
-    h1, h2, h3, h4, h5, h6 {
-        color: #005670;
-    }
-    .stButton>button {
-        background-color: #005670;
-        color: white;
-        border-radius: 5px;
-    }
-    .stButton>button:hover {
-        background-color: #003f4f;
     }
     </style>
     <div class='custom-footer'>
         © 2025 Chemonics International Inc. | Contact: Climate Finance Team
     </div>
     <div class='header-bar'>
-        <img src='https://raw.githubusercontent.com/chemonics/logo.png' alt='Chemonics Logo'/>
+        <img src='https://raw.githubusercontent.com/fgaschick/cfed-ai-tool/main/Chemonics_RGB_Horizontal_BLUE-WHITE.png' alt='Chemonics Logo'/>
     </div>
     <br><br><br><br>
 """, unsafe_allow_html=True)
 
 st.title("Climate Finance Ecosystem Diagnostic (CFED)")
-st.subheader("AI-Assisted Maturity Scoring Tool – Full Prototype")
+st.subheader("AI-Assisted Climate Finance Ecosystem Maturity Scoring Tool – Prototype")
 with st.expander("📘 Walkthrough Guide – How to Use This Tool"):
     st.markdown("""
-    Start with **Enabling Environment**.
-    
-    Use **AI Scoring** to type a short description, or **Manual Scoring** to answer yes/no questions.
-    
-    Move to **Ecosystem Infrastructure**, **Finance Providers**, and **Finance Seekers** the same way.
-    
-    Scores in the upper right will update as you provide responses. Scroll down to see recommended actions once you completed the assessment.
-    
-    Click the download links to **export results** as a PDF or CSV.
-    
+    1. Start with **Enabling Environment**.
+       - Use **AI Scoring** to type a short description, or **Manual Scoring** to answer yes/no questions.
+
+    2. Move to **Ecosystem Infrastructure**, **Finance Providers**, and **Finance Seekers** the same way.
+
+    3. Scroll down to **Results Summary** to view your scores and the average maturity level.
+
+    4. Click the download links to **export results** as a PDF or CSV.
+
     You can go back and edit your responses at any time.
     """)
 
@@ -96,7 +69,6 @@ st.markdown("""
     - Ecosystem Infrastructure
     - Finance Providers
     - Finance Seekers
-
     The tool helps identify maturity gaps, prioritize investments, and track progress over time. Results can be exported in PDF and CSV formats.
     """)
 
@@ -116,7 +88,7 @@ def get_ai_score(prompt, user_input):
                 {"role": "user", "content": user_input}
             ]
         )
-        return response.choices.message['content']
+        return response.choices.message.content
     except openai.error.OpenAIError as e:
         if hasattr(e, 'http_status') and e.http_status == 429:
             return "⚠️ Your OpenAI quota has been exceeded. Please use manual scoring."
@@ -141,10 +113,10 @@ if st.checkbox("Use AI to score Enabling Environment"):
             st.markdown("**AI Suggested Score and Rationale:**")
             st.markdown(result_ee)
 else:
-    has_ndc = st.radio("Has the country submitted an NDC?", ["No", "Yes"], help="NDC refers to a Nationally Determined Contribution under the Paris Agreement. This indicates whether the country has committed to climate targets.")
-    ndc_quality = st.selectbox("How ambitious is the NDC?", ["Low", "Medium", "High"], help="Refers to how clearly the NDC outlines its goals, targets, and implementation measures. High ambition includes measurable climate outcomes and financing strategies.")
-    has_sector_policies = st.radio("Are there sector-specific climate policies?", ["No", "Yes"], help="Considers whether climate adaptation or mitigation plans exist in key sectors such as energy, transport, agriculture, and health.")
-    has_enforcement = st.radio("Are climate laws and policies enforced predictably?", ["No", "Yes"], help="Refers to how reliably climate-related regulations and policies are applied, monitored, and enforced by government institutions.")
+    has_ndc = st.radio("Has the country submitted an NDC?", ["Yes", "No"], help="NDC refers to a Nationally Determined Contribution under the Paris Agreement. This indicates whether the country has committed to climate targets.")
+    ndc_quality = st.selectbox("How ambitious is the NDC?", ["High", "Medium", "Low"], help="Refers to how clearly the NDC outlines its goals, targets, and implementation measures. High ambition includes measurable climate outcomes and financing strategies.")
+    has_sector_policies = st.radio("Are there sector-specific climate policies?", ["Yes", "No"], help="Considers whether climate adaptation or mitigation plans exist in key sectors such as energy, transport, agriculture, and health.")
+    has_enforcement = st.radio("Are climate laws and policies enforced predictably?", ["Yes", "No"], help="Refers to how reliably climate-related regulations and policies are applied, monitored, and enforced by government institutions.")
     enabling_score = 1
     if has_ndc == "Yes":
         enabling_score += 1
@@ -171,9 +143,9 @@ if st.checkbox("Use AI to score Ecosystem Infrastructure"):
             st.markdown("**AI Suggested Score and Rationale:**")
             st.markdown(result_ei)
 else:
-    has_mrv = st.radio("Are MRV systems and climate data tools in place?", ["No", "Yes"], help="MRV refers to Monitoring, Reporting, and Verification systems that track emissions, adaptation actions, or finance flows.")
-    has_partnerships = st.radio("Are there active stakeholder networks and partnerships?", ["No", "Yes"], help="Refers to formal or informal collaboration among government, private sector, academia, and civil society on climate finance or policy.")
-    has_climate_capacity = st.radio("Do institutions have adequate climate finance capacity?", ["No", "Yes"], help="Assesses whether national or subnational institutions have technical, administrative, and financial skills to design, implement, and monitor climate finance.")
+    has_mrv = st.radio("Are MRV systems and climate data tools in place?", ["Yes", "No"], help="MRV refers to Monitoring, Reporting, and Verification systems that track emissions, adaptation actions, or finance flows.")
+    has_partnerships = st.radio("Are there active stakeholder networks and partnerships?", ["Yes", "No"], help="Refers to formal or informal collaboration among government, private sector, academia, and civil society on climate finance or policy.")
+    has_climate_capacity = st.radio("Do institutions have adequate climate finance capacity?", ["Yes", "No"], help="Assesses whether national or subnational institutions have technical, administrative, and financial skills to design, implement, and monitor climate finance.")
     infra_score = 1
     if has_mrv == "Yes":
         infra_score += 1
@@ -198,9 +170,9 @@ if st.checkbox("Use AI to score Finance Providers"):
             st.markdown("**AI Suggested Score and Rationale:**")
             st.markdown(result_fp)
 else:
-    has_public_climate_funding = st.radio("Is there domestic public funding for climate?", ["No", "Yes"], help="Checks if the national budget or public financial institutions allocate domestic funds to climate action.")
-    has_carbon_market = st.radio("Is the country active in voluntary or compliance carbon markets?", ["No", "Yes"], help="Carbon markets enable trading of emissions reductions, including domestic or international credits.")
-    has_private_investment = st.radio("Is commercial/private capital flowing into climate sectors?", ["No", "Yes"], help="Determines whether banks, companies, or investors are financing climate-relevant activities such as renewable energy or resilience.")
+    has_public_climate_funding = st.radio("Is there domestic public funding for climate?", ["Yes", "No"], help="Checks if the national budget or public financial institutions allocate domestic funds to climate action.")
+    has_carbon_market = st.radio("Is the country active in voluntary or compliance carbon markets?", ["Yes", "No"], help="Carbon markets enable trading of emissions reductions, including domestic or international credits.")
+    has_private_investment = st.radio("Is commercial/private capital flowing into climate sectors?", ["Yes", "No"], help="Determines whether banks, companies, or investors are financing climate-relevant activities such as renewable energy or resilience.")
     providers_score = 1
     if has_public_climate_funding == "Yes":
         providers_score += 1
@@ -225,9 +197,9 @@ if st.checkbox("Use AI to score Finance Seekers"):
             st.markdown("**AI Suggested Score and Rationale:**")
             st.markdown(result_fs)
 else:
-    has_project_pipeline = st.radio("Is there a robust pipeline of fundable climate projects?", ["No", "Yes"], help="Assesses if there are well-developed, ready-to-implement projects aligned with climate goals and financing requirements.")
-    has_project_diversity = st.radio("Do projects span adaptation, mitigation, and nature-based solutions?", ["No", "Yes"], help="This means the project pipeline addresses multiple themes: climate adaptation, emission reductions, and ecosystem-based solutions.")
-    inclusive_targeting = st.radio("Are vulnerable or underserved groups targeted in project design?", ["No", "Yes"], help="Considers whether projects prioritize or include groups such as women, youth, Indigenous Peoples, or the poor, who are disproportionately affected by climate change.")
+    has_project_pipeline = st.radio("Is there a robust pipeline of fundable climate projects?", ["Yes", "No"], help="Assesses if there are well-developed, ready-to-implement projects aligned with climate goals and financing requirements.")
+    has_project_diversity = st.radio("Do projects span adaptation, mitigation, and nature-based solutions?", ["Yes", "No"], help="This means the project pipeline addresses multiple themes: climate adaptation, emission reductions, and ecosystem-based solutions.")
+    inclusive_targeting = st.radio("Are vulnerable or underserved groups targeted in project design?", ["Yes", "No"], help="Considers whether projects prioritize or include groups such as women, youth, Indigenous Peoples, or the poor, who are disproportionately affected by climate change.")
     seekers_score = 1
     if has_project_pipeline == "Yes":
         seekers_score += 1
@@ -249,7 +221,7 @@ st.markdown("""
 score_df = pd.DataFrame(scores_data, columns=["Dimension", "Score"])
 if not score_df.empty:
     st.dataframe(score_df, use_container_width=True)
-st.markdown(f"<div class='live-score'>🧮 <strong>Live Maturity Score:</strong> {round(score_df['Score'].mean(), 2)}/4</div>", unsafe_allow_html=True)
+st.markdown(f"<div style='position:fixed;top:90px;right:30px;background-color:#ffffff;border:2px solid #005670;padding:10px;border-radius:8px;z-index:100;'>🧮 <strong>Live Score:</strong> {round(score_df['Score'].mean(), 2)}/4</div>", unsafe_allow_html=True)
 total_average = round(score_df["Score"].mean(), 2)
 st.markdown(f"### 🧮 Average Ecosystem Maturity Score: {total_average}/4")
 
@@ -291,7 +263,7 @@ with open(pdf_output, "rb") as pdf_file:
 st.markdown(href_pdf, unsafe_allow_html=True)
 
 st.markdown("---")
-st.caption("Prototype built for CFED AI tool – All Four Dimensions. To view a walkthrough of how to use this tool, visit: https://cfed-tool-guide.streamlit.app. For definitions, see the CFED Glossary.")
+st.caption("Prototype CFED AI tool – Climate Finance Products and Solutions - Chemonics International")
 st.markdown("""
 <style>
 .sticky-footer {
