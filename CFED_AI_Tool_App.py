@@ -85,7 +85,11 @@ def get_ai_score(prompt, user_input):
 scores_data = []
 
 # --- 1. Enabling Environment ---
-st.header("1. Enabling Environment")
+st.markdown("""
+<div style='background-color:#E5F3F8;padding:1.2em;border-radius:10px;'>
+<h3 style='color:#005670'>1. Enabling Environment</h3>
+</div>
+""", unsafe_allow_html=True)
 if st.checkbox("Use AI to score Enabling Environment"):
     text_ee = st.text_area("Describe the enabling environment (e.g., NDCs, enforcement, sector policies):", height=200)
     if text_ee:
@@ -112,7 +116,11 @@ else:
     scores_data.append(["Enabling Environment", enabling_score])
 
 # --- 2. Ecosystem Infrastructure ---
-st.header("2. Ecosystem Infrastructure")
+st.markdown("""
+<div style='background-color:#E5F3F8;padding:1.2em;border-radius:10px;'>
+<h3 style='color:#005670'>2. Ecosystem Infrastructure</h3>
+</div>
+""", unsafe_allow_html=True)
 if st.checkbox("Use AI to score Ecosystem Infrastructure"):
     text_ei = st.text_area("Describe the ecosystem infrastructure (e.g., MRV systems, data, institutional capacity):", height=200)
     if text_ei:
@@ -136,7 +144,11 @@ else:
     scores_data.append(["Ecosystem Infrastructure", infra_score])
 
 # --- 3. Finance Providers ---
-st.header("3. Finance Providers")
+st.markdown("""
+<div style='background-color:#E5F3F8;padding:1.2em;border-radius:10px;'>
+<h3 style='color:#005670'>3. Finance Providers</h3>
+</div>
+""", unsafe_allow_html=True)
 if st.checkbox("Use AI to score Finance Providers"):
     text_fp = st.text_area("Describe the finance providers landscape (e.g., public/private climate finance, carbon markets):", height=200)
     if text_fp:
@@ -160,7 +172,11 @@ else:
     scores_data.append(["Finance Providers", providers_score])
 
 # --- 4. Finance Seekers ---
-st.header("4. Finance Seekers")
+st.markdown("""
+<div style='background-color:#E5F3F8;padding:1.2em;border-radius:10px;'>
+<h3 style='color:#005670'>4. Finance Seekers</h3>
+</div>
+""", unsafe_allow_html=True)
 if st.checkbox("Use AI to score Finance Seekers"):
     text_fs = st.text_area("Describe the finance seekers (e.g., project pipeline, diversity, inclusion):", height=200)
     if text_fs:
@@ -185,7 +201,11 @@ else:
 
 # --- Results Section ---
 st.markdown("---")
-st.header("Results Summary")
+st.markdown("""
+<div style='background-color:#E5F3F8;padding:1.2em;border-radius:10px;'>
+<h3 style='color:#005670'>Results Summary</h3>
+</div>
+""", unsafe_allow_html=True)
 
 score_df = pd.DataFrame(scores_data, columns=["Dimension", "Score"])
 if not score_df.empty:
