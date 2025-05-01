@@ -207,11 +207,8 @@ if not score_df.empty:
     pdf.add_page()
     import requests
     logo_file = "Chemonics_RGB_Horizontal_BLUE-WHITE.png"
-    logo_file = "chemonics-logo.png"
+    logo_file = "Chemonics_RGB_Horizontal_BLUE-WHITE.png"
     pdf.image(logo_file, x=10, y=8, w=50)
-    else:
-        pdf.set_font("Arial", "B", 12)
-        pdf.cell(200, 10, "Chemonics International", ln=True)
     pdf.set_font("Arial", size=12)
     pdf.ln(30)
     pdf.cell(200, 10, txt="CFED Maturity Assessment Summary", ln=True, align="C")
