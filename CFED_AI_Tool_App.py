@@ -103,15 +103,13 @@ st.markdown("""
 # --- Helper: AI scoring function ---
 def get_ai_score(prompt, user_input):
     try:
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": prompt},
-                {"role": "user", "content": user_input}
-            ]
+        response = openai.Completion.create(
+            model="gpt-3.5-turbo",  # Use your desired model
+            prompt=f"{prompt}\n{user_input}",
+            max_tokens=150  # Limit the number of tokens for response
         )
-        return response.choices[0].message['content']
-    except openai.OpenAIError as e:  # Corrected to openai.OpenAIError for newer versions
+        return response['choices'][0]['text'].strip()  # Extract the AI-generated score
+    except openai.OpenAIError as e:  # Handle specific OpenAI errors
         if hasattr(e, 'http_status') and e.http_status == 429:
             return "⚠️ Your OpenAI quota has been exceeded. Please use manual scoring."
         return f"Error from OpenAI: {e}"
