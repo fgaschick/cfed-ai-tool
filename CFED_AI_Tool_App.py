@@ -206,12 +206,14 @@ if not score_df.empty:
     import requests
     logo_url = "https://chemonics.com/wp-content/uploads/2022/07/chemonics-logo.png"
     logo_file = "chemonics-logo.png"
-    with open(logo_file, "wb") as f:
-        f.write(requests.get(logo_url).content)
-
-    pdf = FPDF()
-    pdf.add_page()
-    pdf.image(logo_file, x=10, y=8, w=50)
+    response = requests.get(logo_url)
+    if response.status_code == 200 and "image" in response.headers.get("Content-Type", ""):
+        with open(logo_file, "wb") as f:
+            f.write(response.content)
+        pdf.image(logo_file, x=10, y=8, w=50)
+    else:
+        pdf.set_font("Arial", "B", 12)
+        pdf.cell(200, 10, "Chemonics International", ln=True)
     pdf.set_font("Arial", size=12)
     pdf.ln(30)
     pdf.cell(200, 10, txt="CFED Maturity Assessment Summary", ln=True, align="C")
@@ -222,12 +224,15 @@ if not score_df.empty:
     pdf.cell(200, 10, txt=f"Average Maturity Score: {total_average}/4", ln=True)
     pdf.ln(20)
     pdf.set_font("Arial", style="I", size=11)
-    pdf.multi_cell(0, 10, "Climate Finance Team\nChemonics International\n2025")
+    pdf.multi_cell(0, 10, "Climate Finance Team
+Chemonics International
+2025")
     pdf_output = "cfed_scores.pdf"
     pdf.output(pdf_output)
     with open(pdf_output, "rb") as pdf_file:
         b64_pdf = base64.b64encode(pdf_file.read()).decode()
         href_pdf = f'<a href="data:application/pdf;base64,{b64_pdf}" download="cfed_scores.pdf">📄 Download scores as PDF</a>'
         st.markdown(href_pdf, unsafe_allow_html=True)
+
 st.markdown("---")
 st.caption("Prototype built for CFED AI tool – All Four Dimensions. To view a walkthrough of how to use this tool, visit: https://cfed-tool-guide.streamlit.app")
