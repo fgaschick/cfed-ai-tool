@@ -11,37 +11,12 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 # Page configuration
 st.set_page_config(page_title="CFED AI Diagnostic Tool", layout="wide", initial_sidebar_state="expanded")
 st.markdown("""
-    <style>
-    body {
-        background-color: #005670;
-        color: white;
-    }
-    .css-18e3th9 {
-        background-color: #005670;
-    }
-    .stApp {
-        background-color: #ffffff;
-    }
-    footer {
-        visibility: hidden;
-    }
-    .custom-footer {
-        position: fixed;
-        left: 0;
-        bottom: 0;
-        width: 100%;
-        background-color: #005670;
-        color: white;
-        text-align: center;
-        padding: 10px;
-        font-size: 13px;
-    }
-    </style>
+    <style>.custom-footer { position: fixed; left: 0; bottom: 0; width: 100%; background-color: #005670; color: white; text-align: center; padding: 10px; font-size: 13px; }</style>
     <div class='custom-footer'>
         © 2025 Chemonics International Inc. | Contact: Climate Finance Team
     </div>
 """, unsafe_allow_html=True)
-st.image("https://chemonics.com/wp-content/themes/chemonics/assets/img/logo.svg", width=200)
+st.image("https://chemonics.com/wp-content/uploads/2022/07/chemonics-logo.png", width=200)
 st.title("Climate Finance Ecosystem Diagnostic (CFED)")
 st.subheader("AI-Assisted Maturity Scoring Tool – Full Prototype")
 with st.expander("ℹ️ About this tool"):
