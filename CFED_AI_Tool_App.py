@@ -203,6 +203,8 @@ if not score_df.empty:
     st.markdown(href_csv, unsafe_allow_html=True)
 
     # --- Downloadable PDF ---
+    pdf = FPDF()
+    pdf.add_page()
     import requests
     logo_url = "https://chemonics.com/wp-content/uploads/2022/07/chemonics-logo.png"
     logo_file = "chemonics-logo.png"
