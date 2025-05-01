@@ -16,7 +16,7 @@ st.markdown("""
         © 2025 Chemonics International Inc. | Contact: Climate Finance Team
     </div>
 """, unsafe_allow_html=True)
-st.image("https://chemonics.com/wp-content/uploads/2022/07/chemonics-logo.png", width=200)
+st.image("htt
 st.title("Climate Finance Ecosystem Diagnostic (CFED)")
 st.subheader("AI-Assisted Maturity Scoring Tool – Full Prototype")
 with st.expander("ℹ️ About this tool"):
