@@ -37,7 +37,7 @@ st.markdown("""
     }
     .live-score {
         position: fixed;
-        top: 150px;
+        top: 120px;
         right: 30px;
         background-color: #ffffff;
         border: 2px solid #005670;
@@ -55,8 +55,8 @@ st.markdown("""
     <br><br><br><br>
 """, unsafe_allow_html=True)
 
-st.title("Chemonics Climate Finance Ecosystem Diagnostic (CFED)")
-st.subheader("AI-Assisted Climate Finance Ecosystem Maturity Scoring Tool – Prototype")
+st.title("Climate Finance Ecosystem Diagnostic (CFED)")
+st.subheader("AI-Assisted Maturity Scoring Tool – Full Prototype")
 with st.expander("📘 Walkthrough Guide – How to Use This Tool"):
     st.markdown("""
     Start with **Enabling Environment**.
@@ -282,3 +282,15 @@ st.markdown("""
   position: fixed;
   bottom: 0;
   width: 100%;
+  background-color: #005670;
+  color: white;
+  text-align: center;
+  padding: 10px;
+  font-size: 13px;
+  z-index: 1000;
+}
+</style>
+<div class='sticky-footer'>
+  © 2025 Chemonics International Inc. | Contact: Climate Finance Team
+</div>
+""", unsafe_allow_html=True)
