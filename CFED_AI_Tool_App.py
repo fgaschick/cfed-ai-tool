@@ -204,7 +204,7 @@ score_df = pd.DataFrame(scores_data, columns=["Dimension", "Score"])
 if not score_df.empty:
     st.dataframe(score_df, use_container_width=True)
 st.markdown(f"<div style='position:fixed;top:90px;right:30px;background-color:#ffffff;border:2px solid #005670;padding:10px;border-radius:8px;z-index:100;'>🧮 <strong>Live Score:</strong> {round(score_df['Score'].mean(), 2)}/4</div>", unsafe_allow_html=True)
-    total_average = round(score_df["Score"].mean(), 2)
+total_average = round(score_df["Score"].mean(), 2)
     st.markdown(f"### 🧮 Average Ecosystem Maturity Score: {total_average}/4")
 
     st.markdown("**Suggested Actions:**")
