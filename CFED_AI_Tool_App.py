@@ -116,7 +116,7 @@ def get_ai_score(prompt, user_input):
                 {"role": "user", "content": user_input}
             ]
         )
-        return response.choices.message.content
+        return response.choices.message['content']
     except openai.error.OpenAIError as e:
         if hasattr(e, 'http_status') and e.http_status == 429:
             return "⚠️ Your OpenAI quota has been exceeded. Please use manual scoring."
