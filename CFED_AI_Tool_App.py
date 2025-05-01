@@ -46,7 +46,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.title("Climate Finance Ecosystem Diagnostic (CFED)")
-st.subheader("AI-Assisted Maturity Scoring Tool – Full Prototype")
+st.subheader("AI-Assisted Climate Finance Ecosystem Maturity Scoring Tool – Prototype")
 with st.expander("📘 Walkthrough Guide – How to Use This Tool"):
     st.markdown("""
     Start with **Enabling Environment**.
