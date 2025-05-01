@@ -3,7 +3,6 @@ import openai
 import os
 import base64
 import pandas as pd
-from fpdf import FPDF
 
 # Set your OpenAI API key
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -35,6 +34,16 @@ st.markdown("""
     .header-bar img {
         width: 200px;
     }
+    .live-score {
+        position: fixed;
+        top: 120px;
+        right: 30px;
+        background-color: #ffffff;
+        border: 2px solid #005670;
+        padding: 10px;
+        border-radius: 8px;
+        z-index: 1000;
+    }
     </style>
     <div class='custom-footer'>
         © 2025 Chemonics International Inc. | Contact: Climate Finance Team
@@ -46,7 +55,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.title("Climate Finance Ecosystem Diagnostic (CFED)")
-st.subheader("AI-Assisted Climate Finance Ecosystem Maturity Scoring Tool – Prototype")
+st.subheader("AI-Assisted Maturity Scoring Tool – Full Prototype")
 with st.expander("📘 Walkthrough Guide – How to Use This Tool"):
     st.markdown("""
     Start with **Enabling Environment**.
@@ -223,7 +232,7 @@ st.markdown("""
 score_df = pd.DataFrame(scores_data, columns=["Dimension", "Score"])
 if not score_df.empty:
     st.dataframe(score_df, use_container_width=True)
-st.markdown(f"<div style='position:fixed;top:90px;right:30px;background-color:#ffffff;border:2px solid #005670;padding:10px;border-radius:8px;z-index:100;'>🧮 <strong>Live Score:</strong> {round(score_df['Score'].mean(), 2)}/4</div>", unsafe_allow_html=True)
+st.markdown(f"<div class='live-score'>🧮 <strong>Live Score:</strong> {round(score_df['Score'].mean(), 2)}/4</div>", unsafe_allow_html=True)
 total_average = round(score_df["Score"].mean(), 2)
 st.markdown(f"### 🧮 Average Ecosystem Maturity Score: {total_average}/4")
 
