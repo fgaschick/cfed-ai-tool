@@ -66,7 +66,7 @@ st.markdown("""
         © 2025 Chemonics International Inc. | Contact: Climate Finance Team
     </div>
     <div class='header-bar'>
-        <img src='https://brandfetch.com/chemonics.com' alt='Chemonics Logo'/>
+        <img src='https://raw.githubusercontent.com/chemonics/logo.png' alt='Chemonics Logo'/>
     </div>
     <br><br><br><br>
 """, unsafe_allow_html=True)
@@ -249,7 +249,7 @@ st.markdown("""
 score_df = pd.DataFrame(scores_data, columns=["Dimension", "Score"])
 if not score_df.empty:
     st.dataframe(score_df, use_container_width=True)
-st.markdown(f"<div class='live-score'>🧮 <strong>Live Score:</strong> {round(score_df['Score'].mean(), 2)}/4</div>", unsafe_allow_html=True)
+st.markdown(f"<div class='live-score'>🧮 <strong>Live Maturity Score:</strong> {round(score_df['Score'].mean(), 2)}/4</div>", unsafe_allow_html=True)
 total_average = round(score_df["Score"].mean(), 2)
 st.markdown(f"### 🧮 Average Ecosystem Maturity Score: {total_average}/4")
 
