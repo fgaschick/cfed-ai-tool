@@ -47,6 +47,7 @@ st.markdown("""
     - Ecosystem Infrastructure
     - Finance Providers
     - Finance Seekers
+
     The tool helps identify maturity gaps, prioritize investments, and track progress over time. Results can be exported in PDF and CSV formats.
     """)
 
@@ -183,4 +184,85 @@ else:
     has_project_diversity = st.radio("Do projects span adaptation, mitigation, and nature-based solutions?", ["Yes", "No"], help="This means the project pipeline addresses multiple themes: climate adaptation, emission reductions, and ecosystem-based solutions.")
     inclusive_targeting = st.radio("Are vulnerable or underserved groups targeted in project design?", ["Yes", "No"], help="Considers whether projects prioritize or include groups such as women, youth, Indigenous Peoples, or the poor, who are disproportionately affected by climate change.")
     seekers_score = 1
-    if has
+    if has_project_pipeline == "Yes":
+        seekers_score += 1
+    if has_project_diversity == "Yes":
+        seekers_score += 1
+    if inclusive_targeting == "Yes":
+        seekers_score += 1
+    seekers_score = min(seekers_score, 4)
+    scores_data.append(["Finance Seekers", seekers_score])
+
+# --- Results Section ---
+st.markdown("---")
+st.markdown("""
+<div style='background-color:#E5F3F8;padding:1.2em;border-radius:10px;'>
+<h3 style='color:#005670'>Results Summary</h3>
+</div>
+""", unsafe_allow_html=True)
+
+score_df = pd.DataFrame(scores_data, columns=["Dimension", "Score"])
+if not score_df.empty:
+    st.dataframe(score_df, use_container_width=True)
+st.markdown(f"<div style='position:fixed;top:90px;right:30px;background-color:#ffffff;border:2px solid #005670;padding:10px;border-radius:8px;z-index:100;'>🧮 <strong>Live Score:</strong> {round(score_df['Score'].mean(), 2)}/4</div>", unsafe_allow_html=True)
+total_average = round(score_df["Score"].mean(), 2)
+st.markdown(f"### 🧮 Average Ecosystem Maturity Score: {total_average}/4")
+
+st.markdown("**Suggested Actions:**")
+if total_average < 2:
+    st.warning("Foundational support needed: Start with policy frameworks, MRV systems, and project pipeline development.")
+elif 2 <= total_average < 3:
+    st.info("Moderate maturity: Expand partnerships, deepen private finance engagement, and strengthen enforcement.")
+else:
+    st.success("Strong ecosystem: Prioritize scaling solutions, regional leadership, and blended finance innovation.")
+
+# --- Downloadable CSV ---
+csv = score_df.to_csv(index=False)
+b64_csv = base64.b64encode(csv.encode()).decode()
+href_csv = f'<a href="data:file/csv;base64,{b64_csv}" download="cfed_scores.csv">📥 Download scores as CSV</a>'
+st.markdown(href_csv, unsafe_allow_html=True)
+
+# --- Downloadable PDF ---
+pdf = FPDF()
+pdf.add_page()
+import requests
+logo_file = "Chemonics_RGB_Horizontal_BLUE-WHITE.png"
+pdf.image(logo_file, x=10, y=8, w=50)
+pdf.set_font("Arial", size=12)
+pdf.ln(30)
+pdf.cell(200, 10, txt="CFED Maturity Assessment Summary", ln=True, align="C")
+pdf.ln(10)
+for index, row in score_df.iterrows():
+    pdf.cell(200, 10, txt=f"{row['Dimension']}: {row['Score']}/4", ln=True)
+pdf.ln(10)
+pdf.cell(200, 10, txt=f"Average Maturity Score: {total_average}/4", ln=True)
+pdf.ln(20)
+pdf.set_font("Arial", style="I", size=11)
+pdf.multi_cell(0, 10, "Climate Finance Team\nChemonics International\n2025")
+pdf_output = "cfed_scores.pdf"
+pdf.output(pdf_output)
+with open(pdf_output, "rb") as pdf_file:
+    b64_pdf = base64.b64encode(pdf_file.read()).decode()
+    href_pdf = f'<a href="data:application/pdf;base64,{b64_pdf}" download="cfed_scores.pdf">📄 Download scores as PDF</a>'
+st.markdown(href_pdf, unsafe_allow_html=True)
+
+st.markdown("---")
+st.caption("Prototype built for CFED AI tool – All Four Dimensions. To view a walkthrough of how to use this tool, visit: https://cfed-tool-guide.streamlit.app. For definitions, see the https://github.com/fgaschick/cfed-ai-tool/blob/main/CFED_Glossary.pdf.")
+st.markdown("""
+<style>
+.sticky-footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: #005670;
+  color: white;
+  text-align: center;
+  padding: 10px;
+  font-size: 13px;
+  z-index: 1000;
+}
+</style>
+<div class='sticky-footer'>
+  © 2025 Chemonics International Inc. | Contact: Climate Finance Team
+</div>
+""", unsafe_allow_html=True)
