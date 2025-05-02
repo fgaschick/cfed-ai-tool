@@ -112,7 +112,7 @@ def get_ai_score(prompt, user_input):
                 {"role": "user", "content": user_input}
             ]
         )
-        return response['choices'][0]['message']['content'].strip()  # Correct method to extract the response
+        return response.choices[0].message.content.strip()  # Correct method to extract the response
     except openai.OpenAIError as e:  # Catching OpenAI errors
         if hasattr(e, 'http_status') and e.http_status == 429:
             return "⚠️ Your OpenAI quota has been exceeded. Please use manual scoring."
