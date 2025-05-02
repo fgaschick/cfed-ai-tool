@@ -134,10 +134,12 @@ def generate_pdf(score_df, total_average):
     pdf.cell(200, 10, txt=f"Average Maturity Score: {total_average}/4", ln=True)
     pdf.ln(20)
     pdf.set_font("Arial", style="I", size=11)
-    pdf.multi_cell(0, 10, "Climate Finance Team\nChemonics International\n2025")
-    pdf_buffer = BytesIO()
-    pdf.output(pdf_buffer)
-    pdf_buffer.seek(0)
+    pdf.multi_cell(0, 10, "Climate Finance Team
+Chemonics International
+2025")
+
+    pdf_bytes = pdf.output(dest='S').encode('latin1')
+    pdf_buffer = BytesIO(pdf_bytes)
     return pdf_buffer
 
 def render_export_buttons(score_df):
