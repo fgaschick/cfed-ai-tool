@@ -1,3 +1,5 @@
+
+
 import streamlit as st
 import openai
 import os
@@ -6,7 +8,7 @@ import pandas as pd
 from fpdf import FPDF
 
 # Set your OpenAI API key
-openai.api_key = os.getenv("OPENAI_API_KEY")
+client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # Page configuration
 st.set_page_config(page_title="CFED AI Diagnostic Tool", layout="wide", initial_sidebar_state="expanded")
@@ -75,7 +77,7 @@ st.markdown("""
 
 # Title
 st.title("Climate Finance Ecosystem Diagnostic (CFED)")
-st.subheader("AI-Assisted Maturity Scoring Tool – Full Prototype")
+st.subheader("AI-Assisted Climate Finance Ecosystem Maturity Scoring Tool – Prototype")
 
 # Walkthrough Guide
 with st.expander("📘 Walkthrough Guide – How to Use This Tool"):
@@ -90,7 +92,7 @@ with st.expander("📘 Walkthrough Guide – How to Use This Tool"):
 
 st.markdown("""
     This tool is designed by Chemonics International to help governments, donors, and implementing partners rapidly assess the maturity of a country's climate finance ecosystem.
-
+    
     Users can choose either AI-generated scoring or manual scoring for four key areas:
     - Enabling Environment
     - Ecosystem Infrastructure
@@ -103,17 +105,17 @@ st.markdown("""
 # --- Helper: AI scoring function ---
 def get_ai_score(prompt, user_input):
     try:
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
+        # Using the correct API method for chat-based models
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",  # Use your desired model
             messages=[
-                {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": f"{prompt}\n{user_input}"}
-            ],
-            max_tokens=150
+                {"role": "system", "content": prompt},
+                {"role": "user", "content": user_input}
+            ]
         )
-        return response.choices[0].message["content"].strip()
-    except openai.error.OpenAIError as e:
-        if hasattr(e, "http_status") and e.http_status == 429:
+        return response.choices[0].message.content.strip()  # Correct method to extract the response
+    except openai.OpenAIError as e:  # Catching OpenAI errors
+        if hasattr(e, 'http_status') and e.http_status == 429:
             return "⚠️ Your OpenAI quota has been exceeded. Please use manual scoring."
         return f"Error from OpenAI: {e}"
     except Exception as e:
@@ -137,10 +139,11 @@ if st.checkbox("Use AI to score Enabling Environment", value=False):
             st.markdown("**AI Suggested Score and Rationale:**")
             st.markdown(result_ee)
 else:
-    has_ndc = st.radio("Has the country submitted an NDC?", ["No", "Yes"], index=1)
-    ndc_quality = st.selectbox("How ambitious is the NDC?", ["Low", "Medium", "High"])
-    has_sector_policies = st.radio("Are there sector-specific climate policies?", ["No", "Yes"], index=1)
-    has_enforcement = st.radio("Are climate laws and policies enforced predictably?", ["No", "Yes"], index=1)
+    has_ndc = st.radio("Has the country submitted an NDC?", ["No", "Yes"], index=0, help="NDC refers to a Nationally Determined Contribution under the Paris Agreement. This indicates whether the country has committed to climate targets.")
+    ndc_quality = st.selectbox("How ambitious is the NDC?", ["Low", "Medium", "High"], help="Refers to how clearly the NDC outlines its goals, targets, and implementation measures.")
+    has_sector_policies = st.radio("Are there sector-specific climate policies?", ["No", "Yes"], index=0, help="Considers whether climate adaptation or mitigation plans exist in key sectors such as energy, transport, agriculture, and health.")
+    has_enforcement = st.radio("Are climate laws and policies enforced predictably?", ["No", "Yes"], index=0, help="Refers to how reliably climate-related regulations and policies are applied, monitored, and enforced by government institutions.")
+    
     enabling_score = 1
     if has_ndc == "Yes":
         enabling_score += 1
@@ -150,6 +153,7 @@ else:
         enabling_score += 1
     if has_enforcement == "Yes":
         enabling_score += 1
+    
     enabling_score = min(enabling_score, 4)
     scores_data.append(["Enabling Environment", enabling_score])
 
@@ -168,9 +172,10 @@ if st.checkbox("Use AI to score Ecosystem Infrastructure", value=False):
             st.markdown("**AI Suggested Score and Rationale:**")
             st.markdown(result_ei)
 else:
-    has_mrv = st.radio("Are MRV systems and climate data tools in place?", ["No", "Yes"], index=1)
-    has_partnerships = st.radio("Are there active stakeholder networks and partnerships?", ["No", "Yes"], index=1)
-    has_climate_capacity = st.radio("Do institutions have adequate climate finance capacity?", ["No", "Yes"], index=1)
+    has_mrv = st.radio("Are MRV systems and climate data tools in place?", ["No", "Yes"], index=0, help="MRV refers to Monitoring, Reporting, and Verification systems that track emissions, adaptation actions, or finance flows.")
+    has_partnerships = st.radio("Are there active stakeholder networks and partnerships?", ["No", "Yes"], index=0, help="Refers to formal or informal collaboration among government, private sector, academia, and civil society on climate finance or policy.")
+    has_climate_capacity = st.radio("Do institutions have adequate climate finance capacity?", ["No", "Yes"], index=0, help="Assesses whether national or subnational institutions have technical, administrative, and financial skills to design, implement, and monitor climate finance.")
+    
     infra_score = 1
     if has_mrv == "Yes":
         infra_score += 1
@@ -178,6 +183,7 @@ else:
         infra_score += 1
     if has_climate_capacity == "Yes":
         infra_score += 1
+    
     infra_score = min(infra_score, 4)
     scores_data.append(["Ecosystem Infrastructure", infra_score])
 
@@ -196,9 +202,10 @@ if st.checkbox("Use AI to score Finance Providers", value=False):
             st.markdown("**AI Suggested Score and Rationale:**")
             st.markdown(result_fp)
 else:
-    has_public_climate_funding = st.radio("Is there domestic public funding for climate?", ["No", "Yes"], index=1)
-    has_carbon_market = st.radio("Is the country active in voluntary or compliance carbon markets?", ["No", "Yes"], index=1)
-    has_private_investment = st.radio("Is commercial/private capital flowing into climate sectors?", ["No", "Yes"], index=1)
+    has_public_climate_funding = st.radio("Is there domestic public funding for climate?", ["No", "Yes"], index=0, help="Checks if the national budget or public financial institutions allocate domestic funds to climate action.")
+    has_carbon_market = st.radio("Is the country active in voluntary or compliance carbon markets?", ["No", "Yes"], index=0, help="Carbon markets enable trading of emissions reductions, including domestic or international credits.")
+    has_private_investment = st.radio("Is commercial/private capital flowing into climate sectors?", ["No", "Yes"], index=0, help="Determines whether banks, companies, or investors are financing climate-relevant activities such as renewable energy or resilience.")
+    
     providers_score = 1
     if has_public_climate_funding == "Yes":
         providers_score += 1
@@ -206,6 +213,7 @@ else:
         providers_score += 1
     if has_private_investment == "Yes":
         providers_score += 1
+    
     providers_score = min(providers_score, 4)
     scores_data.append(["Finance Providers", providers_score])
 
@@ -224,9 +232,10 @@ if st.checkbox("Use AI to score Finance Seekers", value=False):
             st.markdown("**AI Suggested Score and Rationale:**")
             st.markdown(result_fs)
 else:
-    has_project_pipeline = st.radio("Is there a robust pipeline of fundable climate projects?", ["No", "Yes"], index=1)
-    has_project_diversity = st.radio("Do projects span adaptation, mitigation, and nature-based solutions?", ["No", "Yes"], index=1)
-    inclusive_targeting = st.radio("Are vulnerable or underserved groups targeted in project design?", ["No", "Yes"], index=1)
+    has_project_pipeline = st.radio("Is there a robust pipeline of fundable climate projects?", ["No", "Yes"], index=0, help="Assesses if there are well-developed, ready-to-implement projects aligned with climate goals and financing requirements.")
+    has_project_diversity = st.radio("Do projects span adaptation, mitigation, and nature-based solutions?", ["No", "Yes"], index=0, help="This means the project pipeline addresses multiple themes: climate adaptation, emission reductions, and ecosystem-based solutions.")
+    inclusive_targeting = st.radio("Are vulnerable or underserved groups targeted in project design?", ["No", "Yes"], index=0, help="Considers whether projects prioritize or include groups such as women, youth, Indigenous Peoples, or the poor, who are disproportionately affected by climate change.")
+    
     seekers_score = 1
     if has_project_pipeline == "Yes":
         seekers_score += 1
@@ -234,9 +243,9 @@ else:
         seekers_score += 1
     if inclusive_targeting == "Yes":
         seekers_score += 1
+    
     seekers_score = min(seekers_score, 4)
     scores_data.append(["Finance Seekers", seekers_score])
-scores_data.append(["Finance Seekers", seekers_score])
 
 # --- Results Section ---
 st.markdown("---")
@@ -249,98 +258,46 @@ st.markdown("""
 score_df = pd.DataFrame(scores_data, columns=["Dimension", "Score"])
 if not score_df.empty:
     st.dataframe(score_df, use_container_width=True)
-    st.markdown(f"<div class='live-score'>🧮 <strong>Live Maturity Score:</strong> {round(score_df['Score'].mean(), 2)}/4</div>", unsafe_allow_html=True)
-    total_average = round(score_df["Score"].mean(), 2)
-    st.markdown(f"### 🧮 Average Ecosystem Maturity Score: {total_average}/4")
-    st.markdown("**Suggested Actions by Dimension:**")
-st.markdown("**Suggested Actions by Dimension – Grouped by Maturity Tier:**")
+st.markdown(f"<div class='live-score'>🧮 <strong>Live Maturity Score:</strong> {round(score_df['Score'].mean(), 2)}/4</div>", unsafe_allow_html=True)
+total_average = round(score_df["Score"].mean(), 2)
+st.markdown(f"### 🧮 Average Ecosystem Maturity Score: {total_average}/4")
 
-low_maturity = []
-medium_maturity = []
-high_maturity = []
+st.markdown("**Suggested Actions:**")
+if total_average < 2:
+    st.warning("Foundational support needed: Start with policy frameworks, MRV systems, and project pipeline development.")
+elif 2 <= total_average < 3:
+    st.info("Moderate maturity: Expand partnerships, deepen private finance engagement, and strengthen enforcement.")
+else:
+    st.success("Strong ecosystem: Prioritize scaling solutions, regional leadership, and blended finance innovation.")
 
-for dimension, score in scores_data:
-    if score < 2:
-        low_maturity.append(dimension)
-    elif 2 <= score < 3:
-        medium_maturity.append(dimension)
-    else:
-        high_maturity.append(dimension)
+# --- Downloadable CSV ---
+csv = score_df.to_csv(index=False)
+b64_csv = base64.b64encode(csv.encode()).decode()
+href_csv = f'<a href="data:file/csv;base64,{b64_csv}" download="cfed_scores.csv">📥 Download scores as CSV</a>'
+st.markdown(href_csv, unsafe_allow_html=True)
 
-if low_maturity:
-    st.markdown("#### 🔧 Foundational Support Needed")
-    for dim in low_maturity:
-        if dim == "Enabling Environment":
-            st.warning("**Enabling Environment**: Develop or revise NDCs, improve sector-specific climate policies, and establish enforcement mechanisms.")
-        elif dim == "Ecosystem Infrastructure":
-            st.warning("**Ecosystem Infrastructure**: Invest in MRV systems, build institutional capacity, and create multi-stakeholder platforms.")
-        elif dim == "Finance Providers":
-            st.warning("**Finance Providers**: Increase public allocations, introduce carbon pricing or pilot voluntary carbon markets, and de-risk private investments.")
-        elif dim == "Finance Seekers":
-            st.warning("**Finance Seekers**: Support project preparation facilities, ensure inclusive design standards, and link pipelines to funders.")
-
-if medium_maturity:
-    st.markdown("#### 📈 Advancing Maturity")
-    for dim in medium_maturity:
-        if dim == "Enabling Environment":
-            st.info("**Enabling Environment**: Strengthen policy coherence and ensure NDC ambition translates into investment plans.")
-        elif dim == "Ecosystem Infrastructure":
-            st.info("**Ecosystem Infrastructure**: Digitize reporting and analytics tools; formalize knowledge exchange networks.")
-        elif dim == "Finance Providers":
-            st.info("**Finance Providers**: Enable blended finance mechanisms and performance-based grants to crowd in private capital.")
-        elif dim == "Finance Seekers":
-            st.info("**Finance Seekers**: Expand access to technical assistance for project formulation and accreditation with key funds.")
-
-if high_maturity:
-    st.markdown("#### 🚀 Ready to Scale and Lead")
-    for dim in high_maturity:
-        if dim == "Enabling Environment":
-            st.success("**Enabling Environment**: Position the country as a climate finance leader; export policy frameworks to peers.")
-        elif dim == "Ecosystem Infrastructure":
-            st.success("**Ecosystem Infrastructure**: Benchmark MRV capabilities regionally; deploy innovations like satellite data tracking.")
-        elif dim == "Finance Providers":
-            st.success("**Finance Providers**: Scale national green funds and incubate climate fintech; engage institutional investors.")
-        elif dim == "Finance Seekers":
-            st.success("**Finance Seekers**: Promote replication of successful models, engage subnational actors, and innovate inclusive finance.")"""
-    - **Enabling Environment**: Position the country as a climate finance leader; export policy frameworks to peers.
-    - **Ecosystem Infrastructure**: Benchmark MRV capabilities regionally; deploy innovations like satellite data tracking.
-    - **Finance Providers**: Scale national green funds and incubate climate fintech; engage institutional investors.
-    - **Finance Seekers**: Promote replication of successful models, engage subnational actors, and innovate inclusive finance.
-    """)
-        st.success("Strong ecosystem: Prioritize scaling solutions, regional leadership, and blended finance innovation.")
-
-    # --- Download CSV ---
-    csv = score_df.to_csv(index=False)
-    b64_csv = base64.b64encode(csv.encode()).decode()
-    href_csv = f'<a href="data:file/csv;base64,{b64_csv}" download="cfed_scores.csv">📥 Download scores as CSV</a>'
-    st.markdown(href_csv, unsafe_allow_html=True)
-
-    # --- Download PDF ---
-    pdf = FPDF()
-    pdf.add_page()
-    try:
-        pdf.image("Chemonics_RGB_Horizontal_BLUE-WHITE.png", x=10, y=8, w=50)
-    except:
-        pass
-    pdf.set_font("Arial", size=12)
-    pdf.ln(30)
-    pdf.cell(200, 10, txt="CFED Maturity Assessment Summary", ln=True, align="C")
-    pdf.ln(10)
-    for index, row in score_df.iterrows():
-        pdf.cell(200, 10, txt=f"{row['Dimension']}: {row['Score']}/4", ln=True)
-    pdf.ln(10)
-    pdf.cell(200, 10, txt=f"Average Maturity Score: {total_average}/4", ln=True)
-    pdf.ln(20)
-    pdf.set_font("Arial", style="I", size=11)
-    pdf.multi_cell(0, 10, "Climate Finance Team
-Chemonics International
-2025")
-    pdf_output = "cfed_scores.pdf"
-    pdf.output(pdf_output)
-    with open(pdf_output, "rb") as pdf_file:
-        b64_pdf = base64.b64encode(pdf_file.read()).decode()
-        href_pdf = f'<a href="data:application/pdf;base64,{b64_pdf}" download="cfed_scores.pdf">📄 Download scores as PDF</a>'
-        st.markdown(href_pdf, unsafe_allow_html=True)
+# --- Downloadable PDF ---
+pdf = FPDF()
+pdf.add_page()
+logo_file = "Chemonics_RGB_Horizontal_BLUE-WHITE.png"
+pdf.image(logo_file, x=10, y=8, w=50)
+pdf.set_font("Arial", size=12)
+pdf.ln(30)
+pdf.cell(200, 10, txt="CFED Maturity Assessment Summary", ln=True, align="C")
+pdf.ln(10)
+for index, row in score_df.iterrows():
+    pdf.cell(200, 10, txt=f"{row['Dimension']}: {row['Score']}/4", ln=True)
+pdf.ln(10)
+pdf.cell(200, 10, txt=f"Average Maturity Score: {total_average}/4", ln=True)
+pdf.ln(20)
+pdf.set_font("Arial", style="I", size=11)
+pdf.multi_cell(0, 10, "Climate Finance Team\nChemonics International\n2025")
+pdf_output = "cfed_scores.pdf"
+pdf.output(pdf_output)
+with open(pdf_output, "rb") as pdf_file:
+    b64_pdf = base64.b64encode(pdf_file.read()).decode()
+    href_pdf = f'<a href="data:application/pdf;base64,{b64_pdf}" download="cfed_scores.pdf">📄 Download scores as PDF</a>'
+st.markdown(href_pdf, unsafe_allow_html=True)
 
 st.markdown("---")
 st.caption("Prototype built for CFED AI tool – All Four Dimensions. To view a walkthrough of how to use this tool, visit: https://cfed-tool-guide.streamlit.app. For definitions, see the CFED Glossary.")
