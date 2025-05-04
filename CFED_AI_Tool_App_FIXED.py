@@ -26,7 +26,9 @@ def get_ai_score(prompt, user_input):
 st.set_page_config(page_title="Enabling Environment Scoring", layout="wide")
 
 # Custom header and footer with logo
-st.markdown("""
+import streamlit.components.v1 as components
+
+components.html("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
     body {
@@ -75,6 +77,15 @@ st.markdown("""
     .score-medium { background-color: #fdd835; }
     .score-high { background-color: #81c784; }
     </style>
+
+    <div class='header-bar'>
+        <img src='https://raw.githubusercontent.com/fgaschick/cfed-ai-tool/main/Chemonics_RGB_Horizontal_BLUE-WHITE.png' alt='Chemonics Logo'/>
+    </div>
+    <div style='height: 100px;'></div>
+    <div class='custom-footer'>
+        © 2025 Chemonics International Inc. | Contact: Climate Finance Team
+    </div>
+""", height=150, scrolling=False)
 
     <div class='header-bar'><img src='https://raw.githubusercontent.com/fgaschick/cfed-ai-tool/main/Chemonics_RGB_Horizontal_BLUE-WHITE.png' alt='Chemonics Logo'/></div>
 <div style='height: 100px;'></div>
