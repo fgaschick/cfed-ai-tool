@@ -116,8 +116,8 @@ uploaded_file = None
 if use_ai:
     uploaded_file = st.file_uploader("Upload a PDF or DOCX document (optional)", type=["pdf", "docx"])
 
-# Text input for AI
-user_input = st.text_area("\U0001F50D Provide a narrative description (optional):", height=300)
+    # Text input for AI analysis
+    user_input = st.text_area("\U0001F50D Provide a narrative description (optional):", height=300)
 
 # When AI scoring is enabled, process document and text input
 if use_ai:
