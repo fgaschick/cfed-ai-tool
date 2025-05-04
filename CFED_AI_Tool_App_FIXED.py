@@ -1,11 +1,10 @@
 import streamlit as st
-import os
 from openai import OpenAI
 
-# Correct OpenAI usage for openai>=1.0.0
-api_key = os.getenv("OPENAI_API_KEY")
+# Use Streamlit secrets for API key to avoid environment variable issues
+api_key = st.secrets.get("OPENAI_API_KEY")
 if not api_key:
-    st.error("OPENAI_API_KEY environment variable not set.")
+    st.error("OPENAI_API_KEY not found in Streamlit secrets.")
     st.stop()
 
 client = OpenAI(api_key=api_key)
