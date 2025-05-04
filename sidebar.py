@@ -46,24 +46,6 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Sidebar: Instructions to the Tool (First Element)
-st.sidebar.markdown("""
-### 📘 Instructions
-This tool helps evaluate the maturity of a country's climate finance ecosystem. Choose a dimension to start the assessment.
-- **Enabling Environment**: Evaluate the national climate strategy, policies, and enforcement.
-- **Ecosystem Infrastructure**: Assess the availability of tools and partnerships.
-- **Finance Providers**: Check the involvement of public/private funding and carbon markets.
-- **Finance Seekers**: Evaluate the readiness of climate projects and inclusion of vulnerable groups.
-
-Click on any dimension to get started.
-""")
-
-# Create interactive tabs in the sidebar
-tab = st.sidebar.radio(
-    "Select Dimension", 
-    ["Instructions", "Enabling Environment", "Ecosystem Infrastructure", "Finance Providers", "Finance Seekers"]
-)
-
 # Function to get AI score (reused from previous implementation)
 def get_ai_score(prompt, user_input):
     try:
@@ -77,6 +59,12 @@ def get_ai_score(prompt, user_input):
         return response.choices[0].message.content.strip()
     except Exception as e:
         return f"AI error: {str(e)}"
+
+# Create clickable tabs (instructions + dimensions)
+tab = st.selectbox(
+    "Select Dimension", 
+    ["Instructions", "Enabling Environment", "Ecosystem Infrastructure", "Finance Providers", "Finance Seekers"]
+)
 
 # Function to display questions based on selected dimension
 def display_dimension_questions(dimension):
