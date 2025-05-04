@@ -37,7 +37,7 @@ st.markdown("""
         position: fixed;
         left: 0;
         bottom: 0;
-        width: 100%;
+        width: 100vw;
         background-color: #005670;
         color: white;
         text-align: center;
@@ -157,7 +157,7 @@ else:
 
     avg_color_class = score_class
     st.markdown(f"""
-<div class='bottom-box {avg_color_class}' style='margin: 2em 0; position: relative;'>
+<div class='bottom-box {avg_color_class}' style='margin: 4em auto 1em auto; position: relative; text-align: center; max-width: 700px;'>
     <strong>Average Score for Enabling Environment:</strong> {ee_total_score}/3
 </div>
 """, unsafe_allow_html=True)
