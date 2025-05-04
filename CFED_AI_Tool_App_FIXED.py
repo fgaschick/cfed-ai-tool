@@ -23,16 +23,88 @@ def get_ai_score(prompt, user_input):
     except Exception as e:
         return f"AI error: {str(e)}"
 
+# Set page configuration
 st.set_page_config(page_title="Enabling Environment Scoring", layout="wide")
+
+# Sidebar setup
+st.sidebar.title("Tool Navigation")
+st.sidebar.markdown("### Use this tool to score the enabling environment")
+
+# Custom header and footer with logo
+import streamlit.components.v1 as components
+
+components.html("""
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+    body {
+        font-family: 'Roboto', sans-serif;
+        background-color: #f5f5f5;
+    }
+    .custom-footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100vw;
+        background-color: #005670;
+        color: white;
+        text-align: center;
+        padding: 10px;
+        font-size: 13px;
+        z-index: 1000;
+    }
+    .header-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        background-color: #005670;
+        color: white;
+        text-align: center;
+        padding: 10px;
+        font-size: 13px;
+        z-index: 1001;
+    }
+    .header-bar img {
+        max-height: 30px;
+    }
+    .bottom-box {
+        position: fixed;
+        bottom: 60px;
+        right: 30px;
+        padding: 10px 20px;
+        border-radius: 8px;
+        z-index: 1001;
+        box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
+        font-weight: bold;
+        color: white;
+    }
+    .score-low { background-color: #e57373; }
+    .score-medium { background-color: #fdd835; }
+    .score-high { background-color: #81c784; }
+    </style>
+
+    <div class='header-bar'>
+        <img src='https://raw.githubusercontent.com/fgaschick/cfed-ai-tool/main/Chemonics_RGB_Horizontal_BLUE-WHITE.png' alt='Chemonics Logo'/>
+    </div>
+    <div style='height: 100px;'></div>
+    
+""", height=150, scrolling=False)
+
+# Title for the main content
+st.title("Enabling Environment Scoring Prototype")
 
 # Track score separately so it can be rendered globally
 ee_total_score = None
 score_class = ""
 
-use_ai_ee = st.checkbox("Use AI to score Enabling Environment", value=False)
+# Sidebar content
+use_ai_ee = st.sidebar.checkbox("Use AI to score Enabling Environment", value=False)
 
 if use_ai_ee:
-    # Show file upload only when AI option is selected
+    # Show text input first, followed by file upload only when AI option is selected
+    narrative_ee = st.text_area("\U0001F50D Provide a narrative description of the enabling environment:", height=300)
+    
+    # File upload appears below the text input
     uploaded_file = st.file_uploader("Upload a document for AI analysis (PDF/Word)", type=["pdf", "docx"])
     
     if uploaded_file is not None:
@@ -66,18 +138,6 @@ if use_ai_ee:
         # Dummy value to indicate AI mode (actual average not parsed from AI)
         ee_total_score = "AI-Based"
         score_class = "score-medium"
-        
-    narrative_ee = st.text_area("\U0001F50D Provide a narrative description of the enabling environment:", height=300)
-    if narrative_ee:
-        with st.spinner("Analyzing with AI..."):
-            prompt = (
-                "You are a climate finance expert. Based on the following narrative, assess the maturity of the enabling environment using the four sub-components: "
-                "(1) Strategy (NDCs, national plans), (2) Policy (sectoral climate policies), (3) Enforcement (rule of law, anti-corruption), and (4) Stakeholder consultation. "
-                "Assign a maturity score from 0 to 3 for each sub-component and explain each score briefly. Then provide 3 prioritized action recommendations that would help improve the enabling environment if any score is below 3."
-            )
-            output = get_ai_score(prompt, narrative_ee)
-            st.markdown("**AI-Generated Assessment and Recommendations:**")
-            st.markdown(output)
 
 else:
     st.markdown("### \u270D\ufe0f Manual Scoring (based on sub-indicator evidence)")
