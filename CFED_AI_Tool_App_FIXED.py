@@ -5,8 +5,9 @@ import os
 # Set your OpenAI API key
 api_key = os.getenv("OPENAI_API_KEY")
 
-# Use new OpenAI client properly
-client = openai.OpenAI(api_key=api_key)
+# Initialize OpenAI client for openai>=1.0.0
+from openai import OpenAI
+client = OpenAI(api_key=api_key)
 
 def get_ai_score(prompt, user_input):
     try:
