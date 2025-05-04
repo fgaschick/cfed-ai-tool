@@ -1,5 +1,5 @@
 import streamlit as st
-from openai import OpenAI
+import openai
 
 # Use Streamlit secrets for API key to avoid environment variable issues
 api_key = st.secrets.get("OPENAI_API_KEY")
@@ -7,11 +7,11 @@ if not api_key:
     st.error("OPENAI_API_KEY not found in Streamlit secrets.")
     st.stop()
 
-client = OpenAI(api_key=api_key)
+openai.api_key = api_key
 
 def get_ai_score(prompt, user_input):
     try:
-        response = client.chat.completions.create(
+        response = openai.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": prompt},
