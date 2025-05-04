@@ -30,13 +30,6 @@ use_ai_ee = False
 # Set the page configuration
 st.set_page_config(page_title="Climate Finance Scoring", layout="wide")
 
-# Sidebar setup for selecting dimension
-dimension = st.sidebar.radio("Select Dimension", ["Instructions", "Enabling Environment", "Ecosystem Infrastructure", "Finance Providers", "Finance Seekers"])
-
-# Initialize variables for the total score and score class
-ee_total_score = None
-score_class = ""
-
 # Custom header and footer with logo
 import streamlit.components.v1 as components
 
@@ -98,8 +91,8 @@ components.html("""
 """, height=150, scrolling=False)
 
 # Function to handle AI scoring
-def ai_scoring_ui():
-    narrative_ee = st.text_area("\U0001F50D Provide a narrative description of the enabling environment:", height=300)
+def ai_scoring_ui(dimension_name):
+    narrative_ee = st.text_area(f"Provide a narrative description of the {dimension_name}:", height=300)
     
     # File upload appears below the text input
     uploaded_file = st.file_uploader("Upload a document for AI analysis (PDF/Word)", type=["pdf", "docx"])
@@ -120,14 +113,13 @@ def ai_scoring_ui():
             file_content = "\n".join([para.text for para in doc.paragraphs])
         
         if file_content:
-            with st.spinner("Analyzing document with AI..."):
+            with st.spinner(f"Analyzing document for {dimension_name} with AI..."):
                 prompt = (
-                    "You are a climate finance expert. Based on the following document, assess the maturity of the enabling environment using the four sub-components: "
-                    "(1) Strategy (NDCs, national plans), (2) Policy (sectoral climate policies), (3) Enforcement (rule of law, anti-corruption), and (4) Stakeholder consultation. "
-                    "Assign a maturity score from 0 to 3 for each sub-component and explain each score briefly. Then provide 3 prioritized action recommendations that would help improve the enabling environment if any score is below 3."
+                    f"You are a climate finance expert. Based on the following document, assess the maturity of the {dimension_name} using relevant sub-components."
+                    "Assign a maturity score from 0 to 3 for each sub-component and explain each score briefly. Then provide 3 prioritized action recommendations that would help improve the {dimension_name} if any score is below 3."
                 )
                 output = get_ai_score(prompt, file_content)
-                st.markdown("**AI-Generated Assessment and Recommendations:**")
+                st.markdown(f"**AI-Generated Assessment and Recommendations for {dimension_name}:**")
                 st.markdown(output)
 
     # Dummy value to indicate AI mode (actual average not parsed from AI)
@@ -136,48 +128,23 @@ def ai_scoring_ui():
     
     return ee_total_score, score_class
 
-def manual_scoring_ui():
-    st.markdown("### \u270D\ufe0f Manual Scoring (based on sub-indicator evidence)")
+def manual_scoring_ui(dimension_name):
+    st.markdown(f"### \u270D\ufe0f Manual Scoring for {dimension_name} (based on sub-indicator evidence)")
 
-    # STRATEGY
-    st.markdown("#### Strategy")
-    s1 = st.checkbox("Country has submitted an NDC")
-    s2 = st.checkbox("NDC is linked to investment or implementation plans")
-    s3 = st.checkbox("NDC or strategy includes financing targets or mechanisms")
-    s4 = st.checkbox("There is a national climate finance strategy or roadmap")
-    notes_strategy = st.text_area("Notes for Strategy:", key="notes_strategy")
+    # STRATEGY (example, adapt for each section)
+    st.markdown(f"#### {dimension_name} Strategy")
+    s1 = st.checkbox("Criteria 1 for Strategy")
+    s2 = st.checkbox("Criteria 2 for Strategy")
+    s3 = st.checkbox("Criteria 3 for Strategy")
+    notes_strategy = st.text_area(f"Notes for {dimension_name} Strategy:", key="notes_strategy")
 
-    # POLICY
-    st.markdown("#### Policy")
-    p1 = st.checkbox("Sectoral policies (energy, land use, etc.) integrate climate objectives")
-    p2 = st.checkbox("Policies include clear implementation mechanisms")
-    p3 = st.checkbox("Private sector is consulted or involved in policy development")
-    notes_policy = st.text_area("Notes for Policy:", key="notes_policy")
-
-    # ENFORCEMENT
-    st.markdown("#### Enforcement")
-    e1 = st.checkbox("Climate-related laws or regulations exist")
-    e2 = st.checkbox("There is a functioning judiciary or legal redress mechanism")
-    e3 = st.checkbox("Anti-corruption measures are actively implemented")
-    notes_enforcement = st.text_area("Notes for Enforcement:", key="notes_enforcement")
-
-    # STAKEHOLDER CONSULTATION
-    st.markdown("#### Stakeholder Consultation")
-    c1 = st.checkbox("Stakeholders (civil society, academia) are engaged in planning")
-    c2 = st.checkbox("Indigenous Peoples, women, youth are specifically included")
-    c3 = st.checkbox("Consultations are recurring and documented")
-    notes_consultation = st.text_area("Notes for Consultation:", key="notes_consultation")
-
-    # Compute maturity per sub-component
+    # Compute maturity per sub-component (Dummy logic here for illustration)
     def score_subcomponent(answers):
         return min(3, sum(answers))
 
-    strategy_score = score_subcomponent([s1, s2, s3, s4])
-    policy_score = score_subcomponent([p1, p2, p3])
-    enforcement_score = score_subcomponent([e1, e2, e3])
-    consultation_score = score_subcomponent([c1, c2, c3])
+    strategy_score = score_subcomponent([s1, s2, s3])
 
-    ee_total_score = round((strategy_score + policy_score + enforcement_score + consultation_score) / 4, 2)
+    ee_total_score = round(strategy_score / 3, 2)
 
     # Assign color class
     if ee_total_score < 1.5:
@@ -190,46 +157,35 @@ def manual_scoring_ui():
     avg_color_class = score_class
     st.markdown(f"""
 <div class='bottom-box {score_class}' style='margin: 4em auto 1em auto; position: relative; text-align: left; max-width: 900px;'>
-    <strong>Average Score for Enabling Environment:</strong> {ee_total_score}/3</strong> {ee_total_score}/3
+    <strong>Average Score for {dimension_name}:</strong> {ee_total_score}/3
 </div>
 """, unsafe_allow_html=True)
 
     return ee_total_score, score_class
 
 # Main content area
-if dimension == "Enabling Environment":
-    st.header("Enabling Environment Scoring")
-    # Activate AI scoring or manual scoring based on the checkbox selection
+st.title("Climate Finance Scoring Tool")
+
+# Show the sections one after the other
+dimensions = ["Enabling Environment", "Ecosystem Infrastructure", "Finance Providers", "Finance Seekers"]
+
+for dimension in dimensions:
+    st.header(f"{dimension} Scoring")
+    
+    use_ai_ee = st.checkbox(f"Use AI to score {dimension}", value=False)
+    
     if use_ai_ee:
-        ee_total_score, score_class = ai_scoring_ui()
+        ee_total_score, score_class = ai_scoring_ui(dimension)
     else:
-        ee_total_score, score_class = manual_scoring_ui()
+        ee_total_score, score_class = manual_scoring_ui(dimension)
 
     # Floating live score box always shown
     if ee_total_score is not None:
         st.markdown(f"""
         <div class="bottom-box {score_class}" style="bottom: 60px; right: 30px; position: fixed;">
-            <strong>Live Enabling Env Score:</strong><br> {ee_total_score}/3
+            <strong>Live {dimension} Score:</strong><br> {ee_total_score}/3
         </div>
         """, unsafe_allow_html=True)
-
-elif dimension == "Instructions":
-    st.subheader("Instructions")
-    st.markdown("""
-    This tool allows you to assess the maturity of the enabling environment for climate finance in your country.
-    1. Select whether you want to use AI scoring or manually score the sub-components.
-    2. If using AI, provide a narrative description of the enabling environment, or upload a document for analysis.
-    3. If manually scoring, evaluate each sub-component based on evidence.
-    4. The tool will automatically compute an overall score and provide recommendations based on the assessment.
-    """)
-
-# Floating score box in sidebar
-if ee_total_score is not None:
-    st.sidebar.markdown(f"""
-    <div class="bottom-box {score_class}" style="position: fixed; bottom: 60px; right: 30px; width: 200px;">
-        <strong>Live Enabling Env Score:</strong><br> {ee_total_score}/3
-    </div>
-    """, unsafe_allow_html=True)
 
 # Footer
 st.markdown("""
