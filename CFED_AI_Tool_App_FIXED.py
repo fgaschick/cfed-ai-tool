@@ -10,9 +10,7 @@ if not api_key:
 
 client = OpenAI(api_key=api_key)
 
-# Initialize use_ai_ee to False, set here to avoid error
-use_ai_ee = False
-
+# Function to get AI-based scores
 def get_ai_score(prompt, user_input):
     try:
         response = client.chat.completions.create(
@@ -26,7 +24,10 @@ def get_ai_score(prompt, user_input):
     except Exception as e:
         return f"AI error: {str(e)}"
 
-# Set page configuration
+# Initialize the variable `use_ai_ee` to False initially
+use_ai_ee = False
+
+# Set the page configuration
 st.set_page_config(page_title="Climate Finance Scoring", layout="wide")
 
 # Sidebar setup for selecting dimension
