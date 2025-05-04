@@ -94,16 +94,19 @@ def get_user_input(dimension, component, sub_component, indicators):
     Returns a dictionary of user inputs.
     """
     user_inputs = {}
-    for indicator, details in indicators.items():
-        label = f"{component} - {sub_component} - {indicator}" if sub_component else f"{component} - {indicator}"
-        if details["type"] == "selectbox":
-            user_inputs[indicator] = st.selectbox(label, details["options"], help=details["help"])
-        elif details["type"] == "number_input":
-            user_inputs[indicator] = st.number_input(label, help=details["help"])
-        elif details["type"] == "checkbox":
-            user_inputs[indicator] = st.checkbox(label, help=details["help"])
-        elif details["type"] == "text_area":
-            user_inputs[indicator] = st.text_area(label, help=details["help"])
+    if indicators:  # Check if indicators is not None or empty
+        for indicator, details in indicators.items():
+            label = f"{component} - {sub_component} - {indicator}" if sub_component else f"{component} - {indicator}"
+            if details["type"] == "selectbox":
+                user_inputs[indicator] = st.selectbox(label, details["options"], help=details["help"])
+            elif details["type"] == "number_input":
+                user_inputs[indicator] = st.number_input(label, help=details["help"])
+            elif details["type"] == "checkbox":
+                user_inputs[indicator] = st.checkbox(label, help=details["help"])
+            elif details["type"] == "text_area":
+                user_inputs[indicator] = st.text_area(label, help=details["help"])
+    else:
+        st.warning(f"No indicators found for {dimension} - {component} - {sub_component}")
     return user_inputs
 
 
@@ -114,15 +117,15 @@ def score_component(dimension, component, sub_component, user_inputs):
     from the document)
     """
     score = 0
-    if dimension == "Enabling Environment" and component == "Strategy":
+    if dimension == "Enabling Environment" and component == "Strategy" and user_inputs: # Check if user_inputs is not empty
         ndc_status = int(user_inputs["NDC Submission Status"][0])
         cat_rating = int(user_inputs["CAT Rating"][0])
         score = max(ndc_status, cat_rating)
         # ... more scoring logic ...
-    elif dimension == "Finance Seekers" and component == "Built environment" and sub_component is None:  # Explicit None check
+    elif dimension == "Finance Seekers" and component == "Built environment" and sub_component is None and user_inputs:  # Explicit None check and user_inputs check
         green_building_code = int(user_inputs["Green building codes"][0])
         score = green_building_code
-    else:
+    elif user_inputs: # Check if user_inputs is not empty
         score = len(user_inputs)  # A basic placeholder
     return score
 
@@ -180,7 +183,9 @@ for dimension, components in cfe_framework.items():
                 tabs = st.tabs(details["sub_components"].keys())
                 for tab_index, (sub_component, sub_component_details) in enumerate(details["sub_components"].items()):
                     with tabs[tab_index]:
-                        user_inputs = get_user_input(dimension, component, sub_component, sub_component_details["indicators"])
+                        # Debugging output
+                        # st.write(f"DEBUG: Calling get_user_input for {dimension} - {component} - {sub_component}")
+                        user_inputs = get_user_input(dimension, component, sub_component, sub_component_details.get("indicators"))  # Use .get() to handle missing key
                         if st.checkbox(f"Use AI for {component} - {sub_component}"):
                             ai_input = "\n".join([f"{k}: {v}" for k, v in user_inputs.items()])
                             ai_result = get_ai_score(details["ai_prompt"], ai_input)
@@ -193,7 +198,9 @@ for dimension, components in cfe_framework.items():
                         all_scores.setdefault(dimension, {}).setdefault(component, [])
                         all_scores[dimension][component].append({"sub_component": sub_component, "score": component_score})
             else:
-                user_inputs = get_user_input(dimension, component, None, details["indicators"])  # Changed "" to None
+                # Debugging output
+                # st.write(f"DEBUG: Calling get_user_input for {dimension} - {component} - None")
+                user_inputs = get_user_input(dimension, component, None, details.get("indicators"))  # Use .get() to handle missing key
                 if st.checkbox(f"Use AI for {component}"):
                     ai_input = "\n".join([f"{k}: {v}" for k, v in user_inputs.items()])
                     ai_result = get_ai_score(details["ai_prompt"], ai_input)
