@@ -161,7 +161,6 @@ else:
     <strong>Average Score for Enabling Environment:</strong> {ee_total_score}/3
 </div>
 """, unsafe_allow_html=True)
-    """, unsafe_allow_html=True)
 
     # AI-generated recommendations based on manual scores and notes
     if st.button("\U0001F916 Generate AI Recommendations Based on Manual Input"):
