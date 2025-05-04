@@ -6,10 +6,10 @@ import pandas as pd
 from fpdf import FPDF
 
 # Set your OpenAI API key
-openai.api_key = 'your-openai-api-key'
+openai.api_key = 'your-openai-api-key'  # Replace with your actual OpenAI API key
 
-# Function to generate AI-driven recommendations based on scores
-def generate_recommendations(scores_data, dimension_name):
+# Function to generate AI-driven recommendations based on user narrative input
+def generate_recommendations(scores_data, dimension_name, user_input):
     try:
         # Convert the scores data into a formatted string for the AI
         scores_str = "\n".join([f"{dimension}: {score}" for dimension, score in scores_data])
@@ -17,7 +17,8 @@ def generate_recommendations(scores_data, dimension_name):
         prompt = f"Given the following scores for each dimension in the Climate Finance Ecosystem:\n\n{scores_str}\n\n" \
                  f"Based on the {dimension_name} dimension, provide tailored, actionable recommendations. " \
                  "The recommendations should be specific, actionable, and grounded in the context of climate finance. " \
-                 "Please suggest improvements for the {dimension_name} dimension."
+                 "Please suggest improvements for the {dimension_name} dimension.\n\n" \
+                 f"Here is the description of the {dimension_name} dimension: {user_input}"
         
         # Call OpenAI to generate recommendations
         response = openai.Completion.create(
@@ -36,28 +37,20 @@ def generate_recommendations(scores_data, dimension_name):
 st.title("Climate Finance Ecosystem Diagnostic Tool")
 st.subheader("AI-driven Recommendations for Climate Finance Ecosystem Maturity")
 
-# Sample scores data for testing the recommendation engine
-scores_data = [
-    ("Enabling Environment", 3),
-    ("Ecosystem Infrastructure", 2),
-    ("Finance Providers", 4),
-    ("Finance Seekers", 3)
-]
-
 # Function to display dynamic recommendations per dimension
 def display_dynamic_recommendations():
-    # Collecting inputs for each dimension
-    enabling_env_score = st.slider("Enabling Environment", 1, 4, 3)
-    ecosystem_score = st.slider("Ecosystem Infrastructure", 1, 4, 2)
-    finance_providers_score = st.slider("Finance Providers", 1, 4, 4)
-    finance_seekers_score = st.slider("Finance Seekers", 1, 4, 3)
-    
-    # User scores
+    # Collecting narrative input for each dimension
+    enabling_env_narrative = st.text_area("Describe the Enabling Environment (e.g., NDCs, enforcement, sector policies):", height=200)
+    ecosystem_narrative = st.text_area("Describe the Ecosystem Infrastructure (e.g., MRV systems, data, institutional capacity):", height=200)
+    finance_providers_narrative = st.text_area("Describe the Finance Providers (e.g., public/private climate finance, carbon markets):", height=200)
+    finance_seekers_narrative = st.text_area("Describe the Finance Seekers (e.g., project pipeline, diversity, inclusion):", height=200)
+
+    # User scores (using dummy scores for now)
     user_scores = [
-        ("Enabling Environment", enabling_env_score),
-        ("Ecosystem Infrastructure", ecosystem_score),
-        ("Finance Providers", finance_providers_score),
-        ("Finance Seekers", finance_seekers_score)
+        ("Enabling Environment", 3),
+        ("Ecosystem Infrastructure", 2),
+        ("Finance Providers", 4),
+        ("Finance Seekers", 3)
     ]
     
     # Display the user scores
@@ -67,28 +60,32 @@ def display_dynamic_recommendations():
     st.subheader("Recommendations per Dimension")
 
     # Enabling Environment Recommendations
-    enabling_env_recommendations = generate_recommendations(user_scores, "Enabling Environment")
-    st.write("### Enabling Environment Recommendations:")
-    st.write(enabling_env_recommendations)
+    if enabling_env_narrative:
+        enabling_env_recommendations = generate_recommendations(user_scores, "Enabling Environment", enabling_env_narrative)
+        st.write("### Enabling Environment Recommendations:")
+        st.write(enabling_env_recommendations)
 
     # Ecosystem Infrastructure Recommendations
-    ecosystem_recommendations = generate_recommendations(user_scores, "Ecosystem Infrastructure")
-    st.write("### Ecosystem Infrastructure Recommendations:")
-    st.write(ecosystem_recommendations)
+    if ecosystem_narrative:
+        ecosystem_recommendations = generate_recommendations(user_scores, "Ecosystem Infrastructure", ecosystem_narrative)
+        st.write("### Ecosystem Infrastructure Recommendations:")
+        st.write(ecosystem_recommendations)
 
     # Finance Providers Recommendations
-    finance_providers_recommendations = generate_recommendations(user_scores, "Finance Providers")
-    st.write("### Finance Providers Recommendations:")
-    st.write(finance_providers_recommendations)
+    if finance_providers_narrative:
+        finance_providers_recommendations = generate_recommendations(user_scores, "Finance Providers", finance_providers_narrative)
+        st.write("### Finance Providers Recommendations:")
+        st.write(finance_providers_recommendations)
 
     # Finance Seekers Recommendations
-    finance_seekers_recommendations = generate_recommendations(user_scores, "Finance Seekers")
-    st.write("### Finance Seekers Recommendations:")
-    st.write(finance_seekers_recommendations)
+    if finance_seekers_narrative:
+        finance_seekers_recommendations = generate_recommendations(user_scores, "Finance Seekers", finance_seekers_narrative)
+        st.write("### Finance Seekers Recommendations:")
+        st.write(finance_seekers_recommendations)
 
     # Summary of recommendations
     st.subheader("Summary of Recommendations")
-    overall_recommendations = generate_recommendations(user_scores, "Overall")
+    overall_recommendations = generate_recommendations(user_scores, "Overall", "")
     st.write("### General Action Plan:")
     st.write(overall_recommendations)
 
@@ -136,7 +133,7 @@ def download_pdf(pdf_output):
         st.markdown(href_pdf, unsafe_allow_html=True)
 
 # Generate PDF and allow download
-pdf_output = generate_pdf_report(scores_data, overall_recommendations)
+pdf_output = generate_pdf_report(user_scores, overall_recommendations)
 download_pdf(pdf_output)
 
 # --- Downloadable CSV ---
@@ -147,7 +144,7 @@ def download_csv(scores_data):
     href_csv = f'<a href="data:file/csv;base64,{b64_csv}" download="cfed_scores.csv">📥 Download scores as CSV</a>'
     st.markdown(href_csv, unsafe_allow_html=True)
 
-download_csv(scores_data)
+download_csv(user_scores)
 
 st.markdown("---")
 st.caption("Prototype built for CFED AI tool – All Four Dimensions. To view a walkthrough of how to use this tool, visit: https://cfed-tool-guide.streamlit.app.")
