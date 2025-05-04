@@ -55,11 +55,11 @@ st.markdown("""
         z-index: 1000;
     }
     .header-bar img {
-        width: 200px;
+        max-height: 60px;
     }
-    .floating-box {
+    .bottom-box {
         position: fixed;
-        top: 100px;
+        bottom: 60px;
         right: 30px;
         background-color: #ffffff;
         border: 2px solid #005670;
@@ -75,7 +75,7 @@ st.markdown("""
     <div class='header-bar'>
         <img src='https://raw.githubusercontent.com/fgaschick/cfed-ai-tool/main/Chemonics_RGB_Horizontal_BLUE-WHITE.png' alt='Chemonics Logo'/>
     </div>
-    <br><br><br><br>
+    <br><br><br><br><br>
 """, unsafe_allow_html=True)
 
 st.title("Enabling Environment Scoring Prototype")
@@ -161,7 +161,7 @@ else:
 # Floating score box always shown
 if ee_total_score is not None:
     st.markdown(f"""
-    <div class="floating-box">
+    <div class="bottom-box">
         <strong>Live Enabling Env Score:</strong><br> {ee_total_score}/3
     </div>
     """, unsafe_allow_html=True)
