@@ -155,7 +155,7 @@ if use_ai:
 else:
     st.markdown(f"### Manual Scoring for {dimension} (based on sub-indicator evidence)")
 
-    # For each dimension, you would add the corresponding checkboxes, similar to what we did for Enabling Environment
+    # Manual Scoring Options for All Dimensions (this part will vary by dimension)
 
     if dimension == "Enabling Environment":
         # STRATEGY
@@ -214,30 +214,30 @@ else:
         """, unsafe_allow_html=True)
 
     # Repeat similar manual scoring process for other dimensions like Ecosystem Infrastructure, Finance Providers, and Finance Seekers
-    
-    # AI recommendations based on manual scores
-    if st.button(f"✅ Entries complete – Generate AI Recommendations for {dimension}"):
-        if any(score < 3 for score in [strategy_score, policy_score, enforcement_score, consultation_score]):
-            combined_notes = f"""Strategy notes: {notes_strategy}
-            Policy notes: {notes_policy}
-            Enforcement notes: {notes_enforcement}
-            Consultation notes: {notes_consultation}"""
-            ai_prompt_manual = f"""
-            You are a climate finance advisor. The user has manually assessed maturity scores as follows:
-            - Strategy: {strategy_score}/3
-            - Policy: {policy_score}/3
-            - Enforcement: {enforcement_score}/3
-            - Stakeholder Consultation: {consultation_score}/3
 
-            The user also provided these notes:
-            {combined_notes}
+# AI recommendations based on manual scores
+if st.button(f"✅ Entries complete – Generate AI Recommendations for {dimension}"):
+    if any(score < 3 for score in [strategy_score, policy_score, enforcement_score, consultation_score]):
+        combined_notes = f"""Strategy notes: {notes_strategy}
+        Policy notes: {notes_policy}
+        Enforcement notes: {notes_enforcement}
+        Consultation notes: {notes_consultation}"""
+        ai_prompt_manual = f"""
+        You are a climate finance advisor. The user has manually assessed maturity scores as follows:
+        - Strategy: {strategy_score}/3
+        - Policy: {policy_score}/3
+        - Enforcement: {enforcement_score}/3
+        - Stakeholder Consultation: {consultation_score}/3
 
-            Please provide 3-5 concrete, prioritized action recommendations to improve any sub-component that scored below 3.
-            """
-            with st.spinner(f"Generating AI-based action recommendations for {dimension}..."):
-                ai_actions = get_ai_score(ai_prompt_manual, "")
-            st.markdown(f"**AI Recommendations for {dimension}:**")
-            st.markdown(ai_actions)
+        The user also provided these notes:
+        {combined_notes}
+
+        Please provide 3-5 concrete, prioritized action recommendations to improve any sub-component that scored below 3.
+        """
+        with st.spinner(f"Generating AI-based action recommendations for {dimension}..."):
+            ai_actions = get_ai_score(ai_prompt_manual, "")
+        st.markdown(f"**AI Recommendations for {dimension}:**")
+        st.markdown(ai_actions)
 
 # Floating live score always shown
 if total_score is not None:
