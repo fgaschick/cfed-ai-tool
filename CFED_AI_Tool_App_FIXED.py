@@ -29,6 +29,10 @@ st.set_page_config(page_title="Climate Finance Scoring", layout="wide")
 # Sidebar setup for selecting dimension
 dimension = st.sidebar.radio("Select Dimension", ["Instructions", "Enabling Environment", "Ecosystem Infrastructure", "Finance Providers", "Finance Seekers"])
 
+# Initialize variables for the total score and score class
+ee_total_score = None
+score_class = ""
+
 # Custom header and footer with logo
 import streamlit.components.v1 as components
 
