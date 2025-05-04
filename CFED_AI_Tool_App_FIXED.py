@@ -95,7 +95,10 @@ def get_user_input(dimension, component, sub_component, indicators):
     """
     user_inputs = {}
     for indicator, details in indicators.items():
-        label = f"{component} - {sub_component} - {indicator}" if sub_component else f"{component} - {indicator}"
+        if sub_component is not None:  # Explicitly check for None
+            label = f"{component} - {sub_component} - {indicator}"
+        else:
+            label = f"{component} - {indicator}"
         if details["type"] == "selectbox":
             user_inputs[indicator] = st.selectbox(label, details["options"], help=details["help"])
         elif details["type"] == "number_input":
