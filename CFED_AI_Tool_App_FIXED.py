@@ -245,4 +245,3 @@ st.markdown("""
     © 2025 Chemonics International Inc. | Contact: Climate Finance Team
 </div>
 """, unsafe_allow_html=True)
-
