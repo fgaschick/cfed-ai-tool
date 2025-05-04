@@ -149,6 +149,7 @@ def get_ai_score(prompt, user_input):
 st.title("CFE Maturity Assessment Tool")
 all_scores = {}
 
+
 for dimension, components in cfe_framework.items():
     with st.expander(dimension):
         for component, details in components.items():
@@ -162,22 +163,24 @@ for dimension, components in cfe_framework.items():
                             ai_input = "\n".join([f"{k}: {v}" for k, v in user_inputs.items()])
                             ai_result = get_ai_score(details["ai_prompt"], ai_input)
                             st.markdown(f"**AI Score & Rationale:** {ai_result}")
-                            ai_score = int(ai_result.split(":")[0])  # VERY basic - improve this!
+                            # VERY basic - improve this!
+                            ai_score = int(ai_result.split(":")[0]) if ai_result and ":" in ai_result else 0
                             component_score = ai_score * details.get("weight", 1)
                         else:
                             component_score = score_component(dimension, component, sub_component, user_inputs) * details.get("weight", 1)
                         all_scores.setdefault(dimension, {}).setdefault(component, [])
                         all_scores[dimension][component].append({"sub_component": sub_component, "score": component_score})
             else:
-                user_inputs = get_user_input(dimension, component, "", details["indicators"])
+                user_inputs = get_user_input(dimension, component, None, details["indicators"])  # Changed "" to None
                 if st.checkbox(f"Use AI for {component}"):
                     ai_input = "\n".join([f"{k}: {v}" for k, v in user_inputs.items()])
                     ai_result = get_ai_score(details["ai_prompt"], ai_input)
                     st.markdown(f"**AI Score & Rationale:** {ai_result}")
-                    ai_score = int(ai_result.split(":")[0])  # VERY basic - improve this!
+                    # VERY basic - improve this!
+                    ai_score = int(ai_result.split(":")[0]) if ai_result and ":" in ai_result else 0
                     component_score = ai_score * details.get("weight", 1)
                 else:
-                    component_score = score_component(dimension, component, "", user_inputs) * details.get("weight", 1)
+                    component_score = score_component(dimension, component, None, user_inputs)  # Changed "" to None
                 all_scores.setdefault(dimension, {}).setdefault(component, [])
                 all_scores[dimension][component].append({"sub_component": None, "score": component_score})
 
