@@ -7,18 +7,17 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 def get_ai_score(prompt, user_input):
     try:
-        response = openai.ChatCompletion.create(
+        client = openai.Client()
+        response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": prompt},
                 {"role": "user", "content": user_input}
             ]
         )
-        return response['choices'][0]['message']['content'].strip()
-    except openai.error.OpenAIError as e:
-        return f"OpenAI Error: {e}"
+        return response.choices[0].message.content.strip()
     except Exception as e:
-        return f"Unexpected Error: {e}"
+        return f"AI error: {str(e)}"
 
 st.set_page_config(page_title="Enabling Environment Scoring", layout="wide")
 st.title("Enabling Environment Scoring Prototype")
@@ -34,19 +33,9 @@ if use_ai_ee:
                 "(1) Strategy (NDCs, national plans), (2) Policy (sectoral climate policies), (3) Enforcement (rule of law, anti-corruption), and (4) Stakeholder consultation. "
                 "Assign a maturity score from 0 to 3 for each sub-component and explain each score briefly. Then provide 3 prioritized action recommendations that would help improve the enabling environment if any score is below 3."
             )
-            try:
-                result = openai.ChatCompletion.create(
-                    model="gpt-3.5-turbo",
-                    messages=[
-                        {"role": "system", "content": prompt},
-                        {"role": "user", "content": narrative_ee}
-                    ]
-                )
-                output = result['choices'][0]['message']['content'].strip()
-                st.markdown("**AI-Generated Assessment and Recommendations:**")
-                st.markdown(output)
-            except Exception as e:
-                st.error(f"AI error: {str(e)}")
+            output = get_ai_score(prompt, narrative_ee)
+            st.markdown("**AI-Generated Assessment and Recommendations:**")
+            st.markdown(output)
 else:
     st.markdown("### \u270D\ufe0f Manual Scoring (based on sub-indicator evidence)")
 
