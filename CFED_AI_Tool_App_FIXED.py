@@ -45,6 +45,9 @@ st.markdown(floating_score_style, unsafe_allow_html=True)
 
 st.title("Enabling Environment Scoring Prototype")
 
+# Track score separately so it can be rendered globally
+ee_total_score = None
+
 use_ai_ee = st.checkbox("\U0001F9E0 Use AI to score Enabling Environment", value=False)
 
 if use_ai_ee:
@@ -59,6 +62,9 @@ if use_ai_ee:
             output = get_ai_score(prompt, narrative_ee)
             st.markdown("**AI-Generated Assessment and Recommendations:**")
             st.markdown(output)
+
+        # Dummy value to indicate AI mode (actual average not parsed from AI)
+        ee_total_score = "AI-Based"
 else:
     st.markdown("### \u270D\ufe0f Manual Scoring (based on sub-indicator evidence)")
 
@@ -103,13 +109,6 @@ else:
     ee_total_score = round((strategy_score + policy_score + enforcement_score + consultation_score) / 4, 2)
     st.success(f"Average Score for Enabling Environment: {ee_total_score}/3")
 
-    # Floating score box
-    st.markdown(f"""
-    <div class="floating-box">
-        <strong>Live Enabling Env Score:</strong><br> {ee_total_score}/3
-    </div>
-    """, unsafe_allow_html=True)
-
     # AI-generated recommendations based on manual scores and notes
     if st.button("\U0001F916 Generate AI Recommendations Based on Manual Input"):
         combined_notes = f"Strategy notes: {notes_strategy}\nPolicy notes: {notes_policy}\nEnforcement notes: {notes_enforcement}\nConsultation notes: {notes_consultation}"
@@ -123,3 +122,11 @@ else:
             ai_actions = get_ai_score(ai_prompt_manual, "")
             st.markdown("**AI Recommendations for Action:**")
             st.markdown(ai_actions)
+
+# Floating score box always shown
+if ee_total_score is not None:
+    st.markdown(f"""
+    <div class="floating-box">
+        <strong>Live Enabling Env Score:</strong><br> {ee_total_score}/3
+    </div>
+    """, unsafe_allow_html=True)
