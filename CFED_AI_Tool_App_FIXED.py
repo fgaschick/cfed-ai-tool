@@ -33,9 +33,6 @@ dimension = st.sidebar.radio("Select Dimension", ["Instructions", "Enabling Envi
 ee_total_score = None
 score_class = ""
 
-# Initialize use_ai_ee variable here so it's properly in scope
-use_ai_ee = False
-
 # Custom header and footer with logo
 import streamlit.components.v1 as components
 
