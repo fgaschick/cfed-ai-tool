@@ -157,7 +157,10 @@ else:
 
     avg_color_class = score_class
     st.markdown(f"""
-    <div class='bottom-box ' + avg_color_class + '>Average Score for Enabling Environment: ' + str(ee_total_score) + '/3</div>
+    <div class='bottom-box ' + avg_color_class + "'>
+    <strong>Average Score for Enabling Environment:</strong> " + str(ee_total_score) + "/3
+</div>
+"
     """, unsafe_allow_html=True)
 
     # AI-generated recommendations based on manual scores and notes
