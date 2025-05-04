@@ -32,7 +32,7 @@ if use_ai_ee:
             prompt = (
                 "You are a climate finance expert. Based on the following narrative, assess the maturity of the enabling environment using the four sub-components: "
                 "(1) Strategy (NDCs, national plans), (2) Policy (sectoral climate policies), (3) Enforcement (rule of law, anti-corruption), and (4) Stakeholder consultation. "
-                "Assign a maturity score from 0 to 3 for each sub-component. Then provide 2-3 priority action recommendations for areas scoring 0 or 1."
+                "Assign a maturity score from 0 to 3 for each sub-component and explain each score briefly. Then provide 3 prioritized action recommendations that would help improve the enabling environment if any score is below 3."
             )
             result = get_ai_score(prompt, narrative_ee)
             st.markdown("**AI-Generated Assessment and Recommendations:**")
