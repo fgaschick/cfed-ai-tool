@@ -46,7 +46,7 @@ st.markdown("""
         z-index: 1000;
     }
     .header-bar {
-        position: sticky;
+        position: fixed;
         top: 0;
         left: 0;
         width: 100%;
