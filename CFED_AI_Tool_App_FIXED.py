@@ -46,7 +46,7 @@ st.markdown("""
         z-index: 1000;
     }
     .header-bar {
-        position: fixed;
+        position: sticky;
         top: 0;
         left: 0;
         width: 100vw;
@@ -77,6 +77,7 @@ st.markdown("""
     </style>
     <div class='header-bar'>
     <img src='https://raw.githubusercontent.com/fgaschick/cfed-ai-tool/main/Chemonics_RGB_Horizontal_BLUE-WHITE.png' alt='Chemonics Logo'/>
+</div>
 </div>
 <div style='height: 100px;'></div>
     <div class='custom-footer'>
