@@ -25,23 +25,58 @@ def get_ai_score(prompt, user_input):
 
 st.set_page_config(page_title="Enabling Environment Scoring", layout="wide")
 
-# Floating score box
-floating_score_style = """
-<style>
-.floating-box {
-    position: fixed;
-    top: 100px;
-    right: 30px;
-    background-color: #ffffff;
-    border: 2px solid #005670;
-    padding: 15px;
-    border-radius: 8px;
-    z-index: 1001;
-    box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
-}
-</style>
-"""
-st.markdown(floating_score_style, unsafe_allow_html=True)
+# Custom header and footer with logo
+st.markdown("""
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+    body {
+        font-family: 'Roboto', sans-serif;
+        background-color: #f5f5f5;
+    }
+    .custom-footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        background-color: #005670;
+        color: white;
+        text-align: center;
+        padding: 10px;
+        font-size: 13px;
+        z-index: 1000;
+    }
+    .header-bar {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        background-color: #005670;
+        padding: 1em;
+        text-align: center;
+        z-index: 1000;
+    }
+    .header-bar img {
+        width: 200px;
+    }
+    .floating-box {
+        position: fixed;
+        top: 100px;
+        right: 30px;
+        background-color: #ffffff;
+        border: 2px solid #005670;
+        padding: 15px;
+        border-radius: 8px;
+        z-index: 1001;
+        box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
+    }
+    </style>
+    <div class='custom-footer'>
+        © 2025 Chemonics International Inc. | Contact: Climate Finance Team
+    </div>
+    <div class='header-bar'>
+        <img src='https://raw.githubusercontent.com/fgaschick/cfed-ai-tool/main/Chemonics_RGB_Horizontal_BLUE-WHITE.png' alt='Chemonics Logo'/>
+    </div>
+    <br><br><br><br>
+""", unsafe_allow_html=True)
 
 st.title("Enabling Environment Scoring Prototype")
 
