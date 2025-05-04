@@ -108,6 +108,9 @@ st.title("AI Scoring Tool")
 total_score = None
 score_class = ""
 
+# Select dimension
+dimension = st.selectbox("Select a dimension to score", ["Enabling Environment", "Ecosystem Infrastructure", "Finance Providers", "Finance Seekers"])
+
 # AI scoring checkbox
 use_ai = st.checkbox("\U0001F9E0 Use AI to score", value=False)
 
@@ -117,9 +120,9 @@ if use_ai:
     uploaded_file = st.file_uploader("Upload a PDF or DOCX document (optional)", type=["pdf", "docx"])
 
     # Text input for AI analysis
-    user_input = st.text_area("\U0001F50D Provide a narrative description (optional):", height=300)
+    user_input = st.text_area(f"\U0001F50D Provide a narrative description for {dimension}:", height=300)
 
-# When AI scoring is enabled, process document and text input
+# Document and AI analysis for each dimension
 if use_ai:
     if uploaded_file:
         if uploaded_file.type == "application/pdf":
@@ -136,79 +139,84 @@ if use_ai:
         if full_input:
             with st.spinner("Analyzing with AI..."):
                 prompt = (
-                    "You are a climate finance expert. Based on the following narrative, assess the maturity of the enabling environment using the four sub-components: "
+                    f"You are a climate finance expert. Based on the following narrative, assess the maturity of the {dimension} using the four sub-components: "
                     "(1) Strategy (NDCs, national plans), (2) Policy (sectoral climate policies), (3) Enforcement (rule of law, anti-corruption), and (4) Stakeholder consultation. "
                     "Assign a maturity score from 0 to 3 for each sub-component and explain each score briefly. Then provide 3 prioritized action recommendations that would help improve the enabling environment if any score is below 3."
                 )
                 output = get_ai_score(prompt, full_input)
-                st.markdown("**AI-Generated Assessment and Recommendations:**")
+                st.markdown(f"**AI-Generated Assessment and Recommendations for {dimension}:**")
                 st.markdown(output)
 
             # Dummy value to indicate AI mode (actual average not parsed from AI)
             total_score = "AI-Based"
             score_class = "score-medium"
 
-# Manual scoring UI
+# Manual scoring UI for each dimension
 else:
-    st.markdown("### Manual Scoring (based on sub-indicator evidence)")
+    st.markdown(f"### Manual Scoring for {dimension} (based on sub-indicator evidence)")
 
-    # STRATEGY
-    st.markdown("#### Strategy")
-    s1 = st.checkbox("Country has submitted an NDC")
-    s2 = st.checkbox("NDC is linked to investment or implementation plans")
-    s3 = st.checkbox("NDC or strategy includes financing targets or mechanisms")
-    s4 = st.checkbox("There is a national climate finance strategy or roadmap")
-    notes_strategy = st.text_area("Notes for Strategy:", key="notes_strategy")
+    # For each dimension, you would add the corresponding checkboxes, similar to what we did for Enabling Environment
 
-    # POLICY
-    st.markdown("#### Policy")
-    p1 = st.checkbox("Sectoral policies (energy, land use, etc.) integrate climate objectives")
-    p2 = st.checkbox("Policies include clear implementation mechanisms")
-    p3 = st.checkbox("Private sector is consulted or involved in policy development")
-    notes_policy = st.text_area("Notes for Policy:", key="notes_policy")
+    if dimension == "Enabling Environment":
+        # STRATEGY
+        st.markdown("#### Strategy")
+        s1 = st.checkbox("Country has submitted an NDC")
+        s2 = st.checkbox("NDC is linked to investment or implementation plans")
+        s3 = st.checkbox("NDC or strategy includes financing targets or mechanisms")
+        s4 = st.checkbox("There is a national climate finance strategy or roadmap")
+        notes_strategy = st.text_area("Notes for Strategy:", key="notes_strategy")
 
-    # ENFORCEMENT
-    st.markdown("#### Enforcement")
-    e1 = st.checkbox("Climate-related laws or regulations exist")
-    e2 = st.checkbox("There is a functioning judiciary or legal redress mechanism")
-    e3 = st.checkbox("Anti-corruption measures are actively implemented")
-    notes_enforcement = st.text_area("Notes for Enforcement:", key="notes_enforcement")
+        # POLICY
+        st.markdown("#### Policy")
+        p1 = st.checkbox("Sectoral policies (energy, land use, etc.) integrate climate objectives")
+        p2 = st.checkbox("Policies include clear implementation mechanisms")
+        p3 = st.checkbox("Private sector is consulted or involved in policy development")
+        notes_policy = st.text_area("Notes for Policy:", key="notes_policy")
 
-    # STAKEHOLDER CONSULTATION
-    st.markdown("#### Stakeholder Consultation")
-    c1 = st.checkbox("Stakeholders (civil society, academia) are engaged in planning")
-    c2 = st.checkbox("Indigenous Peoples, women, youth are specifically included")
-    c3 = st.checkbox("Consultations are recurring and documented")
-    notes_consultation = st.text_area("Notes for Consultation:", key="notes_consultation")
+        # ENFORCEMENT
+        st.markdown("#### Enforcement")
+        e1 = st.checkbox("Climate-related laws or regulations exist")
+        e2 = st.checkbox("There is a functioning judiciary or legal redress mechanism")
+        e3 = st.checkbox("Anti-corruption measures are actively implemented")
+        notes_enforcement = st.text_area("Notes for Enforcement:", key="notes_enforcement")
 
-    # Compute maturity per sub-component
-    def score_subcomponent(answers):
-        return min(3, sum(answers))
+        # STAKEHOLDER CONSULTATION
+        st.markdown("#### Stakeholder Consultation")
+        c1 = st.checkbox("Stakeholders (civil society, academia) are engaged in planning")
+        c2 = st.checkbox("Indigenous Peoples, women, youth are specifically included")
+        c3 = st.checkbox("Consultations are recurring and documented")
+        notes_consultation = st.text_area("Notes for Consultation:", key="notes_consultation")
 
-    strategy_score = score_subcomponent([s1, s2, s3, s4])
-    policy_score = score_subcomponent([p1, p2, p3])
-    enforcement_score = score_subcomponent([e1, e2, e3])
-    consultation_score = score_subcomponent([c1, c2, c3])
+        # Compute maturity per sub-component
+        def score_subcomponent(answers):
+            return min(3, sum(answers))
 
-    total_score = round((strategy_score + policy_score + enforcement_score + consultation_score) / 4, 2)
+        strategy_score = score_subcomponent([s1, s2, s3, s4])
+        policy_score = score_subcomponent([p1, p2, p3])
+        enforcement_score = score_subcomponent([e1, e2, e3])
+        consultation_score = score_subcomponent([c1, c2, c3])
 
-    # Assign color class
-    if total_score < 1.5:
-        score_class = "score-low"
-    elif total_score < 2.5:
-        score_class = "score-medium"
-    else:
-        score_class = "score-high"
+        total_score = round((strategy_score + policy_score + enforcement_score + consultation_score) / 4, 2)
 
-    avg_color_class = score_class
-    st.markdown(f"""
-    <div class='bottom-box {score_class}' style='margin: 4em auto 1em auto; position: relative; text-align: left; max-width: 900px;'>
-        <strong>Average Score for Enabling Environment:</strong> {total_score}/3
-    </div>
-    """, unsafe_allow_html=True)
+        # Assign color class
+        if total_score < 1.5:
+            score_class = "score-low"
+        elif total_score < 2.5:
+            score_class = "score-medium"
+        else:
+            score_class = "score-high"
 
+        avg_color_class = score_class
+        st.markdown(f"""
+        <div class='bottom-box {score_class}' style='margin: 4em auto 1em auto; position: relative; text-align: left; max-width: 900px;'>
+            <strong>Average Score for {dimension}:</strong> {total_score}/3
+        </div>
+        """, unsafe_allow_html=True)
+
+    # Repeat similar manual scoring process for other dimensions like Ecosystem Infrastructure, Finance Providers, and Finance Seekers
+    
     # AI recommendations based on manual scores
-    if st.button("✅ Entries complete – Generate AI Recommendations"):
+    if st.button(f"✅ Entries complete – Generate AI Recommendations for {dimension}"):
         if any(score < 3 for score in [strategy_score, policy_score, enforcement_score, consultation_score]):
             combined_notes = f"""Strategy notes: {notes_strategy}
             Policy notes: {notes_policy}
@@ -226,16 +234,16 @@ else:
 
             Please provide 3-5 concrete, prioritized action recommendations to improve any sub-component that scored below 3.
             """
-            with st.spinner("Generating AI-based action recommendations..."):
+            with st.spinner(f"Generating AI-based action recommendations for {dimension}..."):
                 ai_actions = get_ai_score(ai_prompt_manual, "")
-            st.markdown("**AI Recommendations for Action:**")
+            st.markdown(f"**AI Recommendations for {dimension}:**")
             st.markdown(ai_actions)
 
 # Floating live score always shown
 if total_score is not None:
     st.markdown(f"""
     <div class="bottom-box {score_class}" style="bottom: 60px; right: 30px; position: fixed;">
-        <strong>Live Enabling Env Score:</strong><br> {total_score}/3
+        <strong>Live {dimension} Score:</strong><br> {total_score}/3
     </div>
     """, unsafe_allow_html=True)
 
