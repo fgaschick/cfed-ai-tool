@@ -60,10 +60,11 @@ def get_ai_score(prompt, user_input):
     except Exception as e:
         return f"AI error: {str(e)}"
 
-# Create clickable tabs (instructions + dimensions)
-tab = st.selectbox(
+# Display tabs for selecting the category
+tab = st.radio(
     "Select Dimension", 
-    ["Instructions", "Enabling Environment", "Ecosystem Infrastructure", "Finance Providers", "Finance Seekers"]
+    ["Instructions", "Enabling Environment", "Ecosystem Infrastructure", "Finance Providers", "Finance Seekers"],
+    horizontal=True  # This arranges them horizontally, so they appear as tabs
 )
 
 # Function to display questions based on selected dimension
