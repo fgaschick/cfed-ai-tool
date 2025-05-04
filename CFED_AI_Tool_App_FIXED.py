@@ -45,13 +45,17 @@ st.markdown("""
         font-size: 13px;
         z-index: 1000;
     }
+    .header-bar-wrapper {
+        height: 60px;
+        margin-bottom: 20px;
+    }
     .header-bar {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         background-color: #005670;
-        padding: 0.5em;
+        padding: 10px;
         text-align: center;
         z-index: 1001;
     }
@@ -76,7 +80,7 @@ st.markdown("""
     <div class='custom-footer'>
         © 2025 Chemonics International Inc. | Contact: Climate Finance Team
     </div>
-    <br><br><br><br><br><br>
+    <div class='header-bar-wrapper'></div>
 """, unsafe_allow_html=True)
 
 st.title("Enabling Environment Scoring Prototype")
