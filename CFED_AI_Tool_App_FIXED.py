@@ -47,15 +47,15 @@ st.markdown("""
     }
     .header-bar {
         position: fixed;
-        top: 0;
+        top: 20px;
         width: 100%;
         background-color: #005670;
-        padding: 1em;
+        padding: 0.8em;
         text-align: center;
         z-index: 1000;
     }
     .header-bar img {
-        max-height: 60px;
+        max-height: 40px;
     }
     .bottom-box {
         position: fixed;
@@ -75,7 +75,7 @@ st.markdown("""
     <div class='header-bar'>
         <img src='https://raw.githubusercontent.com/fgaschick/cfed-ai-tool/main/Chemonics_RGB_Horizontal_BLUE-WHITE.png' alt='Chemonics Logo'/>
     </div>
-    <br><br><br><br><br>
+    <br><br><br><br><br><br>
 """, unsafe_allow_html=True)
 
 st.title("Enabling Environment Scoring Prototype")
