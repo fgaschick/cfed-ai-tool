@@ -95,10 +95,7 @@ def get_user_input(dimension, component, sub_component, indicators):
     """
     user_inputs = {}
     for indicator, details in indicators.items():
-        if sub_component is not None:  # Explicitly check for None
-            label = f"{component} - {sub_component} - {indicator}"
-        else:
-            label = f"{component} - {indicator}"
+        label = f"{component} - {sub_component} - {indicator}" if sub_component else f"{component} - {indicator}"
         if details["type"] == "selectbox":
             user_inputs[indicator] = st.selectbox(label, details["options"], help=details["help"])
         elif details["type"] == "number_input":
@@ -122,7 +119,7 @@ def score_component(dimension, component, sub_component, user_inputs):
         cat_rating = int(user_inputs["CAT Rating"][0])
         score = max(ndc_status, cat_rating)
         # ... more scoring logic ...
-    elif dimension == "Finance Seekers" and component == "Built environment":
+    elif dimension == "Finance Seekers" and component == "Built environment" and sub_component is None:  # Explicit None check
         green_building_code = int(user_inputs["Green building codes"][0])
         score = green_building_code
     else:
