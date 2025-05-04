@@ -1,6 +1,8 @@
 import streamlit as st
 from openai import OpenAI
 import os
+from PyPDF2 import PdfReader
+import docx
 
 # Set OpenAI API key using environment variable
 api_key = os.getenv("OPENAI_API_KEY")
@@ -10,7 +12,6 @@ if not api_key:
 
 client = OpenAI(api_key=api_key)
 
-# Function to get AI-based scores
 def get_ai_score(prompt, user_input):
     try:
         response = client.chat.completions.create(
@@ -24,11 +25,8 @@ def get_ai_score(prompt, user_input):
     except Exception as e:
         return f"AI error: {str(e)}"
 
-# Initialize the variable `use_ai_ee` to False initially
-use_ai_ee = False
-
-# Set the page configuration
-st.set_page_config(page_title="Climate Finance Scoring", layout="wide")
+# Page configuration
+st.set_page_config(page_title="Climate Finance Maturity Assessment Tool", layout="wide")
 
 # Custom header and footer with logo
 import streamlit.components.v1 as components
@@ -90,102 +88,67 @@ components.html("""
     
 """, height=150, scrolling=False)
 
-# Function to handle AI scoring
-def ai_scoring_ui(dimension_name):
-    narrative_ee = st.text_area(f"Provide a narrative description of the {dimension_name}:", height=300)
+# Categories and scoring for Ecosystem Infrastructure
+def manual_scoring_ui(dimension):
+    st.markdown(f"### {dimension}")
     
-    # File upload appears below the text input
-    uploaded_file = st.file_uploader("Upload a document for AI analysis (PDF/Word)", type=["pdf", "docx"])
-    
-    if uploaded_file is not None:
-        file_content = None
+    if dimension == "Ecosystem Infrastructure":
+        # Add relevant questions for Ecosystem Infrastructure
+        st.markdown("#### Monitoring, Reporting, and Verification (MRV)")
+        m1 = st.checkbox("MRV systems and climate data tools are in place")
+        m2 = st.checkbox("Stakeholders are actively engaged in MRV design")
+        notes_mrv = st.text_area("Notes for MRV:", key="notes_mrv")
         
-        if uploaded_file.type == "application/pdf":
-            import PyPDF2
-            reader = PyPDF2.PdfReader(uploaded_file)
-            file_content = ""
-            for page in reader.pages:
-                file_content += page.extract_text()
+        st.markdown("#### Institutional Capacity")
+        i1 = st.checkbox("Key institutions have the capacity to implement climate actions")
+        i2 = st.checkbox("Government institutions coordinate effectively on climate finance")
+        notes_institutional_capacity = st.text_area("Notes for Institutional Capacity:", key="notes_institutional_capacity")
         
-        elif uploaded_file.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-            import docx
-            doc = docx.Document(uploaded_file)
-            file_content = "\n".join([para.text for para in doc.paragraphs])
+        st.markdown("#### Climate Finance Policies")
+        c1 = st.checkbox("Policies effectively promote climate resilience and low-carbon development")
+        c2 = st.checkbox("Financial mechanisms are in place to support climate finance")
+        notes_climate_policies = st.text_area("Notes for Climate Policies:", key="notes_climate_policies")
         
-        if file_content:
-            with st.spinner(f"Analyzing document for {dimension_name} with AI..."):
-                prompt = (
-                    f"You are a climate finance expert. Based on the following document, assess the maturity of the {dimension_name} using relevant sub-components."
-                    "Assign a maturity score from 0 to 3 for each sub-component and explain each score briefly. Then provide 3 prioritized action recommendations that would help improve the {dimension_name} if any score is below 3."
-                )
-                output = get_ai_score(prompt, file_content)
-                st.markdown(f"**AI-Generated Assessment and Recommendations for {dimension_name}:**")
-                st.markdown(output)
+        # Compute maturity score
+        score = sum([m1, m2, i1, i2, c1, c2])
+        total_score = min(3, score)
+        return total_score, "score-medium"  # You can adjust the color as per the score
 
-    # Dummy value to indicate AI mode (actual average not parsed from AI)
-    ee_total_score = "AI-Based"
-    score_class = "score-medium"
-    
-    return ee_total_score, score_class
+    return None, None
 
-def manual_scoring_ui(dimension_name):
-    st.markdown(f"### \u270D\ufe0f Manual Scoring for {dimension_name} (based on sub-indicator evidence)")
+# Add the sidebar for selecting categories
+st.sidebar.title("Dimensions")
+dimension = st.sidebar.radio(
+    "Select a dimension to evaluate:",
+    ["Instructions", "Enabling Environment", "Ecosystem Infrastructure", "Finance Providers"]
+)
 
-    # STRATEGY (example, adapt for each section)
-    st.markdown(f"#### {dimension_name} Strategy")
-    s1 = st.checkbox("Criteria 1 for Strategy")
-    s2 = st.checkbox("Criteria 2 for Strategy")
-    s3 = st.checkbox("Criteria 3 for Strategy")
-    notes_strategy = st.text_area(f"Notes for {dimension_name} Strategy:", key="notes_strategy")
+# Show the instructions first
+if dimension == "Instructions":
+    st.markdown("""
+    ## Instructions
+    1. Choose a dimension to evaluate.
+    2. Use AI to score or fill in the manual inputs.
+    3. AI-generated recommendations will be shown if selected.
+    """)
 
-    # Compute maturity per sub-component (Dummy logic here for illustration)
-    def score_subcomponent(answers):
-        return min(3, sum(answers))
+elif dimension == "Ecosystem Infrastructure":
+    # Run the scoring UI for Ecosystem Infrastructure
+    ee_total_score, score_class = manual_scoring_ui(dimension)
 
-    strategy_score = score_subcomponent([s1, s2, s3])
-
-    ee_total_score = round(strategy_score / 3, 2)
-
-    # Assign color class
-    if ee_total_score < 1.5:
-        score_class = "score-low"
-    elif ee_total_score < 2.5:
-        score_class = "score-medium"
-    else:
-        score_class = "score-high"
-
-    avg_color_class = score_class
-    st.markdown(f"""
-<div class='bottom-box {score_class}' style='margin: 4em auto 1em auto; position: relative; text-align: left; max-width: 900px;'>
-    <strong>Average Score for {dimension_name}:</strong> {ee_total_score}/3
-</div>
-""", unsafe_allow_html=True)
-
-    return ee_total_score, score_class
-
-# Main content area
-st.title("Climate Finance Scoring Tool")
-
-# Show the sections one after the other
-dimensions = ["Enabling Environment", "Ecosystem Infrastructure", "Finance Providers", "Finance Seekers"]
-
-for dimension in dimensions:
-    st.header(f"{dimension} Scoring")
-    
-    use_ai_ee = st.checkbox(f"Use AI to score {dimension}", value=False)
-    
+    # AI-based scoring
+    use_ai_ee = st.checkbox("Use AI to score Ecosystem Infrastructure", value=False)
     if use_ai_ee:
-        ee_total_score, score_class = ai_scoring_ui(dimension)
-    else:
-        ee_total_score, score_class = manual_scoring_ui(dimension)
-
-    # Floating live score box always shown
-    if ee_total_score is not None:
-        st.markdown(f"""
-        <div class="bottom-box {score_class}" style="bottom: 60px; right: 30px; position: fixed;">
-            <strong>Live {dimension} Score:</strong><br> {ee_total_score}/3
-        </div>
-        """, unsafe_allow_html=True)
+        narrative_ee = st.text_area("Provide a narrative description of the ecosystem infrastructure:", height=300)
+        if narrative_ee:
+            with st.spinner("Analyzing with AI..."):
+                prompt = "You are a climate finance expert. Assess the maturity of the ecosystem infrastructure and provide a score with recommendations."
+                output = get_ai_score(prompt, narrative_ee)
+                st.markdown("**AI-Generated Assessment and Recommendations:**")
+                st.markdown(output)
+    st.markdown(f"### Ecosystem Infrastructure Score: {ee_total_score}/3")
+    st.markdown(f"**AI Recommendations for Ecosystem Infrastructure:**")
+    # Use AI for recommendations based on the score
 
 # Footer
 st.markdown("""
@@ -207,3 +170,4 @@ st.markdown("""
     © 2025 Chemonics International Inc. | Contact: Climate Finance Team
 </div>
 """, unsafe_allow_html=True)
+
