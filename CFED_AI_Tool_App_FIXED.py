@@ -163,16 +163,27 @@ else:
 """, unsafe_allow_html=True)
 
     # AI-generated recommendations based on manual scores and notes
-    if st.button("\U0001F916 Generate AI Recommendations Based on Manual Input"):
-        combined_notes = f"Strategy notes: {notes_strategy}\nPolicy notes: {notes_policy}\nEnforcement notes: {notes_enforcement}\nConsultation notes: {notes_consultation}"
-        ai_prompt_manual = (
-            f"You are a climate finance advisor. The user has manually assessed maturity scores as follows:\n"
-            f"- Strategy: {strategy_score}/3\n- Policy: {policy_score}/3\n- Enforcement: {enforcement_score}/3\n- Stakeholder Consultation: {consultation_score}/3\n"
-            f"The user also provided these notes:\n{combined_notes}\n"
-            f"Please provide 3-5 concrete, prioritized action recommendations to improve any sub-component that scored below 3."
-        )
-        with st.spinner("Generating recommendations..."):
-            ai_actions = get_ai_score(ai_prompt_manual, "")
+    if st.button("✅ Entries complete – Generate AI Recommendations"):
+        if any(score < 3 for score in [strategy_score, policy_score, enforcement_score, consultation_score]):
+            combined_notes = f"Strategy notes: {notes_strategy}
+Policy notes: {notes_policy}
+Enforcement notes: {notes_enforcement}
+Consultation notes: {notes_consultation}"
+            ai_prompt_manual = (
+                f"You are a climate finance advisor. The user has manually assessed maturity scores as follows:
+"
+                f"- Strategy: {strategy_score}/3
+- Policy: {policy_score}/3
+- Enforcement: {enforcement_score}/3
+- Stakeholder Consultation: {consultation_score}/3
+"
+                f"The user also provided these notes:
+{combined_notes}
+"
+                f"Please provide 3-5 concrete, prioritized action recommendations to improve any sub-component that scored below 3."
+            )
+            with st.spinner("Generating AI-based action recommendations..."):
+                ai_actions = get_ai_score(ai_prompt_manual, "")
             st.markdown("**AI Recommendations for Action:**")
             st.markdown(ai_actions)
 
