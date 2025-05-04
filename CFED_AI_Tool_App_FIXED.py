@@ -165,10 +165,10 @@ else:
     # AI-generated recommendations based on manual scores and notes
     if st.button("✅ Entries complete – Generate AI Recommendations"):
         if any(score < 3 for score in [strategy_score, policy_score, enforcement_score, consultation_score]):
-            combined_notes = f"Strategy notes: {notes_strategy}
+            combined_notes = f"""Strategy notes: {notes_strategy}
 Policy notes: {notes_policy}
 Enforcement notes: {notes_enforcement}
-Consultation notes: {notes_consultation}"
+Consultation notes: {notes_consultation}"""
             ai_prompt_manual = (
                 f"You are a climate finance advisor. The user has manually assessed maturity scores as follows:
 "
