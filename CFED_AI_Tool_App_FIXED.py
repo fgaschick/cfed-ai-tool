@@ -46,8 +46,8 @@ st.markdown("""
         z-index: 1000;
     }
     .header-bar {
-        position: sticky;
-        top: 0;
+        position: fixed;
+        top: 50px;
         width: 100%;
         background-color: #005670;
         padding: 10px;
@@ -59,7 +59,7 @@ st.markdown("""
     }
     .bottom-box {
         position: fixed;
-        bottom: 10px;
+        bottom: 60px;
         right: 30px;
         padding: 10px 20px;
         border-radius: 8px;
