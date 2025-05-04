@@ -63,13 +63,16 @@ st.markdown("""
         position: fixed;
         bottom: 60px;
         right: 30px;
-        background-color: #ffffff;
-        border: 2px solid #005670;
         padding: 15px;
         border-radius: 8px;
         z-index: 1001;
         box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
+        font-weight: bold;
+        color: white;
     }
+    .score-low { background-color: #e74c3c; }    /* red */
+    .score-medium { background-color: #f1c40f; } /* yellow */
+    .score-high { background-color: #2ecc71; }   /* green */
     </style>
     <div class='header-bar'>
         <img src='https://raw.githubusercontent.com/fgaschick/cfed-ai-tool/main/Chemonics_RGB_Horizontal_BLUE-WHITE.png' alt='Chemonics Logo'/>
@@ -83,6 +86,7 @@ st.title("Enabling Environment Scoring Prototype")
 
 # Track score separately so it can be rendered globally
 ee_total_score = None
+score_class = ""
 
 use_ai_ee = st.checkbox("\U0001F9E0 Use AI to score Enabling Environment", value=False)
 
@@ -101,6 +105,7 @@ if use_ai_ee:
 
         # Dummy value to indicate AI mode (actual average not parsed from AI)
         ee_total_score = "AI-Based"
+        score_class = "score-medium"
 else:
     st.markdown("### \u270D\ufe0f Manual Scoring (based on sub-indicator evidence)")
 
@@ -143,6 +148,15 @@ else:
     consultation_score = score_subcomponent([c1, c2, c3])
 
     ee_total_score = round((strategy_score + policy_score + enforcement_score + consultation_score) / 4, 2)
+
+    # Assign color class
+    if ee_total_score < 1.5:
+        score_class = "score-low"
+    elif ee_total_score < 2.5:
+        score_class = "score-medium"
+    else:
+        score_class = "score-high"
+
     st.success(f"Average Score for Enabling Environment: {ee_total_score}/3")
 
     # AI-generated recommendations based on manual scores and notes
@@ -162,7 +176,7 @@ else:
 # Floating score box always shown
 if ee_total_score is not None:
     st.markdown(f"""
-    <div class="bottom-box">
+    <div class="bottom-box {score_class}">
         <strong>Live Enabling Env Score:</strong><br> {ee_total_score}/3
     </div>
     """, unsafe_allow_html=True)
