@@ -24,11 +24,10 @@ def get_ai_score(prompt, user_input):
         return f"AI error: {str(e)}"
 
 # Set page configuration
-st.set_page_config(page_title="Enabling Environment Scoring", layout="wide")
+st.set_page_config(page_title="Climate Finance Scoring", layout="wide")
 
-# Sidebar setup
-st.sidebar.title("Tool Navigation")
-st.sidebar.markdown("### Use this tool to score the enabling environment")
+# Sidebar setup for selecting dimension
+dimension = st.sidebar.radio("Select Dimension", ["Instructions", "Enabling Environment", "Ecosystem Infrastructure", "Finance Providers", "Finance Seekers"])
 
 # Custom header and footer with logo
 import streamlit.components.v1 as components
@@ -90,25 +89,14 @@ components.html("""
     
 """, height=150, scrolling=False)
 
-# Title for the main content
-st.title("Enabling Environment Scoring Prototype")
-
-# Track score separately so it can be rendered globally
-ee_total_score = None
-score_class = ""
-
-# Sidebar content
-use_ai_ee = st.sidebar.checkbox("Use AI to score Enabling Environment", value=False)
-
-if use_ai_ee:
-    # Show text input first, followed by file upload only when AI option is selected
+# Function to handle AI scoring
+def ai_scoring_ui():
     narrative_ee = st.text_area("\U0001F50D Provide a narrative description of the enabling environment:", height=300)
     
     # File upload appears below the text input
     uploaded_file = st.file_uploader("Upload a document for AI analysis (PDF/Word)", type=["pdf", "docx"])
     
     if uploaded_file is not None:
-        # Process the uploaded file (you can add logic to extract text and analyze it)
         file_content = None
         
         if uploaded_file.type == "application/pdf":
@@ -123,7 +111,6 @@ if use_ai_ee:
             doc = docx.Document(uploaded_file)
             file_content = "\n".join([para.text for para in doc.paragraphs])
         
-        # Once the file is uploaded and its content is extracted, you can pass it to the AI model.
         if file_content:
             with st.spinner("Analyzing document with AI..."):
                 prompt = (
@@ -135,11 +122,13 @@ if use_ai_ee:
                 st.markdown("**AI-Generated Assessment and Recommendations:**")
                 st.markdown(output)
 
-        # Dummy value to indicate AI mode (actual average not parsed from AI)
-        ee_total_score = "AI-Based"
-        score_class = "score-medium"
+    # Dummy value to indicate AI mode (actual average not parsed from AI)
+    ee_total_score = "AI-Based"
+    score_class = "score-medium"
+    
+    return ee_total_score, score_class
 
-else:
+def manual_scoring_ui():
     st.markdown("### \u270D\ufe0f Manual Scoring (based on sub-indicator evidence)")
 
     # STRATEGY
@@ -197,42 +186,44 @@ else:
 </div>
 """, unsafe_allow_html=True)
 
-    # AI-generated recommendations based on manual scores and notes
-    if st.button("✅ Entries complete – Generate AI Recommendations"):
-        if any(score < 3 for score in [strategy_score, policy_score, enforcement_score, consultation_score]):
-            combined_notes = f"""Strategy notes: {notes_strategy}
-Policy notes: {notes_policy}
-Enforcement notes: {notes_enforcement}
-Consultation notes: {notes_consultation}"""
-            ai_prompt_manual = f"""
-You are a climate finance advisor. The user has manually assessed maturity scores as follows:
-- Strategy: {strategy_score}/3
-- Policy: {policy_score}/3
-- Enforcement: {enforcement_score}/3
-- Stakeholder Consultation: {consultation_score}/3
+    return ee_total_score, score_class
 
-The user also provided these notes:
-{combined_notes}
+# Main content area
+if dimension == "Enabling Environment":
+    st.header("Enabling Environment Scoring")
+    # Activate AI scoring or manual scoring based on the checkbox selection
+    if use_ai_ee:
+        ee_total_score, score_class = ai_scoring_ui()
+    else:
+        ee_total_score, score_class = manual_scoring_ui()
 
-Please provide 3-5 concrete, prioritized action recommendations to improve any sub-component that scored below 3.
-"""
-            with st.spinner("Generating AI-based action recommendations..."):
-                ai_actions = get_ai_score(ai_prompt_manual, "")
-            st.markdown("**AI Recommendations for Action:**")
-            st.markdown(ai_actions)
+    # Floating live score box always shown
+    if ee_total_score is not None:
+        st.markdown(f"""
+        <div class="bottom-box {score_class}" style="bottom: 60px; right: 30px; position: fixed;">
+            <strong>Live Enabling Env Score:</strong><br> {ee_total_score}/3
+        </div>
+        """, unsafe_allow_html=True)
 
-# Floating score box always shown
+elif dimension == "Instructions":
+    st.subheader("Instructions")
+    st.markdown("""
+    This tool allows you to assess the maturity of the enabling environment for climate finance in your country.
+    1. Select whether you want to use AI scoring or manually score the sub-components.
+    2. If using AI, provide a narrative description of the enabling environment, or upload a document for analysis.
+    3. If manually scoring, evaluate each sub-component based on evidence.
+    4. The tool will automatically compute an overall score and provide recommendations based on the assessment.
+    """)
 
-
-# Floating live score
+# Floating score box in sidebar
 if ee_total_score is not None:
-    st.markdown(f"""
-    <div class="bottom-box {score_class}" style="bottom: 60px; right: 30px; position: fixed;">
+    st.sidebar.markdown(f"""
+    <div class="bottom-box {score_class}" style="position: fixed; bottom: 60px; right: 30px; width: 200px;">
         <strong>Live Enabling Env Score:</strong><br> {ee_total_score}/3
     </div>
     """, unsafe_allow_html=True)
 
-# Proper footer now added at the end of the app
+# Footer
 st.markdown("""
 <style>
 .footer-fixed {
