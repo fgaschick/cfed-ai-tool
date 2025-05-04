@@ -10,6 +10,9 @@ if not api_key:
 
 client = OpenAI(api_key=api_key)
 
+# Initialize use_ai_ee to False, set here to avoid error
+use_ai_ee = False
+
 def get_ai_score(prompt, user_input):
     try:
         response = client.chat.completions.create(
