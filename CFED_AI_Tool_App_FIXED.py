@@ -146,9 +146,31 @@ def get_ai_score(prompt, user_input):
 
 
 # --- Main Assessment Logic ---
-st.title("CFE Maturity Assessment Tool")
-all_scores = {}
 
+# Header and User Guide (as in the original script)
+st.title("CFE Maturity Assessment Tool")
+st.markdown(
+    """
+    This tool helps assess the maturity of a country's Climate Finance Ecosystem (CFE).
+    It is based on a framework that considers four dimensions:
+    Enabling Environment, Ecosystem Infrastructure, Finance Providers, and Finance Seekers.
+    """
+)
+
+# Add user guide here (e.g., read from a file or define as a string)
+user_guide = """
+## User Guide
+
+1.  **Select a dimension** to begin the assessment.
+2.  For each component, provide inputs for the indicators.
+3.  You can choose to use AI for scoring or use the tool's scoring mechanism.
+4.  The results will be displayed at the end.
+
+    ... (Add more detailed instructions)
+    """
+st.sidebar.markdown(user_guide)
+
+all_scores = {}
 
 for dimension, components in cfe_framework.items():
     with st.expander(dimension):
@@ -178,7 +200,7 @@ for dimension, components in cfe_framework.items():
                     st.markdown(f"**AI Score & Rationale:** {ai_result}")
                     # VERY basic - improve this!
                     ai_score = int(ai_result.split(":")[0]) if ai_result and ":" in ai_result else 0
-                    component_score = ai_score * details.get("weight", 1)
+                    component_score = score_component(dimension, component, None, user_inputs)  # Changed "" to None
                 else:
                     component_score = score_component(dimension, component, None, user_inputs)  # Changed "" to None
                 all_scores.setdefault(dimension, {}).setdefault(component, [])
@@ -188,3 +210,7 @@ for dimension, components in cfe_framework.items():
 st.header("Assessment Results")
 # (Implement display of results, visualizations, downloads)
 print(all_scores)
+
+# Footer
+st.markdown("---")
+st.markdown("This tool was developed to support climate finance ecosystem assessments.")
