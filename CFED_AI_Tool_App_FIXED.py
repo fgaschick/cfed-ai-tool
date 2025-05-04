@@ -46,33 +46,31 @@ st.markdown("""
         z-index: 1000;
     }
     .header-bar {
-        position: fixed;
-        top: 60px;
-        left: 0;
+        position: sticky;
+        top: 0;
         width: 100%;
         background-color: #005670;
         padding: 10px;
         text-align: center;
         z-index: 1001;
-        margin-bottom: 20px;
     }
     .header-bar img {
-        max-height: 35px;
+        max-height: 30px;
     }
     .bottom-box {
         position: fixed;
-        bottom: 60px;
+        bottom: 10px;
         right: 30px;
-        padding: 15px;
+        padding: 10px 20px;
         border-radius: 8px;
         z-index: 1001;
         box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
         font-weight: bold;
         color: white;
     }
-    .score-low { background-color: #e74c3c; }    /* red */
-    .score-medium { background-color: #f1c40f; } /* yellow */
-    .score-high { background-color: #2ecc71; }   /* green */
+    .score-low { background-color: #f2b4ae; }     /* muted red */
+    .score-medium { background-color: #f9e79f; }  /* muted yellow */
+    .score-high { background-color: #b5ead7; }    /* muted green */
     </style>
     <div class='header-bar'>
         <img src='https://raw.githubusercontent.com/fgaschick/cfed-ai-tool/main/Chemonics_RGB_Horizontal_BLUE-WHITE.png' alt='Chemonics Logo'/>
@@ -157,9 +155,9 @@ else:
     else:
         score_class = "score-high"
 
-    avg_color_class = 'score-low' if ee_total_score < 1.5 else 'score-medium' if ee_total_score < 2.5 else 'score-high'
+    avg_color_class = score_class
     st.markdown(f"""
-    <div class='bottom-box {avg_color_class}'>
+    <div class='bottom-box {avg_color_class}' style="left: 50%; transform: translateX(-50%);">
         Average Score for Enabling Environment: {ee_total_score}/3
     </div>
     """, unsafe_allow_html=True)
