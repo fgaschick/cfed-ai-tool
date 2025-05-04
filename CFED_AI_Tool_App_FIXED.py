@@ -82,9 +82,7 @@ components.html("""
         <img src='https://raw.githubusercontent.com/fgaschick/cfed-ai-tool/main/Chemonics_RGB_Horizontal_BLUE-WHITE.png' alt='Chemonics Logo'/>
     </div>
     <div style='height: 100px;'></div>
-    <div class='custom-footer'>
-        © 2025 Chemonics International Inc. | Contact: Climate Finance Team
-    </div>
+    
 """, height=150, scrolling=False)
 
     
@@ -202,3 +200,24 @@ if ee_total_score is not None:
         <strong>Live Enabling Env Score:</strong><br> {ee_total_score}/3
     </div>
     """, unsafe_allow_html=True)
+
+# Proper footer now added at the end of the app
+st.markdown("""
+<style>
+.footer-fixed {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100vw;
+    background-color: #005670;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    font-size: 13px;
+    z-index: 1000;
+}
+</style>
+<div class='footer-fixed'>
+    © 2025 Chemonics International Inc. | Contact: Climate Finance Team
+</div>
+""", unsafe_allow_html=True)
