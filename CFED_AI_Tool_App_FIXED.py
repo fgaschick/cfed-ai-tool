@@ -47,7 +47,7 @@ st.markdown("""
     }
     .header-bar {
         position: fixed;
-        top: 0;
+        top: 60px;
         left: 0;
         width: 100%;
         background-color: #005670;
