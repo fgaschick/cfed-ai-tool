@@ -48,7 +48,7 @@ st.markdown("""
     .header-bar {
         position: fixed;
         top: 60px;
-        width: 100%;
+        width: 100vw;
         background-color: #005670;
         padding: 10px;
         text-align: center;
@@ -68,9 +68,9 @@ st.markdown("""
         font-weight: bold;
         color: white;
     }
-    .score-low { background-color: #f2b4ae; }     /* muted red */
-    .score-medium { background-color: #f9e79f; }  /* muted yellow */
-    .score-high { background-color: #b5ead7; }    /* muted green */
+    .score-low { background-color: #e57373; }     /* muted red */
+    .score-medium { background-color: #fdd835; }  /* muted yellow */
+    .score-high { background-color: #81c784; }    /* muted green */
     </style>
     <div class='header-bar'>
         <img src='https://raw.githubusercontent.com/fgaschick/cfed-ai-tool/main/Chemonics_RGB_Horizontal_BLUE-WHITE.png' alt='Chemonics Logo'/>
@@ -157,7 +157,7 @@ else:
 
     avg_color_class = score_class
     st.markdown(f"""
-<div class='bottom-box {avg_color_class}' style='margin: 4em auto 1em auto; position: relative; text-align: center; max-width: 700px;'>
+<div class='bottom-box {avg_color_class}' style='margin: 4em auto 1em auto; position: relative; text-align: left; max-width: 900px;'>
     <strong>Average Score for Enabling Environment:</strong> {ee_total_score}/3
 </div>
 """, unsafe_allow_html=True)
