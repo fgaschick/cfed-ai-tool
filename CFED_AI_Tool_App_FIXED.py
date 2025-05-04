@@ -3,19 +3,19 @@ import openai
 import os
 
 # Set your OpenAI API key
-client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 def get_ai_score(prompt, user_input):
     try:
-        response = client.chat.completions.create(
+        response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": prompt},
                 {"role": "user", "content": user_input}
             ]
         )
-        return response.choices[0].message.content.strip()
-    except openai.OpenAIError as e:
+        return response['choices'][0]['message']['content'].strip()
+    except openai.error.OpenAIError as e:
         return f"OpenAI Error: {e}"
     except Exception as e:
         return f"Unexpected Error: {e}"
