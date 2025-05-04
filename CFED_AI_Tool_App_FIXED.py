@@ -46,7 +46,7 @@ st.markdown("""
         z-index: 1000;
     }
     .header-bar {
-        position: sticky;
+        position: fixed;
         top: 0;
         left: 0;
         width: 100vw;
@@ -71,10 +71,15 @@ st.markdown("""
         font-weight: bold;
         color: white;
     }
-    .score-low { background-color: #e57373; }     /* muted red */
-    .score-medium { background-color: #fdd835; }  /* muted yellow */
-    .score-high { background-color: #81c784; }    /* muted green */
+    .score-low { background-color: #e57373; }
+    .score-medium { background-color: #fdd835; }
+    .score-high { background-color: #81c784; }
     </style>
+
+    <div class='header-bar'>
+        <img src='https://raw.githubusercontent.com/fgaschick/cfed-ai-tool/main/Chemonics_RGB_Horizontal_BLUE-WHITE.png' alt='Chemonics Logo'/>
+    </div>
+    <div style='height: 100px;'></div>
     <div class='header-bar'>
     <img src='https://raw.githubusercontent.com/fgaschick/cfed-ai-tool/main/Chemonics_RGB_Horizontal_BLUE-WHITE.png' alt='Chemonics Logo'/>
 </div>
