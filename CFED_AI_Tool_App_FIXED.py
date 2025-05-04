@@ -3,11 +3,13 @@ import openai
 import os
 
 # Set your OpenAI API key
-openai.api_key = os.getenv("OPENAI_API_KEY")
+api_key = os.getenv("OPENAI_API_KEY")
+
+# Use new OpenAI client properly
+client = openai.OpenAI(api_key=api_key)
 
 def get_ai_score(prompt, user_input):
     try:
-        client = openai.Client()
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
