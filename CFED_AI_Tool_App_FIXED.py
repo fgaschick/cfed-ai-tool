@@ -2,16 +2,12 @@ import streamlit as st
 import openai
 import os
 
-# Set your OpenAI API key
-api_key = os.getenv("OPENAI_API_KEY")
-
-# Initialize OpenAI client for openai>=1.0.0
-from openai import OpenAI
-client = OpenAI(api_key=api_key)
+# For openai>=1.0.0 use openai directly, not OpenAI()
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 def get_ai_score(prompt, user_input):
     try:
-        response = client.chat.completions.create(
+        response = openai.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": prompt},
