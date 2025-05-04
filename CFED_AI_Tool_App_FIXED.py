@@ -157,7 +157,12 @@ else:
     else:
         score_class = "score-high"
 
-    st.success(f"Average Score for Enabling Environment: {ee_total_score}/3")
+    avg_color_class = 'score-low' if ee_total_score < 1.5 else 'score-medium' if ee_total_score < 2.5 else 'score-high'
+    st.markdown(f"""
+    <div class='bottom-box {avg_color_class}'>
+        Average Score for Enabling Environment: {ee_total_score}/3
+    </div>
+    """, unsafe_allow_html=True)
 
     # AI-generated recommendations based on manual scores and notes
     if st.button("\U0001F916 Generate AI Recommendations Based on Manual Input"):
