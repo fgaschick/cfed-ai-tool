@@ -60,11 +60,10 @@ def get_ai_score(prompt, user_input):
     except Exception as e:
         return f"AI error: {str(e)}"
 
-# Display tabs for selecting the category
-tab = st.radio(
+# Sidebar: Dimension Selection
+dimension = st.sidebar.radio(
     "Select Dimension", 
-    ["Instructions", "Enabling Environment", "Ecosystem Infrastructure", "Finance Providers", "Finance Seekers"],
-    horizontal=True  # This arranges them horizontally, so they appear as tabs
+    ["Instructions", "Enabling Environment", "Ecosystem Infrastructure", "Finance Providers", "Finance Seekers"]
 )
 
 # Function to display questions based on selected dimension
@@ -95,7 +94,7 @@ def display_dimension_questions(dimension):
         # Add more questions as needed
 
 # Display the selected tab's content
-if tab == "Instructions":
+if dimension == "Instructions":
     st.markdown("""
     ### 📘 Instructions
     This tool helps evaluate the maturity of a country's climate finance ecosystem. Choose a dimension to start the assessment.
@@ -106,7 +105,7 @@ if tab == "Instructions":
     """)
 else:
     # Display the questions for the selected dimension
-    display_dimension_questions(tab)
+    display_dimension_questions(dimension)
 
 # Live Score (floating score displayed on the sidebar)
 live_score = 3  # Replace with your score calculation logic
