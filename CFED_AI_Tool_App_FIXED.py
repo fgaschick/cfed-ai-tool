@@ -194,9 +194,17 @@ Please provide 3-5 concrete, prioritized action recommendations to improve any s
             st.markdown(ai_actions)
 
 # Floating score box always shown
+if ee_total_score is not None and ee_total_score != "AI-Based":
+    st.markdown(f"""
+    <div class='bottom-box {score_class}' style='margin: 4em auto 1em auto; position: relative; text-align: left; max-width: 900px;'>
+        <strong>Average Score for Enabling Environment:</strong> {ee_total_score}/3
+    </div>
+    """, unsafe_allow_html=True)
+
+# Floating live score
 if ee_total_score is not None:
     st.markdown(f"""
-    <div class="bottom-box {score_class}">
+    <div class="bottom-box {score_class}" style="bottom: 60px; right: 30px; position: fixed;">
         <strong>Live Enabling Env Score:</strong><br> {ee_total_score}/3
     </div>
     """, unsafe_allow_html=True)
