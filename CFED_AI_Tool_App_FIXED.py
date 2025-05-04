@@ -169,19 +169,18 @@ else:
 Policy notes: {notes_policy}
 Enforcement notes: {notes_enforcement}
 Consultation notes: {notes_consultation}"""
-            ai_prompt_manual = (
-                f"You are a climate finance advisor. The user has manually assessed maturity scores as follows:
-"
-                f"- Strategy: {strategy_score}/3
+            ai_prompt_manual = f"""
+You are a climate finance advisor. The user has manually assessed maturity scores as follows:
+- Strategy: {strategy_score}/3
 - Policy: {policy_score}/3
 - Enforcement: {enforcement_score}/3
 - Stakeholder Consultation: {consultation_score}/3
-"
-                f"The user also provided these notes:
+
+The user also provided these notes:
 {combined_notes}
-"
-                f"Please provide 3-5 concrete, prioritized action recommendations to improve any sub-component that scored below 3."
-            )
+
+Please provide 3-5 concrete, prioritized action recommendations to improve any sub-component that scored below 3.
+"""
             with st.spinner("Generating AI-based action recommendations..."):
                 ai_actions = get_ai_score(ai_prompt_manual, "")
             st.markdown("**AI Recommendations for Action:**")
