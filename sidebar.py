@@ -26,18 +26,21 @@ st.markdown("""
         font-size: 20px;
         font-weight: bold;
     }
-    .sidebar .sidebar-selectbox, .sidebar .stButton button {
-        background-color: #005670;
+    .sidebar .sidebar-tabs {
+        margin-top: 30px;
         color: white;
-        border-radius: 5px;
+        padding: 10px;
+        font-weight: bold;
+        cursor: pointer;
+        text-align: center;
     }
-    .sidebar .sidebar-selectbox:hover, .sidebar .stButton button:hover {
+    .sidebar .sidebar-tabs:hover {
         background-color: #003f4f; /* Darker blue for hover */
     }
-    .sidebar .stCheckbox input {
-        background-color: #005670;
+    .sidebar .active-tab {
+        background-color: #003f4f;
     }
-    .sidebar .stMarkdown {
+    .sidebar .tab-content {
         color: white;
     }
     </style>
@@ -55,10 +58,10 @@ This tool helps evaluate the maturity of a country's climate finance ecosystem. 
 Click on any dimension to get started.
 """)
 
-# Sidebar: Select Dimension (All visible)
-dimension = st.sidebar.radio(
-    "Select Dimension",
-    ["Enabling Environment", "Ecosystem Infrastructure", "Finance Providers", "Finance Seekers"]
+# Create interactive tabs in the sidebar
+tab = st.sidebar.radio(
+    "Select Dimension", 
+    ["Instructions", "Enabling Environment", "Ecosystem Infrastructure", "Finance Providers", "Finance Seekers"]
 )
 
 # Function to get AI score (reused from previous implementation)
@@ -102,8 +105,19 @@ def display_dimension_questions(dimension):
         st.checkbox("Do projects span adaptation, mitigation, and nature-based solutions?")
         # Add more questions as needed
 
-# Display the questions for the selected dimension
-display_dimension_questions(dimension)
+# Display the selected tab's content
+if tab == "Instructions":
+    st.markdown("""
+    ### 📘 Instructions
+    This tool helps evaluate the maturity of a country's climate finance ecosystem. Choose a dimension to start the assessment.
+    - **Enabling Environment**: Evaluate the national climate strategy, policies, and enforcement.
+    - **Ecosystem Infrastructure**: Assess the availability of tools and partnerships.
+    - **Finance Providers**: Check the involvement of public/private funding and carbon markets.
+    - **Finance Seekers**: Evaluate the readiness of climate projects and inclusion of vulnerable groups.
+    """)
+else:
+    # Display the questions for the selected dimension
+    display_dimension_questions(tab)
 
 # Live Score (floating score displayed on the sidebar)
 live_score = 3  # Replace with your score calculation logic
