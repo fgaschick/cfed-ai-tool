@@ -48,14 +48,15 @@ st.markdown("""
     .header-bar {
         position: fixed;
         top: 0;
+        left: 0;
         width: 100%;
         background-color: #005670;
-        padding: 0.8em 1em;
+        padding: 0.5em;
         text-align: center;
-        z-index: 1000;
+        z-index: 1001;
     }
     .header-bar img {
-        max-height: 30px;
+        max-height: 35px;
     }
     .bottom-box {
         position: fixed;
@@ -69,13 +70,13 @@ st.markdown("""
         box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
     }
     </style>
-    <div class='custom-footer'>
-        © 2025 Chemonics International Inc. | Contact: Climate Finance Team
-    </div>
     <div class='header-bar'>
         <img src='https://raw.githubusercontent.com/fgaschick/cfed-ai-tool/main/Chemonics_RGB_Horizontal_BLUE-WHITE.png' alt='Chemonics Logo'/>
     </div>
-    <br><br><br><br><br>
+    <div class='custom-footer'>
+        © 2025 Chemonics International Inc. | Contact: Climate Finance Team
+    </div>
+    <br><br><br><br><br><br>
 """, unsafe_allow_html=True)
 
 st.title("Enabling Environment Scoring Prototype")
