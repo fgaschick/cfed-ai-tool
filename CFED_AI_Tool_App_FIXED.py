@@ -88,7 +88,7 @@ components.html("""
     
 """, height=150, scrolling=False)
 
-# Categories and scoring for Ecosystem Infrastructure
+# Categories and scoring for all dimensions
 def manual_scoring_ui(dimension):
     st.markdown(f"### {dimension}")
     
