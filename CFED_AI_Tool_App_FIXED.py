@@ -138,10 +138,6 @@ def manual_scoring_ui(dimension):
         total_score = min(3, score)
         return total_score, "score-medium"
 
-    # Additional dimensions logic (Ecosystem Infrastructure, Finance Providers, Finance Seekers)
-    # You can follow the same structure as Enabling Environment above for other dimensions
-    # [Here you would include the logic for "Ecosystem Infrastructure", "Finance Providers", etc.]
-
     return None, None
 
 # Add the sidebar for selecting categories
