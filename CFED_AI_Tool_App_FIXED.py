@@ -1,231 +1,150 @@
 import streamlit as st
 import openai
+import os
+import base64
 import pandas as pd
-import os  # Import os for environment variables
+from fpdf import FPDF
 
-# --- Data Structure ---
-cfe_framework = {
-    "Enabling Environment": {
-        "Strategy": {
-            "Paris documents and commitments": {
-                "indicators": {
-                    "NDC Submission Status": {
-                        "type": "selectbox",
-                        "options": [
-                            "0 - No NDC submitted",
-                            "1 - NDC submitted",
-                            "2 - NDC submitted, some enhancements",
-                            "3 - NDC submitted, significant enhancements",
-                        ],
-                        "help": "Status of Nationally Determined Contribution...",
-                    },
-                    "CAT Rating": {
-                        "type": "selectbox",
-                        "options": [
-                            "0 - Not rated or insufficient",
-                            "1 - Highly insufficient to insufficient",
-                            "2 - Almost sufficient",
-                            "3 - 1.5C compatible",
-                        ],
-                        "help": "Climate Action Tracker rating...",
-                    },
-                    # ... other indicators ...
-                },
-                "ai_prompt": "You are a climate finance expert...",
-                "weight": 0.3,  # Example weight for the component
-            },
-            "Policy": {
-                "Development of climate policies": {
-                    "indicators": {
-                        "National climate change policy": {
-                            "type": "selectbox",
-                            "options": [
-                                "0 - No policy",
-                                "1 - Policy enacted",
-                                "2 - Sectoral policies",
-                                "3 - Codified policies",
-                            ],
-                            "help": "National climate change policy...",
-                        },
-                        # ... other indicators ...
-                    },
-                    "ai_prompt": "You are a climate policy expert...",
-                    "weight": 0.4,
-                },
-                # ... other components ...
-            },
-            # ... other components ...
-        },
-        "Ecosystem Infrastructure": {
-            # ...
-        },
-        # ... other dimensions ...
-    },
-    "Finance Providers": {
-        # ...
-    },
-    "Finance Seekers": {
-        "Built environment": {
-            "indicators": {
-                "Green building codes": {
-                    "type": "selectbox",
-                    "options": [
-                        "0 - No building codes",
-                        "1 - Voluntary green building codes",
-                        "2 - Mandatory green building codes",
-                        "3 - Enforcement of green building codes",
-                    ],
-                    "help": "Status of green building codes...",
-                },
-                # ... other indicators
-            },
-            "ai_prompt": "You are an expert on sustainable buildings...",
-            "weight": 0.5,
-        },
-        # ... other components
-    },
-}
+# Set your OpenAI API key
+openai.api_key = 'your-openai-api-key'  # Replace with your actual OpenAI API key
 
-
-# --- Helper Functions ---
-def get_user_input(dimension, component, sub_component, indicators):
-    """
-    Generates Streamlit input elements based on the indicator types.
-    Returns a dictionary of user inputs.
-    """
-    user_inputs = {}
-    if indicators:  # Check if indicators is not None or empty
-        for indicator, details in indicators.items():
-            label = f"{component} - {sub_component} - {indicator}" if sub_component else f"{component} - {indicator}"
-            if details["type"] == "selectbox":
-                user_inputs[indicator] = st.selectbox(label, details["options"], help=details["help"])
-            elif details["type"] == "number_input":
-                user_inputs[indicator] = st.number_input(label, help=details["help"])
-            elif details["type"] == "checkbox":
-                user_inputs[indicator] = st.checkbox(label, help=details["help"])
-            elif details["type"] == "text_area":
-                user_inputs[indicator] = st.text_area(label, help=details["help"])
-    else:
-        st.warning(f"No indicators found for {dimension} - {component} - {sub_component}")
-    return user_inputs
-
-
-def score_component(dimension, component, sub_component, user_inputs):
-    """
-    Calculates a score for a component based on user inputs and indicator weights.
-    (This is a placeholder - you'll need to implement the scoring logic
-    from the document)
-    """
-    score = 0
-    if dimension == "Enabling Environment" and component == "Strategy" and user_inputs:  # Check if user_inputs is not empty
-        ndc_status = int(user_inputs["NDC Submission Status"][0])
-        cat_rating = int(user_inputs["CAT Rating"][0])
-        score = max(ndc_status, cat_rating)
-        # ... more scoring logic ...
-    elif dimension == "Finance Seekers" and component == "Built environment" and sub_component is None and user_inputs:  # Explicit None check and user_inputs check
-        green_building_code = int(user_inputs["Green building codes"][0])
-        score = green_building_code
-    elif user_inputs:  # Check if user_inputs is not empty
-        score = len(user_inputs)  # A basic placeholder
-    return score
-
-
-def get_ai_score(prompt, user_input):
-    """
-    Calls the OpenAI API to get an AI-generated score and rationale.
-    """
+# Function to generate AI-driven recommendations based on user narrative input
+def generate_recommendations(scores_data, dimension_name, user_input):
     try:
-        client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))  # Use environment variable
-        response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": prompt},
-                {"role": "user", "content": user_input},
-            ],
+        # Convert the scores data into a formatted string for the AI
+        scores_str = "\n".join([f"{dimension}: {score}" for dimension, score in scores_data])
+        
+        prompt = f"Given the following scores for each dimension in the Climate Finance Ecosystem:\n\n{scores_str}\n\n" \
+                 f"Based on the {dimension_name} dimension, provide tailored, actionable recommendations. " \
+                 "The recommendations should be specific, actionable, and grounded in the context of climate finance. " \
+                 "Please suggest improvements for the {dimension_name} dimension.\n\n" \
+                 f"Here is the description of the {dimension_name} dimension: {user_input}"
+        
+        # Call OpenAI to generate recommendations
+        response = openai.Completion.create(
+            model="gpt-4",  # Using GPT-4 for advanced responses
+            prompt=prompt,
+            max_tokens=300
         )
-        return response.choices[0].message.content.strip()
+        
+        recommendations = response.choices[0].text.strip()
+        return recommendations
+    
     except Exception as e:
-        return f"AI Error: {e}"
+        return f"Error generating recommendations: {e}"
 
+# Streamlit UI for displaying the tool
+st.title("Climate Finance Ecosystem Diagnostic Tool")
+st.subheader("AI-driven Recommendations for Climate Finance Ecosystem Maturity")
 
-# --- Main Assessment Logic ---
+# Function to display dynamic recommendations per dimension
+def display_dynamic_recommendations():
+    # Collecting narrative input for each dimension
+    enabling_env_narrative = st.text_area("Describe the Enabling Environment (e.g., NDCs, enforcement, sector policies):", height=200)
+    ecosystem_narrative = st.text_area("Describe the Ecosystem Infrastructure (e.g., MRV systems, data, institutional capacity):", height=200)
+    finance_providers_narrative = st.text_area("Describe the Finance Providers (e.g., public/private climate finance, carbon markets):", height=200)
+    finance_seekers_narrative = st.text_area("Describe the Finance Seekers (e.g., project pipeline, diversity, inclusion):", height=200)
 
-# Header and User Guide (as in the original script)
-st.title("CFE Maturity Assessment Tool")
-st.markdown(
-    """
-    This tool helps assess the maturity of a country's Climate Finance Ecosystem (CFE).
-    It is based on a framework that considers four dimensions:
-    Enabling Environment, Ecosystem Infrastructure, Finance Providers, and Finance Seekers.
-    """
-)
+    # User scores (using dummy scores for now)
+    user_scores = [
+        ("Enabling Environment", 3),
+        ("Ecosystem Infrastructure", 2),
+        ("Finance Providers", 4),
+        ("Finance Seekers", 3)
+    ]
+    
+    # Display the user scores
+    st.write("User Scores:", user_scores)
 
-# Add user guide here (e.g., read from a file or define as a string)
-user_guide = """
-## User Guide
+    # Generate dynamic recommendations per dimension
+    st.subheader("Recommendations per Dimension")
 
-1.  **Select a dimension** to begin the assessment.
-2.  For each component, provide inputs for the indicators.
-3.  You can choose to use AI for scoring or use the tool's scoring mechanism.
-4.  The results will be displayed at the end.
+    # Enabling Environment Recommendations
+    if enabling_env_narrative:
+        enabling_env_recommendations = generate_recommendations(user_scores, "Enabling Environment", enabling_env_narrative)
+        st.write("### Enabling Environment Recommendations:")
+        st.write(enabling_env_recommendations)
 
-    ... (Add more detailed instructions)
-    """
-st.sidebar.markdown(user_guide)
+    # Ecosystem Infrastructure Recommendations
+    if ecosystem_narrative:
+        ecosystem_recommendations = generate_recommendations(user_scores, "Ecosystem Infrastructure", ecosystem_narrative)
+        st.write("### Ecosystem Infrastructure Recommendations:")
+        st.write(ecosystem_recommendations)
 
-all_scores = {}
+    # Finance Providers Recommendations
+    if finance_providers_narrative:
+        finance_providers_recommendations = generate_recommendations(user_scores, "Finance Providers", finance_providers_narrative)
+        st.write("### Finance Providers Recommendations:")
+        st.write(finance_providers_recommendations)
 
-for dimension, components in cfe_framework.items():
-    with st.expander(dimension):
-        for component, details in components.items():
-            st.subheader(component)
-            if "sub_components" in details:
-                tabs = st.tabs(details["sub_components"].keys())
-                for tab_index, (sub_component, sub_component_details) in enumerate(details["sub_components"].items()):
-                    with tabs[tab_index]:
-                        user_inputs = get_user_input(dimension, component, sub_component, sub_component_details.get("indicators"))  # Use .get()
-                        if st.checkbox(f"Use AI for {component} - {sub_component}"):
-                            ai_input = "\n".join([f"{k}: {v}" for k, v in user_inputs.items()])
-                            # Debugging output
-                            # st.write(f"DEBUG: Calling get_ai_score for {dimension} - {component} - {sub_component}")
-                            ai_prompt = sub_component_details.get("ai_prompt", "You are a helpful AI assistant.")  # Provide default
-                            ai_result = get_ai_score(ai_prompt, ai_input)
-                            st.markdown(f"**AI Score & Rationale:** {ai_result}")
-                            try:
-                                ai_score = int(ai_result.split(":")[0]) if ai_result and ":" in ai_result else 0
-                            except ValueError:
-                                ai_score = 0
-                                st.warning(f"Could not parse AI score from: '{ai_result}'. Using 0.")
-                            component_score = ai_score * details.get("weight", 1)
-                        else:
-                            component_score = score_component(dimension, component, sub_component, user_inputs) * details.get("weight", 1)
-                        all_scores.setdefault(dimension, {}).setdefault(component, [])
-                        all_scores[dimension][component].append({"sub_component": sub_component, "score": component_score})
-            else:
-                user_inputs = get_user_input(dimension, component, None, details.get("indicators"))  # Use .get()
-                if st.checkbox(f"Use AI for {component}"):
-                    ai_input = "\n".join([f"{k}: {v}" for k, v in user_inputs.items()])
-                    # Debugging output
-                    # st.write(f"DEBUG: Calling get_ai_score for {dimension} - {component}")
-                    ai_prompt = details.get("ai_prompt", "You are a helpful AI assistant.")  # Provide default
-                    ai_result = get_ai_score(ai_prompt, ai_input)
-                    st.markdown(f"**AI Score & Rationale:** {ai_result}")
-                    try:
-                        ai_score = int(ai_result.split(":")[0]) if ai_result and ":" in ai_result else 0
-                    except ValueError:
-                        ai_score = 0
-                        st.warning(f"Could not parse AI score from: '{ai_result}'. Using 0.")
-                    component_score = score_component(dimension, component, None, user_inputs)  # Changed "" to None
-                else:
-                    component_score = score_component(dimension, component, None, user_inputs)  # Changed "" to None
-                all_scores.setdefault(dimension, {}).setdefault(component, [])
-                all_scores[dimension][component].append({"sub_component": None, "score": component_score})
+    # Finance Seekers Recommendations
+    if finance_seekers_narrative:
+        finance_seekers_recommendations = generate_recommendations(user_scores, "Finance Seekers", finance_seekers_narrative)
+        st.write("### Finance Seekers Recommendations:")
+        st.write(finance_seekers_recommendations)
 
-# --- Display Results ---
-st.header("Assessment Results")
-# (Implement display of results, visualizations, downloads)
-print(all_scores)
+    # Summary of recommendations
+    st.subheader("Summary of Recommendations")
+    overall_recommendations = generate_recommendations(user_scores, "Overall", "")
+    st.write("### General Action Plan:")
+    st.write(overall_recommendations)
 
-# Footer
+# Streamlit UI for displaying the tool and collecting user inputs
+with st.expander("📘 Walkthrough Guide – How to Use This Tool"):
+    st.markdown("""
+    1. Start with **Enabling Environment**.
+       - Use **AI Scoring** to type a short description, or **Manual Scoring** to answer yes/no questions.
+    2. Move to **Ecosystem Infrastructure**, **Finance Providers**, and **Finance Seekers** the same way.
+    3. Scores in the upper right will update as you provide responses. Scroll down to see recommended actions once you complete the assessment.
+    4. Click the download links to **export results** as a PDF or CSV.
+    5. You can go back and edit your responses at any time.
+    """)
+
+# Display recommendations dynamically
+display_dynamic_recommendations()
+
+# --- Helper: PDF Export ---
+def generate_pdf_report(scores_data, overall_recommendations):
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Arial", size=12)
+    pdf.cell(200, 10, txt="Climate Finance Ecosystem Diagnostic Tool - Recommendations", ln=True, align="C")
+    pdf.ln(10)
+    
+    # Add recommendations for each dimension
+    for dimension, score in scores_data:
+        pdf.cell(200, 10, txt=f"{dimension}: {score}/4", ln=True)
+
+    pdf.ln(10)
+    pdf.cell(200, 10, txt="### Summary of Recommendations:", ln=True)
+    pdf.ln(5)
+    pdf.multi_cell(0, 10, overall_recommendations)
+    
+    # Output the PDF
+    pdf_output = "climate_finance_recommendations.pdf"
+    pdf.output(pdf_output)
+    return pdf_output
+
+# --- Downloadable PDF ---
+def download_pdf(pdf_output):
+    with open(pdf_output, "rb") as pdf_file:
+        b64_pdf = base64.b64encode(pdf_file.read()).decode()
+        href_pdf = f'<a href="data:application/pdf;base64,{b64_pdf}" download="climate_finance_recommendations.pdf">📄 Download Recommendations as PDF</a>'
+        st.markdown(href_pdf, unsafe_allow_html=True)
+
+# Generate PDF and allow download
+pdf_output = generate_pdf_report(user_scores, overall_recommendations)
+download_pdf(pdf_output)
+
+# --- Downloadable CSV ---
+def download_csv(scores_data):
+    score_df = pd.DataFrame(scores_data, columns=["Dimension", "Score"])
+    csv = score_df.to_csv(index=False)
+    b64_csv = base64.b64encode(csv.encode()).decode()
+    href_csv = f'<a href="data:file/csv;base64,{b64_csv}" download="cfed_scores.csv">📥 Download scores as CSV</a>'
+    st.markdown(href_csv, unsafe_allow_html=True)
+
+download_csv(user_scores)
+
 st.markdown("---")
-st.markdown("This tool was developed to support climate finance ecosystem assessments.")
+st.caption("Prototype built for CFED AI tool – All Four Dimensions. To view a walkthrough of how to use this tool, visit: https://cfed-tool-guide.streamlit.app.")
