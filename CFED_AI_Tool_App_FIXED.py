@@ -191,8 +191,11 @@ for dimension, components in cfe_framework.items():
                             ai_prompt = sub_component_details.get("ai_prompt", "You are a helpful AI assistant.")  # Provide default
                             ai_result = get_ai_score(ai_prompt, ai_input)
                             st.markdown(f"**AI Score & Rationale:** {ai_result}")
-                            # VERY basic - improve this!
-                            ai_score = int(ai_result.split(":")[0]) if ai_result and ":" in ai_result else 0
+                            try:
+                                ai_score = int(ai_result.split(":")[0]) if ai_result and ":" in ai_result else 0
+                            except ValueError:
+                                ai_score = 0
+                                st.warning(f"Could not parse AI score from: '{ai_result}'. Using 0.")
                             component_score = ai_score * details.get("weight", 1)
                         else:
                             component_score = score_component(dimension, component, sub_component, user_inputs) * details.get("weight", 1)
@@ -207,8 +210,11 @@ for dimension, components in cfe_framework.items():
                     ai_prompt = details.get("ai_prompt", "You are a helpful AI assistant.")  # Provide default
                     ai_result = get_ai_score(ai_prompt, ai_input)
                     st.markdown(f"**AI Score & Rationale:** {ai_result}")
-                    # VERY basic - improve this!
-                    ai_score = int(ai_result.split(":")[0]) if ai_result and ":" in ai_result else 0
+                    try:
+                        ai_score = int(ai_result.split(":")[0]) if ai_result and ":" in ai_result else 0
+                    except ValueError:
+                        ai_score = 0
+                        st.warning(f"Could not parse AI score from: '{ai_result}'. Using 0.")
                     component_score = score_component(dimension, component, None, user_inputs)  # Changed "" to None
                 else:
                     component_score = score_component(dimension, component, None, user_inputs)  # Changed "" to None
