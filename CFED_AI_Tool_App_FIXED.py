@@ -47,11 +47,14 @@ st.markdown("""
     }
     .header-bar {
         position: fixed;
-        top: 60px;
+        top: 0;
+        left: 0;
         width: 100vw;
         background-color: #005670;
-        padding: 10px;
+        color: white;
         text-align: center;
+        padding: 10px;
+        font-size: 13px;
         z-index: 1001;
     }
     .header-bar img {
