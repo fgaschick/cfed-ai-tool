@@ -164,8 +164,8 @@ else:
 
     avg_color_class = score_class
     st.markdown(f"""
-<div class='bottom-box {avg_color_class}' style='margin: 4em auto 1em auto; position: relative; text-align: left; max-width: 900px;'>
-    <strong>Average Score for Enabling Environment:</strong> {ee_total_score}/3
+<div class='bottom-box {score_class}' style='margin: 4em auto 1em auto; position: relative; text-align: left; max-width: 900px;'>
+    <strong>Average Score for Enabling Environment:</strong> {ee_total_score}/3</strong> {ee_total_score}/3
 </div>
 """, unsafe_allow_html=True)
 
