@@ -77,12 +77,9 @@ st.markdown("""
     </style>
 
     <div class='header-bar'>
-        <img src='https://raw.githubusercontent.com/fgaschick/cfed-ai-tool/main/Chemonics_RGB_Horizontal_BLUE-WHITE.png' alt='Chemonics Logo'/>
-    </div>
-    <div style='height: 100px;'></div>
-    <div class='header-bar'>
     <img src='https://raw.githubusercontent.com/fgaschick/cfed-ai-tool/main/Chemonics_RGB_Horizontal_BLUE-WHITE.png' alt='Chemonics Logo'/>
 </div>
+<div style='height: 100px;'></div>
 <div style='height: 100px;'></div>
     <div class='custom-footer'>
         © 2025 Chemonics International Inc. | Contact: Climate Finance Team
