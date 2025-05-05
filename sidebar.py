@@ -1,6 +1,7 @@
 import streamlit as st
 from openai import OpenAI
 import os
+import csv
 
 # Set OpenAI API key using environment variable
 api_key = os.getenv("OPENAI_API_KEY")
@@ -169,6 +170,50 @@ if selected_dimension:
 
 # Display the overall combined score
 st.sidebar.markdown(f"**Combined Score of All Dimensions:** {combined_score_avg}/4")
+
+# Tab setup: Instructions and Recommendations
+tab_selected = st.selectbox("Select Tab", ["Instructions", "Summary & Recommendations"])
+
+if tab_selected == "Instructions":
+    st.markdown("""
+    ### Instructions
+    This tool helps assess the maturity of climate finance dimensions.
+    - Each dimension has subcategories that will be scored manually or via AI.
+    - For each subcategory, answer the relevant questions and provide any notes.
+    - You can also use the AI scoring option by providing a narrative.
+    - The AI will generate recommendations for improvement.
+    """)
+
+elif tab_selected == "Summary & Recommendations":
+    # AI-based summary and recommendations for all dimensions
+    all_recommendations = []
+    for dimension in DIMENSIONS:
+        narrative_input = st.text_area(f"Provide a narrative description for {dimension}", height=300)
+        if narrative_input:
+            ai_score = ai_scoring(dimension, narrative_input)
+            all_recommendations.append(ai_score)
+
+    # Display AI-based summary and recommendations for all dimensions
+    st.markdown("### AI-Based Recommendations for All Dimensions:")
+    for rec in all_recommendations:
+        st.markdown(rec)
+
+    # Option to download results as CSV or text file
+    if st.button("Download Results"):
+        file_name = "climate_finance_results.csv"
+        with open(file_name, "w") as f:
+            writer = csv.writer(f)
+            writer.writerow(["Dimension", "AI-Based Recommendations"])
+            for i, dimension in enumerate(DIMENSIONS):
+                writer.writerow([dimension, all_recommendations[i]])
+
+        with open(file_name, "rb") as f:
+            st.download_button(
+                label="Download Results",
+                data=f,
+                file_name=file_name,
+                mime="text/csv"
+            )
 
 # Footer
 st.markdown("""
