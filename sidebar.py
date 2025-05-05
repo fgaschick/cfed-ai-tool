@@ -23,69 +23,23 @@ def get_ai_score(prompt, user_input):
     except Exception as e:
         return f"AI error: {str(e)}"
 
-st.set_page_config(page_title="Climate Finance Maturity Assessment", layout="wide")
+# Function to display scoring UI for subcategories
+def show_scoring_ui(subcategory_name, dimension_name):
+    st.markdown(f"### {subcategory_name} Scoring")
+    answers = []
 
-# Custom header and footer with logo
-import streamlit.components.v1 as components
+    # For each question in the selected subcategory, display a checkbox
+    for question in DIMENSIONS[dimension_name]["subcategories"][subcategory_name]:
+        answer = st.checkbox(question)
+        answers.append(answer)
 
-components.html("""
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-    body {
-        font-family: 'Roboto', sans-serif;
-        background-color: #f5f5f5;
-    }
-    .custom-footer {
-        position: fixed;
-        left: 0;
-        bottom: 0;
-        width: 100vw;
-        background-color: #005670;
-        color: white;
-        text-align: center;
-        padding: 10px;
-        font-size: 13px;
-        z-index: 1000;
-    }
-    .header-bar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        background-color: #005670;
-        color: white;
-        text-align: center;
-        padding: 10px;
-        font-size: 13px;
-        z-index: 1001;
-    }
-    .header-bar img {
-        max-height: 30px;
-    }
-    .bottom-box {
-        position: fixed;
-        bottom: 60px;
-        right: 30px;
-        padding: 10px 20px;
-        border-radius: 8px;
-        z-index: 1001;
-        box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
-        font-weight: bold;
-        color: white;
-    }
-    .score-low { background-color: #e57373; }
-    .score-medium { background-color: #fdd835; }
-    .score-high { background-color: #81c784; }
-    </style>
+    # Calculate score for subcategory
+    subcategory_score = sum(answers)
+    st.markdown(f"**Score for {subcategory_name}:** {subcategory_score}/{len(answers)}")
 
-    <div class='header-bar'>
-        <img src='https://raw.githubusercontent.com/fgaschick/cfed-ai-tool/main/Chemonics_RGB_Horizontal_BLUE-WHITE.png' alt='Chemonics Logo'/>
-    </div>
-    <div style='height: 100px;'></div>
-    
-""", height=150, scrolling=False)
+    return subcategory_score
 
-# Define subcategories and associated questions for each dimension
+# DIMENSIONS structure to include questions for each subcategory
 DIMENSIONS = {
     "Enabling Environment": {
         "subcategories": {
@@ -112,36 +66,42 @@ DIMENSIONS = {
             ]
         }
     },
-    # Repeat the same for Ecosystem Infrastructure, Finance Providers, and Finance Seekers
+    # Repeat this structure for the remaining three dimensions...
 }
-
-# Function for scoring and displaying questions
-def show_scoring_ui(dimension_name, subcategory_name):
-    st.markdown(f"### {subcategory_name} Scoring")
-    answers = []
-
-    # For each question in the selected subcategory
-    for question in DIMENSIONS[dimension_name]["subcategories"][subcategory_name]:
-        answer = st.checkbox(question)
-        answers.append(answer)
-
-    # Calculate score for subcategory
-    subcategory_score = sum(answers)
-    st.markdown(f"**Score for {subcategory_name}:** {subcategory_score}/{len(answers)}")
-
-    return subcategory_score
 
 # Sidebar for selecting dimension
 selected_dimension = st.sidebar.selectbox("Select Dimension", list(DIMENSIONS.keys()))
 
-# Display the dimension and allow subcategory scoring
+# AI-Based Scoring Functionality
+def ai_scoring_ui(dimension_name):
+    use_ai = st.checkbox(f"Use AI to score {dimension_name}", value=False)
+    if use_ai:
+        narrative = st.text_area(f"Provide a narrative description for {dimension_name}:", height=300)
+        if narrative:
+            prompt = (
+                f"You are a climate finance expert. Based on the following narrative, assess the maturity of the {dimension_name} using the relevant sub-components "
+                "and assign a maturity score from 0 to 3 for each sub-component. Please also provide prioritized action recommendations."
+            )
+            with st.spinner(f"Analyzing {dimension_name} with AI..."):
+                ai_output = get_ai_score(prompt, narrative)
+            st.markdown("**AI-Generated Assessment and Recommendations:**")
+            st.markdown(ai_output)
+
+# Initialize variable to store total dimension score
+dimension_score = 0
+
+# Display dimension and subcategories
 st.markdown(f"## {selected_dimension} Scoring")
 
-dimension_score = 0
+# AI scoring
+ai_scoring_ui(selected_dimension)
+
+# Manual rule-based scoring
 for subcategory_name in DIMENSIONS[selected_dimension]["subcategories"]:
-    subcategory_score = show_scoring_ui(selected_dimension, subcategory_name)
+    subcategory_score = show_scoring_ui(subcategory_name, selected_dimension)
     dimension_score += subcategory_score
 
+# Calculate overall score for the dimension
 dimension_score = round(dimension_score / sum(len(DIMENSIONS[selected_dimension]["subcategories"][subcat]) for subcat in DIMENSIONS[selected_dimension]["subcategories"]), 2)
 
 # Display the overall dimension score
