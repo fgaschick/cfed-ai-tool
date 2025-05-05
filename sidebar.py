@@ -116,10 +116,16 @@ DIMENSIONS = {
     }
 }
 
+# Initialize session state for combined score and dimension scores
+if 'combined_score' not in st.session_state:
+    st.session_state.combined_score = 0
+if 'dimension_scores' not in st.session_state:
+    st.session_state.dimension_scores = {dim: 0 for dim in DIMENSIONS}
+
 # Sidebar for selecting dimension
 selected_dimension = st.sidebar.selectbox("Select Dimension", list(DIMENSIONS.keys()))
 
-# AI-Based Scoring Functionality
+# Function for AI-based scoring
 def ai_scoring_ui(dimension_name):
     use_ai = st.checkbox(f"Use AI to score {dimension_name}", value=False)
     if use_ai:
@@ -138,7 +144,7 @@ def ai_scoring_ui(dimension_name):
 dimension_score = 0
 
 # Function to calculate combined score for all dimensions
-combined_score = 0
+combined_score = st.session_state.combined_score
 total_dimensions = len(DIMENSIONS)
 
 # Display dimension and subcategories
@@ -152,11 +158,17 @@ for subcategory_name in DIMENSIONS[selected_dimension]["subcategories"]:
     subcategory_score = show_scoring_ui(subcategory_name, selected_dimension, DIMENSIONS[selected_dimension])
     dimension_score += subcategory_score
 
+# Update dimension score in session state
+st.session_state.dimension_scores[selected_dimension] = dimension_score
+
 # Calculate overall score for the dimension
 dimension_score = round(dimension_score / sum(len(DIMENSIONS[selected_dimension]["subcategories"][subcat]) for subcat in DIMENSIONS[selected_dimension]["subcategories"]), 2)
 
 # Update combined score
 combined_score += dimension_score
+
+# Update session state for combined score
+st.session_state.combined_score = combined_score
 
 # Display the overall dimension score
 st.markdown(f"### Overall Score for {selected_dimension}: {dimension_score}/3")
@@ -165,7 +177,7 @@ st.markdown(f"### Overall Score for {selected_dimension}: {dimension_score}/3")
 st.sidebar.markdown(f"**Live {selected_dimension} Score:** {dimension_score}/3")
 
 # Calculate and display the combined score
-combined_score_avg = round(combined_score / total_dimensions, 2)
+combined_score_avg = round(st.session_state.combined_score / total_dimensions, 2)
 st.sidebar.markdown(f"**Combined Score of All Dimensions:** {combined_score_avg}/3")
 
 # Footer
