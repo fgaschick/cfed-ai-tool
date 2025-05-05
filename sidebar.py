@@ -114,7 +114,7 @@ DIMENSIONS = {
 # Sidebar for selecting dimension
 selected_dimension = st.sidebar.selectbox("Select Dimension", list(DIMENSIONS.keys()))
 
-# Function to display and score each dimension's subcategories
+# Function to display and score each dimension's subcategories with AI
 def display_dimension_scoring(dimension_name):
     dimension_data = DIMENSIONS[dimension_name]
     total_dimension_score = 0
@@ -129,18 +129,43 @@ def display_dimension_scoring(dimension_name):
     st.session_state.dimension_scores[dimension_name] = total_dimension_score
     return total_dimension_score
 
+# AI-based scoring when checkbox is selected
+def ai_scoring(dimension_name, narrative_input):
+    if dimension_name == "Enabling Environment":
+        prompt = (
+            "You are a climate finance expert. Based on the following narrative, assess the maturity of the enabling environment using the four sub-components: "
+            "(1) Strategy (NDCs, national plans), (2) Policy (sectoral climate policies), (3) Enforcement (rule of law, anti-corruption), and (4) Stakeholder consultation. "
+            "Assign a maturity score from 0 to 4 for each sub-component and explain each score briefly. Then provide 3 prioritized action recommendations if any score is below 3."
+        )
+    else:
+        prompt = f"AI-based scoring for {dimension_name} using the provided narrative."
+
+    ai_result = get_ai_score(prompt, narrative_input)
+    return ai_result
+
 # Show the dimension UI and calculate the score
-total_dimension_score = display_dimension_scoring(selected_dimension)
+if selected_dimension:
+    # AI scoring interface
+    use_ai = st.checkbox(f"Use AI to score {selected_dimension}")
+    if use_ai:
+        narrative_input = st.text_area(f"Provide a narrative description for {selected_dimension}", height=300)
+        if narrative_input:
+            with st.spinner("Analyzing with AI..."):
+                ai_score = ai_scoring(selected_dimension, narrative_input)
+                st.markdown("**AI-Generated Assessment and Recommendations:**")
+                st.markdown(ai_score)
+    
+    total_dimension_score = display_dimension_scoring(selected_dimension)
 
-# Calculate the combined score across all dimensions (max score per dimension is 4)
-combined_score = sum(st.session_state.dimension_scores.values())
-combined_score_avg = round(combined_score / (4 * len(DIMENSIONS)), 2)  # Maximum score for each dimension is 4
+    # Calculate the combined score across all dimensions (max score per dimension is 4)
+    combined_score = sum(st.session_state.dimension_scores.values())
+    combined_score_avg = round(combined_score / (4 * len(DIMENSIONS)), 2)  # Maximum score for each dimension is 4
 
-# Display the total score for the selected dimension
-st.markdown(f"### Total Score for {selected_dimension}: {total_dimension_score}/{4 * sum(len(DIMENSIONS[selected_dimension]['subcategories'][subcat]) for subcat in DIMENSIONS[selected_dimension]['subcategories'])}")
+    # Display the total score for the selected dimension
+    st.markdown(f"### Total Score for {selected_dimension}: {total_dimension_score}/{4 * sum(len(DIMENSIONS[selected_dimension]['subcategories'][subcat]) for subcat in DIMENSIONS[selected_dimension]['subcategories'])}")
 
-# Floating live score on the sidebar
-st.sidebar.markdown(f"**Live Score for {selected_dimension}:** {total_dimension_score}/{4 * sum(len(DIMENSIONS[selected_dimension]['subcategories'][subcat]) for subcat in DIMENSIONS[selected_dimension]['subcategories'])}")
+    # Floating live score on the sidebar
+    st.sidebar.markdown(f"**Live Score for {selected_dimension}:** {total_dimension_score}/{4 * sum(len(DIMENSIONS[selected_dimension]['subcategories'][subcat]) for subcat in DIMENSIONS[selected_dimension]['subcategories'])}")
 
 # Display the overall combined score
 st.sidebar.markdown(f"**Combined Score of All Dimensions:** {combined_score_avg}/4")
