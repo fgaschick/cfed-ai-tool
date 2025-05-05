@@ -112,7 +112,10 @@ DIMENSIONS = {
     }
 }
 
-# Sidebar for selecting dimension
+# Sidebar for selecting dimension and tabs
+tab_selected = st.sidebar.radio("Select Tab", ["Instructions", "Summary & Recommendations"])
+
+# Initialize selected dimension
 selected_dimension = st.sidebar.selectbox("Select Dimension", list(DIMENSIONS.keys()))
 
 # Function to display and score each dimension's subcategories with AI
@@ -144,7 +147,7 @@ def ai_scoring(dimension_name, narrative_input):
     ai_result = get_ai_score(prompt, narrative_input)
     return ai_result
 
-# Show the dimension UI and calculate the score
+# Display the dimension UI and calculate the score
 if selected_dimension:
     # AI scoring interface
     use_ai = st.checkbox(f"Use AI to score {selected_dimension}")
@@ -172,8 +175,6 @@ if selected_dimension:
 st.sidebar.markdown(f"**Combined Score of All Dimensions:** {combined_score_avg}/4")
 
 # Tab setup: Instructions and Recommendations
-tab_selected = st.selectbox("Select Tab", ["Instructions", "Summary & Recommendations"])
-
 if tab_selected == "Instructions":
     st.markdown("""
     ### Instructions
