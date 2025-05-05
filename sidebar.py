@@ -35,7 +35,7 @@ components.html("""
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
     body {
         font-family: 'Roboto', sans-serif;
-        background-color: #f5f5f5;
+        background-color: #005670;
     }
     .header-bar {
         position: fixed;
