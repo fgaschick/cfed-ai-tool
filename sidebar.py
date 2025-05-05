@@ -24,12 +24,12 @@ def get_ai_score(prompt, user_input):
         return f"AI error: {str(e)}"
 
 # Function to display scoring UI for subcategories
-def show_scoring_ui(subcategory_name, dimension_name):
+def show_scoring_ui(subcategory_name, dimension_name, dimension_data):
     st.markdown(f"### {subcategory_name} Scoring")
     answers = []
 
     # For each question in the selected subcategory, display a checkbox
-    for question in DIMENSIONS[dimension_name]["subcategories"][subcategory_name]:
+    for question in dimension_data["subcategories"][subcategory_name]:
         answer = st.checkbox(question)
         answers.append(answer)
 
@@ -66,7 +66,54 @@ DIMENSIONS = {
             ]
         }
     },
-    # Repeat this structure for the remaining three dimensions...
+    "Ecosystem Infrastructure": {
+        "subcategories": {
+            "Monitoring Systems": [
+                "Are there systems in place for monitoring and evaluating ecosystem data?",
+                "Are these systems effectively capturing climate data?"
+            ],
+            "Institutional Capacity": [
+                "Are there institutions with sufficient capacity to implement climate finance?",
+                "Is there adequate staff training and expertise in climate finance?"
+            ],
+            "Data Availability": [
+                "Is data on climate impacts and vulnerabilities available?",
+                "Are data systems transparent and accessible?"
+            ]
+        }
+    },
+    "Finance Providers": {
+        "subcategories": {
+            "Public Finance": [
+                "Is there public finance allocated for climate projects?",
+                "Are public funds mobilized for mitigation and adaptation?"
+            ],
+            "Private Finance": [
+                "Is there active private investment in climate action?",
+                "Do banks and financial institutions fund climate-relevant projects?"
+            ],
+            "International Support": [
+                "Does the country receive international climate finance?",
+                "Are foreign investments supporting local climate initiatives?"
+            ]
+        }
+    },
+    "Finance Seekers": {
+        "subcategories": {
+            "Project Pipeline": [
+                "Is there a robust pipeline of fundable climate projects?",
+                "Are projects aligned with national climate goals?"
+            ],
+            "Private Sector Engagement": [
+                "Are private sector entities engaged in climate projects?",
+                "Do they contribute to climate resilience or emission reduction?"
+            ],
+            "Capacity to Absorb Funds": [
+                "Does the country have institutions capable of managing climate finance?",
+                "Are there transparent processes for fund distribution?"
+            ]
+        }
+    }
 }
 
 # Sidebar for selecting dimension
@@ -98,7 +145,7 @@ ai_scoring_ui(selected_dimension)
 
 # Manual rule-based scoring
 for subcategory_name in DIMENSIONS[selected_dimension]["subcategories"]:
-    subcategory_score = show_scoring_ui(subcategory_name, selected_dimension)
+    subcategory_score = show_scoring_ui(subcategory_name, selected_dimension, DIMENSIONS[selected_dimension])
     dimension_score += subcategory_score
 
 # Calculate overall score for the dimension
