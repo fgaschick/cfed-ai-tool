@@ -10,6 +10,7 @@ if not api_key:
 
 client = OpenAI(api_key=api_key)
 
+# Function to call OpenAI API for AI scoring
 def get_ai_score(prompt, user_input):
     try:
         response = client.chat.completions.create(
@@ -23,23 +24,17 @@ def get_ai_score(prompt, user_input):
     except Exception as e:
         return f"AI error: {str(e)}"
 
-# Function to display scoring UI for subcategories
-def show_scoring_ui(subcategory_name, dimension_name, dimension_data):
-    st.markdown(f"### {subcategory_name} Scoring")
-    answers = []
+# Function to calculate score for each subcategory based on user input
+def score_subcategory(answers):
+    return min(4, sum(answers))  # Adjusting max score to 4 for each subcategory
 
-    # For each question in the selected subcategory, display a checkbox
-    for question in dimension_data["subcategories"][subcategory_name]:
-        answer = st.checkbox(question)
-        answers.append(answer)
+# Initialize session state for combined score and dimension scores
+if 'combined_score' not in st.session_state:
+    st.session_state.combined_score = 0
+if 'dimension_scores' not in st.session_state:
+    st.session_state.dimension_scores = {dim: 0 for dim in ["Enabling Environment", "Ecosystem Infrastructure", "Finance Providers", "Finance Seekers"]}
 
-    # Calculate score for subcategory
-    subcategory_score = sum(answers)
-    st.markdown(f"**Score for {subcategory_name}:** {subcategory_score}/{len(answers)}")
-
-    return subcategory_score
-
-# DIMENSIONS structure to include questions for each subcategory
+# Define the dimensions and their subcategories with questions
 DIMENSIONS = {
     "Enabling Environment": {
         "subcategories": {
@@ -116,69 +111,39 @@ DIMENSIONS = {
     }
 }
 
-# Initialize session state for combined score and dimension scores
-if 'combined_score' not in st.session_state:
-    st.session_state.combined_score = 0
-if 'dimension_scores' not in st.session_state:
-    st.session_state.dimension_scores = {dim: 0 for dim in DIMENSIONS}
-
 # Sidebar for selecting dimension
 selected_dimension = st.sidebar.selectbox("Select Dimension", list(DIMENSIONS.keys()))
 
-# Function for AI-based scoring
-def ai_scoring_ui(dimension_name):
-    use_ai = st.checkbox(f"Use AI to score {dimension_name}", value=False)
-    if use_ai:
-        narrative = st.text_area(f"Provide a narrative description for {dimension_name}:", height=300)
-        if narrative:
-            prompt = (
-                f"You are a climate finance expert. Based on the following narrative, assess the maturity of the {dimension_name} using the relevant sub-components "
-                "and assign a maturity score from 0 to 3 for each sub-component. Please also provide prioritized action recommendations."
-            )
-            with st.spinner(f"Analyzing {dimension_name} with AI..."):
-                ai_output = get_ai_score(prompt, narrative)
-            st.markdown("**AI-Generated Assessment and Recommendations:**")
-            st.markdown(ai_output)
+# Function to display and score each dimension's subcategories
+def display_dimension_scoring(dimension_name):
+    dimension_data = DIMENSIONS[dimension_name]
+    total_dimension_score = 0
+    for subcategory_name, questions in dimension_data["subcategories"].items():
+        st.markdown(f"### {subcategory_name}")
+        answers = [st.checkbox(q) for q in questions]
+        subcategory_score = score_subcategory(answers)
+        total_dimension_score += subcategory_score
+        st.markdown(f"Score for {subcategory_name}: {subcategory_score}/{len(questions)*4}")
+    
+    # Store the dimension score in session state
+    st.session_state.dimension_scores[dimension_name] = total_dimension_score
+    return total_dimension_score
 
-# Initialize variable to store total dimension score
-dimension_score = 0
+# Show the dimension UI and calculate the score
+total_dimension_score = display_dimension_scoring(selected_dimension)
 
-# Function to calculate combined score for all dimensions
-combined_score = st.session_state.combined_score
-total_dimensions = len(DIMENSIONS)
+# Calculate the combined score across all dimensions (max score per dimension is 4)
+combined_score = sum(st.session_state.dimension_scores.values())
+combined_score_avg = round(combined_score / (4 * len(DIMENSIONS)), 2)  # Maximum score for each dimension is 4
 
-# Display dimension and subcategories
-st.markdown(f"## {selected_dimension} Scoring")
-
-# AI scoring
-ai_scoring_ui(selected_dimension)
-
-# Manual rule-based scoring
-for subcategory_name in DIMENSIONS[selected_dimension]["subcategories"]:
-    subcategory_score = show_scoring_ui(subcategory_name, selected_dimension, DIMENSIONS[selected_dimension])
-    dimension_score += subcategory_score
-
-# Update dimension score in session state
-st.session_state.dimension_scores[selected_dimension] = dimension_score
-
-# Calculate overall score for the dimension
-dimension_score = round(dimension_score / sum(len(DIMENSIONS[selected_dimension]["subcategories"][subcat]) for subcat in DIMENSIONS[selected_dimension]["subcategories"]), 2)
-
-# Update combined score
-combined_score += dimension_score
-
-# Update session state for combined score
-st.session_state.combined_score = combined_score
-
-# Display the overall dimension score
-st.markdown(f"### Overall Score for {selected_dimension}: {dimension_score}/3")
+# Display the total score for the selected dimension
+st.markdown(f"### Total Score for {selected_dimension}: {total_dimension_score}/{4 * sum(len(DIMENSIONS[selected_dimension]['subcategories'][subcat]) for subcat in DIMENSIONS[selected_dimension]['subcategories'])}")
 
 # Floating live score on the sidebar
-st.sidebar.markdown(f"**Live {selected_dimension} Score:** {dimension_score}/3")
+st.sidebar.markdown(f"**Live Score for {selected_dimension}:** {total_dimension_score}/{4 * sum(len(DIMENSIONS[selected_dimension]['subcategories'][subcat]) for subcat in DIMENSIONS[selected_dimension]['subcategories'])}")
 
-# Calculate and display the combined score
-combined_score_avg = round(st.session_state.combined_score / total_dimensions, 2)
-st.sidebar.markdown(f"**Combined Score of All Dimensions:** {combined_score_avg}/3")
+# Display the overall combined score
+st.sidebar.markdown(f"**Combined Score of All Dimensions:** {combined_score_avg}/4")
 
 # Footer
 st.markdown("""
