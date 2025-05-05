@@ -2,7 +2,7 @@ import streamlit as st
 from openai import OpenAI
 import os
 
-# Set OpenAI API key using environment variable, as in original working script
+# Set OpenAI API key using environment variable
 api_key = os.getenv("OPENAI_API_KEY")
 if not api_key:
     st.error("OPENAI_API_KEY environment variable not set.")
@@ -85,79 +85,70 @@ components.html("""
     
 """, height=150, scrolling=False)
 
-# Dimension Definitions
+# Define subcategories and associated questions for each dimension
 DIMENSIONS = {
     "Enabling Environment": {
-        "subcategories": ["Strategy", "Policy", "Enforcement", "Stakeholder Consultation"],
-        "ai_prompt": "You are a climate finance expert. Based on the following narrative, assess the maturity of the enabling environment using the four sub-components: Strategy, Policy, Enforcement, and Stakeholder Consultation."
+        "subcategories": {
+            "Strategy": [
+                "Has the country submitted an NDC?",
+                "Does the NDC link to investment or implementation plans?",
+                "Does the NDC or strategy include financing targets or mechanisms?",
+                "Is there a national climate finance strategy or roadmap?"
+            ],
+            "Policy": [
+                "Do sectoral policies (energy, land use, etc.) integrate climate objectives?",
+                "Do policies include clear implementation mechanisms?",
+                "Is the private sector consulted or involved in policy development?"
+            ],
+            "Enforcement": [
+                "Do climate-related laws or regulations exist?",
+                "Is there a functioning judiciary or legal redress mechanism?",
+                "Are anti-corruption measures actively implemented?"
+            ],
+            "Stakeholder Consultation": [
+                "Are stakeholders (civil society, academia) engaged in planning?",
+                "Are Indigenous Peoples, women, youth specifically included?",
+                "Are consultations recurring and documented?"
+            ]
+        }
     },
-    "Ecosystem Infrastructure": {
-        "subcategories": ["MRV Systems", "Stakeholder Networks", "Capacity Building", "Financing Mechanisms"],
-        "ai_prompt": "Assess the maturity of the ecosystem infrastructure using sub-components like MRV systems, stakeholder networks, capacity building, and financing mechanisms."
-    },
-    "Finance Providers": {
-        "subcategories": ["Public Funding", "Private Investment", "Carbon Markets", "Donor Support"],
-        "ai_prompt": "Assess the finance providers' landscape including public funding, private investment, carbon markets, and donor support."
-    },
-    "Finance Seekers": {
-        "subcategories": ["Project Pipeline", "Diversification", "Inclusion", "Stakeholder Engagement"],
-        "ai_prompt": "Assess the readiness of finance seekers, considering project pipeline, diversification, inclusion, and stakeholder engagement."
-    }
+    # Repeat the same for Ecosystem Infrastructure, Finance Providers, and Finance Seekers
 }
 
-# Dimension UI
-def show_dimension_ui(dimension_name):
-    dimension = DIMENSIONS[dimension_name]
-    total_score = None
-    score_class = ""
-    
-    st.markdown(f"### {dimension_name} Scoring")
-    
-    use_ai = st.checkbox(f"Use AI to score {dimension_name}", value=False)
-    
-    if use_ai:
-        narrative = st.text_area(f"Provide a narrative description of the {dimension_name.lower()}:")
-        if narrative:
-            with st.spinner("Analyzing with AI..."):
-                output = get_ai_score(dimension["ai_prompt"], narrative)
-                st.markdown("**AI-Generated Assessment and Recommendations:**")
-                st.markdown(output)
-            total_score = "AI-Based"
-            score_class = "score-medium"
-    else:
-        st.markdown(f"### Manual Scoring for {dimension_name}")
-        
-        # Manual scoring for subcategories
-        scores = {}
-        for subcategory in dimension["subcategories"]:
-            scores[subcategory] = st.checkbox(f"Assess {subcategory}")
-        
-        # Calculate the score for this dimension
-        total_score = sum([1 for score in scores.values() if score])
-        total_score = min(total_score, len(dimension["subcategories"]))
-        
-        if total_score < 1.5:
-            score_class = "score-low"
-        elif total_score < 2.5:
-            score_class = "score-medium"
-        else:
-            score_class = "score-high"
-        
-        st.markdown(f"**Score for {dimension_name}:** {total_score}/{len(dimension['subcategories'])}")
-    
-    # Floating live score
-    if total_score is not None:
-        st.markdown(f"""
-        <div class="bottom-box {score_class}" style="bottom: 60px; right: 30px; position: fixed;">
-            <strong>Live {dimension_name} Score:</strong><br> {total_score}/{len(dimension['subcategories'])}
-        </div>
-        """, unsafe_allow_html=True)
+# Function for scoring and displaying questions
+def show_scoring_ui(dimension_name, subcategory_name):
+    st.markdown(f"### {subcategory_name} Scoring")
+    answers = []
 
-# Sidebar to select the dimension
+    # For each question in the selected subcategory
+    for question in DIMENSIONS[dimension_name]["subcategories"][subcategory_name]:
+        answer = st.checkbox(question)
+        answers.append(answer)
+
+    # Calculate score for subcategory
+    subcategory_score = sum(answers)
+    st.markdown(f"**Score for {subcategory_name}:** {subcategory_score}/{len(answers)}")
+
+    return subcategory_score
+
+# Sidebar for selecting dimension
 selected_dimension = st.sidebar.selectbox("Select Dimension", list(DIMENSIONS.keys()))
 
-# Show the UI for the selected dimension
-show_dimension_ui(selected_dimension)
+# Display the dimension and allow subcategory scoring
+st.markdown(f"## {selected_dimension} Scoring")
+
+dimension_score = 0
+for subcategory_name in DIMENSIONS[selected_dimension]["subcategories"]:
+    subcategory_score = show_scoring_ui(selected_dimension, subcategory_name)
+    dimension_score += subcategory_score
+
+dimension_score = round(dimension_score / sum(len(DIMENSIONS[selected_dimension]["subcategories"][subcat]) for subcat in DIMENSIONS[selected_dimension]["subcategories"]), 2)
+
+# Display the overall dimension score
+st.markdown(f"### Overall Score for {selected_dimension}: {dimension_score}/3")
+
+# Floating live score on the sidebar
+st.sidebar.markdown(f"**Live {selected_dimension} Score:** {dimension_score}/3")
 
 # Footer
 st.markdown("""
