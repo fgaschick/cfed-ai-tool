@@ -88,6 +88,9 @@ components.html("""
         background-color: #003b4d;  /* Chemonics Dark Blue */
         color: white;
     }
+    .sidebar .sidebar-title, .sidebar .sidebar-subheader {
+        color: white;
+    }
     </style>
 """, height=150)
 
