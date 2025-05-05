@@ -91,6 +91,9 @@ components.html("""
     .sidebar .sidebar-title, .sidebar .sidebar-subheader {
         color: white;
     }
+    .sidebar .sidebar-sticky {
+        position: fixed;
+    }
     </style>
 """, height=150)
 
