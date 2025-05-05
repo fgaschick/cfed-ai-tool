@@ -112,7 +112,7 @@ DIMENSIONS = {
     }
 }
 
-# Sidebar for selecting dimension and tabs
+# Sidebar for selecting tabs and showing scores
 tab_selected = st.sidebar.radio("Select Tab", ["Instructions", "Summary & Recommendations"])
 
 # Initialize selected dimension
@@ -176,7 +176,7 @@ st.sidebar.markdown(f"**Combined Score of All Dimensions:** {combined_score_avg}
 
 # Tab setup: Instructions and Recommendations
 if tab_selected == "Instructions":
-    st.markdown("""
+    st.sidebar.markdown("""
     ### Instructions
     This tool helps assess the maturity of climate finance dimensions.
     - Each dimension has subcategories that will be scored manually or via AI.
@@ -195,7 +195,7 @@ elif tab_selected == "Summary & Recommendations":
             all_recommendations.append(ai_score)
 
     # Display AI-based summary and recommendations for all dimensions
-    st.markdown("### AI-Based Recommendations for All Dimensions:")
+    st.sidebar.markdown("### AI-Based Recommendations for All Dimensions:")
     for rec in all_recommendations:
         st.markdown(rec)
 
