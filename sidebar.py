@@ -81,7 +81,7 @@ components.html("""
 
     /* Sidebar Customization */
     .sidebar .sidebar-content {
-        background-color: #003b4d;  /* Chemonics Dark Blue */
+        background-color: #005670;  /* Chemonics Dark Blue */
         color: white;
     }
     .sidebar .sidebar-header {
