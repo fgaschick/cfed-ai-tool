@@ -105,7 +105,7 @@ DIMENSIONS = {
     }
 }
 
-# Display the UI for the selected dimension
+# Dimension UI
 def show_dimension_ui(dimension_name):
     dimension = DIMENSIONS[dimension_name]
     total_score = None
@@ -153,7 +153,7 @@ def show_dimension_ui(dimension_name):
         </div>
         """, unsafe_allow_html=True)
 
-# Display dimension selector in the sidebar
+# Sidebar to select the dimension
 selected_dimension = st.sidebar.selectbox("Select Dimension", list(DIMENSIONS.keys()))
 
 # Show the UI for the selected dimension
