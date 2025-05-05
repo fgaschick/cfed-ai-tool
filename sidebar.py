@@ -137,6 +137,10 @@ def ai_scoring_ui(dimension_name):
 # Initialize variable to store total dimension score
 dimension_score = 0
 
+# Function to calculate combined score for all dimensions
+combined_score = 0
+total_dimensions = len(DIMENSIONS)
+
 # Display dimension and subcategories
 st.markdown(f"## {selected_dimension} Scoring")
 
@@ -151,11 +155,18 @@ for subcategory_name in DIMENSIONS[selected_dimension]["subcategories"]:
 # Calculate overall score for the dimension
 dimension_score = round(dimension_score / sum(len(DIMENSIONS[selected_dimension]["subcategories"][subcat]) for subcat in DIMENSIONS[selected_dimension]["subcategories"]), 2)
 
+# Update combined score
+combined_score += dimension_score
+
 # Display the overall dimension score
 st.markdown(f"### Overall Score for {selected_dimension}: {dimension_score}/3")
 
 # Floating live score on the sidebar
 st.sidebar.markdown(f"**Live {selected_dimension} Score:** {dimension_score}/3")
+
+# Calculate and display the combined score
+combined_score_avg = round(combined_score / total_dimensions, 2)
+st.sidebar.markdown(f"**Combined Score of All Dimensions:** {combined_score_avg}/3")
 
 # Footer
 st.markdown("""
