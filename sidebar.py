@@ -2,7 +2,7 @@ import streamlit as st
 from openai import OpenAI
 import os
 
-# Set OpenAI API key using environment variable
+# Set OpenAI API key using environment variable, as in original working script
 api_key = os.getenv("OPENAI_API_KEY")
 if not api_key:
     st.error("OPENAI_API_KEY environment variable not set.")
@@ -10,7 +10,6 @@ if not api_key:
 
 client = OpenAI(api_key=api_key)
 
-# Function to get AI score (reused from previous implementation)
 def get_ai_score(prompt, user_input):
     try:
         response = client.chat.completions.create(
@@ -24,140 +23,143 @@ def get_ai_score(prompt, user_input):
     except Exception as e:
         return f"AI error: {str(e)}"
 
-# Sidebar Styling for Chemonics
-st.markdown("""
+st.set_page_config(page_title="Climate Finance Maturity Assessment", layout="wide")
+
+# Custom header and footer with logo
+import streamlit.components.v1 as components
+
+components.html("""
     <style>
-    /* Sidebar Styling */
-    .sidebar .sidebar-content {
-        background-color: #005670; /* Chemonics blue */
-        color: white;
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+    body {
         font-family: 'Roboto', sans-serif;
+        background-color: #f5f5f5;
     }
-    .sidebar .sidebar-header {
+    .custom-footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100vw;
+        background-color: #005670;
         color: white;
         text-align: center;
         padding: 10px;
-        font-size: 20px;
-        font-weight: bold;
+        font-size: 13px;
+        z-index: 1000;
     }
-    .sidebar .sidebar-tabs {
-        margin-top: 30px;
+    .header-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        background-color: #005670;
         color: white;
-        padding: 10px;
-        font-weight: bold;
-        cursor: pointer;
         text-align: center;
+        padding: 10px;
+        font-size: 13px;
+        z-index: 1001;
     }
-    .sidebar .sidebar-tabs:hover {
-        background-color: #003f4f; /* Darker blue for hover */
+    .header-bar img {
+        max-height: 30px;
     }
-    .sidebar .active-tab {
-        background-color: #003f4f;
-    }
-    .sidebar .tab-content {
+    .bottom-box {
+        position: fixed;
+        bottom: 60px;
+        right: 30px;
+        padding: 10px 20px;
+        border-radius: 8px;
+        z-index: 1001;
+        box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
+        font-weight: bold;
         color: white;
     }
+    .score-low { background-color: #e57373; }
+    .score-medium { background-color: #fdd835; }
+    .score-high { background-color: #81c784; }
     </style>
-""", unsafe_allow_html=True)
 
-# Sidebar: Dimension Selection
-dimension = st.sidebar.radio(
-    "Select Dimension", 
-    ["Instructions", "Enabling Environment", "Ecosystem Infrastructure", "Finance Providers", "Finance Seekers"]
-)
-
-# Function to display questions based on selected dimension
-def display_dimension_questions(dimension):
-    if dimension == "Enabling Environment":
-        st.markdown("### Enabling Environment Questions")
-        s1 = st.checkbox("Has the country submitted an NDC?")
-        s2 = st.checkbox("Are NDCs linked to investment or implementation plans?")
-        s3 = st.checkbox("Does the NDC include financing targets or mechanisms?")
-        # Add more questions as needed
-        # Score calculation
-        ee_score = s1 + s2 + s3
-        st.sidebar.markdown(f"**Live Score**: {ee_score}/3")
-        
-    elif dimension == "Ecosystem Infrastructure":
-        st.markdown("### Ecosystem Infrastructure Questions")
-        mrv = st.checkbox("Are MRV systems and climate data tools in place?")
-        partnerships = st.checkbox("Are there active stakeholder networks?")
-        climate_capacity = st.checkbox("Do institutions have adequate climate finance capacity?")
-        # Score calculation
-        infra_score = mrv + partnerships + climate_capacity
-        st.sidebar.markdown(f"**Live Score**: {infra_score}/3")
-        
-    elif dimension == "Finance Providers":
-        st.markdown("### Finance Providers Questions")
-        public_funding = st.checkbox("Is there domestic public funding for climate?")
-        carbon_market = st.checkbox("Is the country active in voluntary or compliance carbon markets?")
-        private_investment = st.checkbox("Is commercial/private capital flowing into climate sectors?")
-        # Score calculation
-        providers_score = public_funding + carbon_market + private_investment
-        st.sidebar.markdown(f"**Live Score**: {providers_score}/3")
-        
-    elif dimension == "Finance Seekers":
-        st.markdown("### Finance Seekers Questions")
-        project_pipeline = st.checkbox("Is there a robust pipeline of fundable climate projects?")
-        project_diversity = st.checkbox("Do projects span adaptation, mitigation, and nature-based solutions?")
-        inclusive_targeting = st.checkbox("Are vulnerable or underserved groups targeted in project design?")
-        # Score calculation
-        seekers_score = project_pipeline + project_diversity + inclusive_targeting
-        st.sidebar.markdown(f"**Live Score**: {seekers_score}/3")
-
-# Display the selected tab's content
-if dimension == "Instructions":
-    st.markdown("""
-    ### 📘 Instructions
-    This tool helps evaluate the maturity of a country's climate finance ecosystem. Choose a dimension to start the assessment.
-    - **Enabling Environment**: Evaluate the national climate strategy, policies, and enforcement.
-    - **Ecosystem Infrastructure**: Assess the availability of tools and partnerships.
-    - **Finance Providers**: Check the involvement of public/private funding and carbon markets.
-    - **Finance Seekers**: Evaluate the readiness of climate projects and inclusion of vulnerable groups.
-    """)
-else:
-    # Display the questions for the selected dimension
-    display_dimension_questions(dimension)
-
-# Display Live Score in Sidebar for Each Dimension (floating score)
-if dimension != "Instructions":
-    st.sidebar.markdown(f"**Live Score for {dimension}:** {ee_score}/3")
-
-# AI-generated recommendations for each dimension
-if st.button("✅ Generate AI-Based Recommendations"):
-    combined_notes = f"""Strategy notes: {notes_strategy}
-Policy notes: {notes_policy}
-Enforcement notes: {notes_enforcement}
-Consultation notes: {notes_consultation}"""
-    ai_prompt_manual = f"""
-You are a climate finance advisor. The user has manually assessed maturity scores as follows:
-- Strategy: {strategy_score}/3
-- Policy: {policy_score}/3
-- Enforcement: {enforcement_score}/3
-- Stakeholder Consultation: {consultation_score}/3
-
-The user also provided these notes:
-{combined_notes}
-
-Please provide 3-5 concrete, prioritized action recommendations to improve any sub-component that scored below 3.
-"""
-    with st.spinner("Generating AI-based action recommendations..."):
-        ai_actions = get_ai_score(ai_prompt_manual, "")
-    st.markdown("**AI Recommendations for Action:**")
-    st.markdown(ai_actions)
-
-# Floating score box always shown
-
-
-# Floating live score
-if ee_total_score is not None:
-    st.markdown(f"""
-    <div class="bottom-box {score_class}" style="bottom: 60px; right: 30px; position: fixed;">
-        <strong>Live Enabling Env Score:</strong><br> {ee_total_score}/3
+    <div class='header-bar'>
+        <img src='https://raw.githubusercontent.com/fgaschick/cfed-ai-tool/main/Chemonics_RGB_Horizontal_BLUE-WHITE.png' alt='Chemonics Logo'/>
     </div>
-    """, unsafe_allow_html=True)
+    <div style='height: 100px;'></div>
+    
+""", height=150, scrolling=False)
 
-# Proper footer now added at the end of the app
+# Dimension Definitions
+DIMENSIONS = {
+    "Enabling Environment": {
+        "subcategories": ["Strategy", "Policy", "Enforcement", "Stakeholder Consultation"],
+        "ai_prompt": "You are a climate finance expert. Based on the following narrative, assess the maturity of the enabling environment using the four sub-components: Strategy, Policy, Enforcement, and Stakeholder Consultation."
+    },
+    "Ecosystem Infrastructure": {
+        "subcategories": ["MRV Systems", "Stakeholder Networks", "Capacity Building", "Financing Mechanisms"],
+        "ai_prompt": "Assess the maturity of the ecosystem infrastructure using sub-components like MRV systems, stakeholder networks, capacity building, and financing mechanisms."
+    },
+    "Finance Providers": {
+        "subcategories": ["Public Funding", "Private Investment", "Carbon Markets", "Donor Support"],
+        "ai_prompt": "Assess the finance providers' landscape including public funding, private investment, carbon markets, and donor support."
+    },
+    "Finance Seekers": {
+        "subcategories": ["Project Pipeline", "Diversification", "Inclusion", "Stakeholder Engagement"],
+        "ai_prompt": "Assess the readiness of finance seekers, considering project pipeline, diversification, inclusion, and stakeholder engagement."
+    }
+}
+
+# Display the UI for the selected dimension
+def show_dimension_ui(dimension_name):
+    dimension = DIMENSIONS[dimension_name]
+    total_score = None
+    score_class = ""
+    
+    st.markdown(f"### {dimension_name} Scoring")
+    
+    use_ai = st.checkbox(f"Use AI to score {dimension_name}", value=False)
+    
+    if use_ai:
+        narrative = st.text_area(f"Provide a narrative description of the {dimension_name.lower()}:")
+        if narrative:
+            with st.spinner("Analyzing with AI..."):
+                output = get_ai_score(dimension["ai_prompt"], narrative)
+                st.markdown("**AI-Generated Assessment and Recommendations:**")
+                st.markdown(output)
+            total_score = "AI-Based"
+            score_class = "score-medium"
+    else:
+        st.markdown(f"### Manual Scoring for {dimension_name}")
+        
+        # Manual scoring for subcategories
+        scores = {}
+        for subcategory in dimension["subcategories"]:
+            scores[subcategory] = st.checkbox(f"Assess {subcategory}")
+        
+        # Calculate the score for this dimension
+        total_score = sum([1 for score in scores.values() if score])
+        total_score = min(total_score, len(dimension["subcategories"]))
+        
+        if total_score < 1.5:
+            score_class = "score-low"
+        elif total_score < 2.5:
+            score_class = "score-medium"
+        else:
+            score_class = "score-high"
+        
+        st.markdown(f"**Score for {dimension_name}:** {total_score}/{len(dimension['subcategories'])}")
+    
+    # Floating live score
+    if total_score is not None:
+        st.markdown(f"""
+        <div class="bottom-box {score_class}" style="bottom: 60px; right: 30px; position: fixed;">
+            <strong>Live {dimension_name} Score:</strong><br> {total_score}/{len(dimension['subcategories'])}
+        </div>
+        """, unsafe_allow_html=True)
+
+# Display dimension selector in the sidebar
+selected_dimension = st.sidebar.selectbox("Select Dimension", list(DIMENSIONS.keys()))
+
+# Show the UI for the selected dimension
+show_dimension_ui(selected_dimension)
+
+# Footer
 st.markdown("""
 <style>
 .footer-fixed {
