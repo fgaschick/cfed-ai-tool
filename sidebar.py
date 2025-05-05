@@ -78,7 +78,7 @@ components.html("""
     .score-low { background-color: #e57373; }
     .score-medium { background-color: #fdd835; }
     .score-high { background-color: #81c784; }
-    
+
     /* Sidebar Customization */
     .sidebar .sidebar-content {
         background-color: #003b4d;  /* Chemonics Dark Blue */
@@ -92,11 +92,9 @@ components.html("""
 """, height=150)
 
 # Sidebar setup for navigation
+st.sidebar.image("https://raw.githubusercontent.com/fgaschick/cfed-ai-tool/main/Chemonics_RGB_Horizontal_BLUE-WHITE.png", width=300)
 st.sidebar.title("Climate Finance Ecosystem Diagnostic (CFED)")
 st.sidebar.subheader("AI-Assisted Climate Finance Ecosystem Maturity Scoring Tool – Prototype")
-
-# Add Chemonics logo to the sidebar at the top
-st.sidebar.image("https://raw.githubusercontent.com/fgaschick/cfed-ai-tool/main/Chemonics_RGB_Horizontal_BLUE-WHITE.png", width=300)
 
 # Sidebar menu tabs
 tabs = ["Instructions", "Enabling Environment", "Ecosystem Infrastructure", "Finance Providers", "Finance Seekers", "Summary & Recommendations"]
