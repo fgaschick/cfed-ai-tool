@@ -78,6 +78,16 @@ components.html("""
     .score-low { background-color: #e57373; }
     .score-medium { background-color: #fdd835; }
     .score-high { background-color: #81c784; }
+    
+    /* Sidebar Customization */
+    .sidebar .sidebar-content {
+        background-color: #003b4d;  /* Chemonics Dark Blue */
+        color: white;
+    }
+    .sidebar .sidebar-header {
+        background-color: #003b4d;  /* Chemonics Dark Blue */
+        color: white;
+    }
     </style>
 """, height=150)
 
@@ -85,7 +95,7 @@ components.html("""
 st.sidebar.title("Climate Finance Ecosystem Diagnostic (CFED)")
 st.sidebar.subheader("AI-Assisted Climate Finance Ecosystem Maturity Scoring Tool – Prototype")
 
-# Add Chemonics logo to the sidebar
+# Add Chemonics logo to the sidebar at the top
 st.sidebar.image("https://raw.githubusercontent.com/fgaschick/cfed-ai-tool/main/Chemonics_RGB_Horizontal_BLUE-WHITE.png", width=300)
 
 # Sidebar menu tabs
@@ -156,7 +166,7 @@ elif selected_tab == "Enabling Environment":
                 output = get_ai_score(prompt, narrative_ee)
                 st.markdown("**AI-Generated Assessment and Recommendations:**")
                 st.markdown(output)
-            dimension_scores["Enabling Environment"] = 2  # Placeholder value for AI-based score, update as per actual AI output
+            dimension_scores["Enabling Environment"] = 2  # Placeholder value for AI-based score
     else:
         st.markdown("### Manual Scoring (based on sub-indicator evidence)")
         # Manual scoring based on checkboxes
