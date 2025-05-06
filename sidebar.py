@@ -175,7 +175,7 @@ elif selected_tab == "Enabling Environment":
             dimension_scores["Enabling Environment"] = 2  # Placeholder value for AI-based score
     else:
         st.markdown("### Manual Scoring (based on sub-indicator evidence)")
-        # Manual scoring based on checkboxes
+        # Manual scoring based on checkboxes (use subcomponents from the Excel sheet)
         s1 = st.checkbox("Country has submitted an NDC")
         s2 = st.checkbox("NDC is linked to investment or implementation plans")
         s3 = st.checkbox("NDC or strategy includes financing targets or mechanisms")
@@ -205,7 +205,7 @@ elif selected_tab == "Ecosystem Infrastructure":
             dimension_scores["Ecosystem Infrastructure"] = 2  # Placeholder value for AI-based score
     else:
         st.markdown("### Manual Scoring (based on sub-indicator evidence)")
-        # Manual scoring based on checkboxes
+        # Manual scoring based on checkboxes (use subcomponents from the Excel sheet)
         e1 = st.checkbox("Physical infrastructure for climate adaptation and mitigation exists")
         e2 = st.checkbox("There is a national or regional data infrastructure for monitoring climate impacts")
         e3 = st.checkbox("Climate-related digital platforms are available for stakeholders")
@@ -235,7 +235,7 @@ elif selected_tab == "Finance Providers":
             dimension_scores["Finance Providers"] = 2  # Placeholder value for AI-based score
     else:
         st.markdown("### Manual Scoring (based on sub-indicator evidence)")
-        # Manual scoring based on checkboxes
+        # Manual scoring based on checkboxes (use subcomponents from the Excel sheet)
         f1 = st.checkbox("Public finance providers are operational and engaged in climate finance")
         f2 = st.checkbox("Private finance providers are actively engaged in climate finance")
         f3 = st.checkbox("Development finance institutions provide substantial climate finance")
@@ -265,7 +265,7 @@ elif selected_tab == "Finance Seekers":
             dimension_scores["Finance Seekers"] = 2  # Placeholder value for AI-based score
     else:
         st.markdown("### Manual Scoring (based on sub-indicator evidence)")
-        # Manual scoring based on checkboxes
+        # Manual scoring based on checkboxes (use subcomponents from the Excel sheet)
         s1 = st.checkbox("Project proposals are well developed and aligned with climate finance needs")
         s2 = st.checkbox("A pipeline of climate projects is available for financing")
         s3 = st.checkbox("There is easy access to finance for climate-related projects")
