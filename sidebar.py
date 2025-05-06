@@ -26,6 +26,19 @@ def get_ai_score(prompt, user_input):
     except Exception as e:
         return f"AI error: {str(e)}"
 
+# Function to extract text from uploaded document (PDF/Word)
+def extract_text_from_file(uploaded_file):
+    text = ""
+    if uploaded_file.type == "application/pdf":
+        pdf_reader = PyPDF2.PdfReader(uploaded_file)
+        for page in pdf_reader.pages:
+            text += page.extract_text()
+    elif uploaded_file.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+        doc = docx.Document(uploaded_file)
+        for para in doc.paragraphs:
+            text += para.text
+    return text
+
 # Set page configuration
 st.set_page_config(page_title="Climate Finance Maturity Tool", layout="wide")
 
@@ -164,6 +177,11 @@ elif selected_tab == "Enabling Environment":
     use_ai_ee = st.checkbox("Use AI to score Enabling Environment", value=False)
     if use_ai_ee:
         narrative_ee = st.text_area("Provide a narrative description of the enabling environment:", height=300)
+        uploaded_file_ee = st.file_uploader("Upload Document (PDF/Word)", type=["pdf", "docx"], key="file_ee")
+        if uploaded_file_ee:
+            file_text = extract_text_from_file(uploaded_file_ee)
+            narrative_ee += file_text  # Append document text to the narrative
+
         if narrative_ee:
             with st.spinner("Analyzing with AI..."):
                 prompt = (
@@ -192,9 +210,16 @@ elif selected_tab == "Enabling Environment":
 # --- Ecosystem Infrastructure Dimension ---
 elif selected_tab == "Ecosystem Infrastructure":
     st.title("Ecosystem Infrastructure Scoring")
+
+    # AI-based scoring option
     use_ai_ecosystem = st.checkbox("Use AI to score Ecosystem Infrastructure", value=False)
     if use_ai_ecosystem:
         narrative_ecosystem = st.text_area("Provide a narrative description of the ecosystem infrastructure:", height=300)
+        uploaded_file_ecosystem = st.file_uploader("Upload Document (PDF/Word)", type=["pdf", "docx"], key="file_ecosystem")
+        if uploaded_file_ecosystem:
+            file_text = extract_text_from_file(uploaded_file_ecosystem)
+            narrative_ecosystem += file_text  # Append document text to the narrative
+
         if narrative_ecosystem:
             with st.spinner("Analyzing with AI..."):
                 prompt = (
@@ -222,9 +247,16 @@ elif selected_tab == "Ecosystem Infrastructure":
 # --- Finance Providers Dimension ---
 elif selected_tab == "Finance Providers":
     st.title("Finance Providers Scoring")
+
+    # AI-based scoring option
     use_ai_finance_providers = st.checkbox("Use AI to score Finance Providers", value=False)
     if use_ai_finance_providers:
         narrative_finance_providers = st.text_area("Provide a narrative description of the finance providers:", height=300)
+        uploaded_file_finance_providers = st.file_uploader("Upload Document (PDF/Word)", type=["pdf", "docx"], key="file_finance_providers")
+        if uploaded_file_finance_providers:
+            file_text = extract_text_from_file(uploaded_file_finance_providers)
+            narrative_finance_providers += file_text  # Append document text to the narrative
+
         if narrative_finance_providers:
             with st.spinner("Analyzing with AI..."):
                 prompt = (
@@ -252,9 +284,16 @@ elif selected_tab == "Finance Providers":
 # --- Finance Seekers Dimension ---
 elif selected_tab == "Finance Seekers":
     st.title("Finance Seekers Scoring")
+
+    # AI-based scoring option
     use_ai_finance_seekers = st.checkbox("Use AI to score Finance Seekers", value=False)
     if use_ai_finance_seekers:
         narrative_finance_seekers = st.text_area("Provide a narrative description of the finance seekers:", height=300)
+        uploaded_file_finance_seekers = st.file_uploader("Upload Document (PDF/Word)", type=["pdf", "docx"], key="file_finance_seekers")
+        if uploaded_file_finance_seekers:
+            file_text = extract_text_from_file(uploaded_file_finance_seekers)
+            narrative_finance_seekers += file_text  # Append document text to the narrative
+
         if narrative_finance_seekers:
             with st.spinner("Analyzing with AI..."):
                 prompt = (
