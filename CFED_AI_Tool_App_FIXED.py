@@ -1,8 +1,8 @@
 import streamlit as st
 from openai import OpenAI
 import os
-from PyPDF2 import PdfReader
-import docx
+import base64
+import pandas as pd
 
 # Set OpenAI API key using environment variable
 api_key = os.getenv("OPENAI_API_KEY")
@@ -12,37 +12,22 @@ if not api_key:
 
 client = OpenAI(api_key=api_key)
 
+# AI scoring function
 def get_ai_score(prompt, user_input):
     try:
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": prompt},
-                {"role": "user", "content": user_input}
-            ]
+            messages=[{"role": "system", "content": prompt},
+                      {"role": "user", "content": user_input}]
         )
         return response.choices[0].message.content.strip()
     except Exception as e:
         return f"AI error: {str(e)}"
 
-def extract_text_from_pdf(pdf_file):
-    reader = PdfReader(pdf_file)
-    text = ""
-    for page in reader.pages:
-        text += page.extract_text()
-    return text
+# Set page configuration
+st.set_page_config(page_title="Climate Finance Maturity Tool", layout="wide")
 
-def extract_text_from_docx(docx_file):
-    doc = docx.Document(docx_file)
-    text = ""
-    for para in doc.paragraphs:
-        text += para.text + "\n"
-    return text
-
-# Streamlit setup
-st.set_page_config(page_title="AI Scoring Tool", layout="wide")
-
-# Custom header and footer
+# Custom CSS for sidebar and main content
 import streamlit.components.v1 as components
 
 components.html("""
@@ -51,18 +36,6 @@ components.html("""
     body {
         font-family: 'Roboto', sans-serif;
         background-color: #f5f5f5;
-    }
-    .custom-footer {
-        position: fixed;
-        left: 0;
-        bottom: 0;
-        width: 100vw;
-        background-color: #005670;
-        color: white;
-        text-align: center;
-        padding: 10px;
-        font-size: 13px;
-        z-index: 1000;
     }
     .header-bar {
         position: fixed;
@@ -79,6 +52,18 @@ components.html("""
     .header-bar img {
         max-height: 30px;
     }
+    .footer-fixed {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100vw;
+        background-color: #005670;
+        color: white;
+        text-align: center;
+        padding: 10px;
+        font-size: 13px;
+        z-index: 1000;
+    }
     .bottom-box {
         position: fixed;
         bottom: 60px;
@@ -93,161 +78,212 @@ components.html("""
     .score-low { background-color: #e57373; }
     .score-medium { background-color: #fdd835; }
     .score-high { background-color: #81c784; }
+
+    /* Sidebar Customization */
+    .sidebar .sidebar-content {
+        background-color: #005670;  /* Chemonics Dark Blue */
+        color: white;
+    }
+    .sidebar .sidebar-header {
+        background-color: #005670;  /* Chemonics Dark Blue */
+        color: white;
+    }
+    .sidebar .sidebar-title, .sidebar .sidebar-subheader {
+        color: white;
+    }
+    .sidebar .sidebar-sticky {
+        position: fixed;
+    }
     </style>
+""", height=150)
 
-    <div class='header-bar'>
-        <img src='https://raw.githubusercontent.com/fgaschick/cfed-ai-tool/main/Chemonics_RGB_Horizontal_BLUE-WHITE.png' alt='Chemonics Logo'/>
-    </div>
-    <div style='height: 100px;'></div>
-""", height=150, scrolling=False)
+# Sidebar setup for navigation
+st.sidebar.image("https://raw.githubusercontent.com/fgaschick/cfed-ai-tool/main/Chemonics_RGB_Horizontal_BLUE-WHITE.png", width=300)
+st.sidebar.title("Climate Finance Ecosystem Diagnostic (CFED)")
+st.sidebar.subheader("AI-Assisted Climate Finance Ecosystem Maturity Scoring Tool – Prototype")
 
-# Title
-st.title("AI Scoring Tool")
+# Sidebar menu tabs
+tabs = ["Instructions", "Enabling Environment", "Ecosystem Infrastructure", "Finance Providers", "Finance Seekers", "Summary & Recommendations"]
+selected_tab = st.sidebar.radio("Choose a tab", tabs)
 
-# Track score globally
-total_score = None
-score_class = ""
+# Initialize variables for tracking scores
+dimension_scores = {"Enabling Environment": 0, "Ecosystem Infrastructure": 0, "Finance Providers": 0, "Finance Seekers": 0}
+combined_score = 0
 
-# Select dimension
-dimension = st.selectbox("Select a dimension to score", ["Enabling Environment", "Ecosystem Infrastructure", "Finance Providers", "Finance Seekers"])
+# Function to calculate the combined score
+def calculate_combined_score():
+    return sum(dimension_scores.values()) / 4
 
-# AI scoring checkbox
-use_ai = st.checkbox("\U0001F9E0 Use AI to score", value=False)
-
-# Upload document
-uploaded_file = None
-if use_ai:
-    uploaded_file = st.file_uploader("Upload a PDF or DOCX document (optional)", type=["pdf", "docx"])
-
-    # Text input for AI analysis
-    user_input = st.text_area(f"\U0001F50D Provide a narrative description for {dimension}:", height=300)
-
-# Document and AI analysis for each dimension
-if use_ai:
-    if uploaded_file:
-        if uploaded_file.type == "application/pdf":
-            document_text = extract_text_from_pdf(uploaded_file)
-        elif uploaded_file.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-            document_text = extract_text_from_docx(uploaded_file)
-        else:
-            document_text = ""
-
-        # Combine the document text and the user input
-        full_input = f"{document_text}\n\n{user_input}"
+# --- Instructions Tab ---
+if selected_tab == "Instructions":
+    st.markdown("""
+        ## Instructions
+        This tool helps to assess the maturity of a country's climate finance ecosystem. 
+        There are four main dimensions that need to be scored: 
+        - Enabling Environment
+        - Ecosystem Infrastructure
+        - Finance Providers
+        - Finance Seekers
         
-        # Display AI analysis if document/text input is provided
-        if full_input:
+        You can use either **AI-based scoring** (by providing a narrative description) or **manual scoring** (based on checkboxes). 
+        In each dimension, after scoring, you will receive an overall score for that dimension and prioritized recommendations for improvement.
+        
+        After completing all dimensions, you can see the **Summary & Recommendations** tab where you will find AI-based suggestions for improvements based on your inputs.
+    """)
+
+# --- Summary & Recommendations Tab ---
+elif selected_tab == "Summary & Recommendations":
+    st.markdown("## AI-based Recommendations for Action")
+    recommendations = []
+    for dimension, score in dimension_scores.items():
+        if score < 3:
+            prompt = f"Provide 3-5 concrete, prioritized recommendations for improving the {dimension} based on the score of {score}."
+            recommendations.append(f"### {dimension} Recommendations:\n{get_ai_score(prompt, '')}")
+
+    for recommendation in recommendations:
+        st.markdown(recommendation)
+
+    st.markdown("### Download Recommendations as CSV")
+    # Download the AI recommendations as CSV
+    data = {"Dimension": list(dimension_scores.keys()), "Score": list(dimension_scores.values()), "Recommendations": recommendations}
+    df = pd.DataFrame(data)
+    csv = df.to_csv(index=False)
+    b64 = base64.b64encode(csv.encode()).decode()  # encoding as base64
+    href = f'<a href="data:file/csv;base64,{b64}" download="recommendations.csv">Download as CSV</a>'
+    st.markdown(href, unsafe_allow_html=True)
+
+# --- Enabling Environment Dimension ---
+elif selected_tab == "Enabling Environment":
+    st.title("Enabling Environment Scoring")
+
+    # AI-based scoring option
+    use_ai_ee = st.checkbox("Use AI to score Enabling Environment", value=False)
+    if use_ai_ee:
+        narrative_ee = st.text_area("Provide a narrative description of the enabling environment:", height=300)
+        if narrative_ee:
             with st.spinner("Analyzing with AI..."):
                 prompt = (
-                    f"You are a climate finance expert. Based on the following narrative, assess the maturity of the {dimension} using the four sub-components: "
+                    "You are a climate finance expert. Based on the following narrative, assess the maturity of the enabling environment using the four sub-components: "
                     "(1) Strategy (NDCs, national plans), (2) Policy (sectoral climate policies), (3) Enforcement (rule of law, anti-corruption), and (4) Stakeholder consultation. "
                     "Assign a maturity score from 0 to 3 for each sub-component and explain each score briefly. Then provide 3 prioritized action recommendations that would help improve the enabling environment if any score is below 3."
                 )
-                output = get_ai_score(prompt, full_input)
-                st.markdown(f"**AI-Generated Assessment and Recommendations for {dimension}:**")
+                output = get_ai_score(prompt, narrative_ee)
+                st.markdown("**AI-Generated Assessment and Recommendations:**")
                 st.markdown(output)
-
-            # Dummy value to indicate AI mode (actual average not parsed from AI)
-            total_score = "AI-Based"
-            score_class = "score-medium"
-
-# Manual scoring UI for each dimension
-else:
-    st.markdown(f"### Manual Scoring for {dimension} (based on sub-indicator evidence)")
-
-    # Manual Scoring Options for All Dimensions (this part will vary by dimension)
-
-    if dimension == "Enabling Environment":
-        # STRATEGY
-        st.markdown("#### Strategy")
+            dimension_scores["Enabling Environment"] = 2  # Placeholder value for AI-based score
+    else:
+        st.markdown("### Manual Scoring (based on sub-indicator evidence)")
+        # Manual scoring based on checkboxes
         s1 = st.checkbox("Country has submitted an NDC")
         s2 = st.checkbox("NDC is linked to investment or implementation plans")
         s3 = st.checkbox("NDC or strategy includes financing targets or mechanisms")
         s4 = st.checkbox("There is a national climate finance strategy or roadmap")
-        notes_strategy = st.text_area("Notes for Strategy:", key="notes_strategy")
 
-        # POLICY
-        st.markdown("#### Policy")
-        p1 = st.checkbox("Sectoral policies (energy, land use, etc.) integrate climate objectives")
-        p2 = st.checkbox("Policies include clear implementation mechanisms")
-        p3 = st.checkbox("Private sector is consulted or involved in policy development")
-        notes_policy = st.text_area("Notes for Policy:", key="notes_policy")
+        # Compute score for Enabling Environment
+        ee_score = sum([s1, s2, s3, s4])
+        dimension_scores["Enabling Environment"] = ee_score
 
-        # ENFORCEMENT
-        st.markdown("#### Enforcement")
-        e1 = st.checkbox("Climate-related laws or regulations exist")
-        e2 = st.checkbox("There is a functioning judiciary or legal redress mechanism")
-        e3 = st.checkbox("Anti-corruption measures are actively implemented")
-        notes_enforcement = st.text_area("Notes for Enforcement:", key="notes_enforcement")
+        st.markdown(f"**Score for Enabling Environment:** {ee_score}/4")
 
-        # STAKEHOLDER CONSULTATION
-        st.markdown("#### Stakeholder Consultation")
-        c1 = st.checkbox("Stakeholders (civil society, academia) are engaged in planning")
-        c2 = st.checkbox("Indigenous Peoples, women, youth are specifically included")
-        c3 = st.checkbox("Consultations are recurring and documented")
-        notes_consultation = st.text_area("Notes for Consultation:", key="notes_consultation")
+# --- Ecosystem Infrastructure Dimension ---
+elif selected_tab == "Ecosystem Infrastructure":
+    st.title("Ecosystem Infrastructure Scoring")
+    use_ai_ecosystem = st.checkbox("Use AI to score Ecosystem Infrastructure", value=False)
+    if use_ai_ecosystem:
+        narrative_ecosystem = st.text_area("Provide a narrative description of the ecosystem infrastructure:", height=300)
+        if narrative_ecosystem:
+            with st.spinner("Analyzing with AI..."):
+                prompt = (
+                    "You are a climate finance expert. Based on the following narrative, assess the maturity of the ecosystem infrastructure using the relevant sub-components: "
+                    "(1) Physical infrastructure, (2) Data infrastructure, (3) Digital platforms, (4) Regulatory frameworks."
+                )
+                output = get_ai_score(prompt, narrative_ecosystem)
+                st.markdown("**AI-Generated Assessment and Recommendations:**")
+                st.markdown(output)
+            dimension_scores["Ecosystem Infrastructure"] = 2  # Placeholder value for AI-based score
+    else:
+        st.markdown("### Manual Scoring (based on sub-indicator evidence)")
+        # Manual scoring based on checkboxes
+        e1 = st.checkbox("Physical infrastructure for climate adaptation and mitigation exists")
+        e2 = st.checkbox("There is a national or regional data infrastructure for monitoring climate impacts")
+        e3 = st.checkbox("Climate-related digital platforms are available for stakeholders")
+        e4 = st.checkbox("Regulatory frameworks for climate finance and development are in place")
 
-        # Compute maturity per sub-component
-        def score_subcomponent(answers):
-            return min(3, sum(answers))
+        # Compute score for Ecosystem Infrastructure
+        ecosystem_score = sum([e1, e2, e3, e4])
+        dimension_scores["Ecosystem Infrastructure"] = ecosystem_score
 
-        strategy_score = score_subcomponent([s1, s2, s3, s4])
-        policy_score = score_subcomponent([p1, p2, p3])
-        enforcement_score = score_subcomponent([e1, e2, e3])
-        consultation_score = score_subcomponent([c1, c2, c3])
+        st.markdown(f"**Score for Ecosystem Infrastructure:** {ecosystem_score}/4")
 
-        total_score = round((strategy_score + policy_score + enforcement_score + consultation_score) / 4, 2)
+# --- Finance Providers Dimension ---
+elif selected_tab == "Finance Providers":
+    st.title("Finance Providers Scoring")
+    use_ai_finance_providers = st.checkbox("Use AI to score Finance Providers", value=False)
+    if use_ai_finance_providers:
+        narrative_finance_providers = st.text_area("Provide a narrative description of the finance providers:", height=300)
+        if narrative_finance_providers:
+            with st.spinner("Analyzing with AI..."):
+                prompt = (
+                    "You are a climate finance expert. Based on the following narrative, assess the maturity of the finance providers using the relevant sub-components: "
+                    "(1) Public finance providers, (2) Private finance providers, (3) Development finance institutions, (4) Multilateral development banks."
+                )
+                output = get_ai_score(prompt, narrative_finance_providers)
+                st.markdown("**AI-Generated Assessment and Recommendations:**")
+                st.markdown(output)
+            dimension_scores["Finance Providers"] = 2  # Placeholder value for AI-based score
+    else:
+        st.markdown("### Manual Scoring (based on sub-indicator evidence)")
+        # Manual scoring based on checkboxes
+        f1 = st.checkbox("Public finance providers are operational and engaged in climate finance")
+        f2 = st.checkbox("Private finance providers are actively engaged in climate finance")
+        f3 = st.checkbox("Development finance institutions provide substantial climate finance")
+        f4 = st.checkbox("Multilateral development banks are active in the climate finance ecosystem")
 
-        # Assign color class
-        if total_score < 1.5:
-            score_class = "score-low"
-        elif total_score < 2.5:
-            score_class = "score-medium"
-        else:
-            score_class = "score-high"
+        # Compute score for Finance Providers
+        finance_providers_score = sum([f1, f2, f3, f4])
+        dimension_scores["Finance Providers"] = finance_providers_score
 
-        avg_color_class = score_class
-        st.markdown(f"""
-        <div class='bottom-box {score_class}' style='margin: 4em auto 1em auto; position: relative; text-align: left; max-width: 900px;'>
-            <strong>Average Score for {dimension}:</strong> {total_score}/3
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown(f"**Score for Finance Providers:** {finance_providers_score}/4")
 
-    # Repeat similar manual scoring process for other dimensions like Ecosystem Infrastructure, Finance Providers, and Finance Seekers
+# --- Finance Seekers Dimension ---
+elif selected_tab == "Finance Seekers":
+    st.title("Finance Seekers Scoring")
+    use_ai_finance_seekers = st.checkbox("Use AI to score Finance Seekers", value=False)
+    if use_ai_finance_seekers:
+        narrative_finance_seekers = st.text_area("Provide a narrative description of the finance seekers:", height=300)
+        if narrative_finance_seekers:
+            with st.spinner("Analyzing with AI..."):
+                prompt = (
+                    "You are a climate finance expert. Based on the following narrative, assess the maturity of the finance seekers using the relevant sub-components: "
+                    "(1) Project proposals, (2) Pipeline of projects, (3) Access to finance, (4) Stakeholder engagement."
+                )
+                output = get_ai_score(prompt, narrative_finance_seekers)
+                st.markdown("**AI-Generated Assessment and Recommendations:**")
+                st.markdown(output)
+            dimension_scores["Finance Seekers"] = 2  # Placeholder value for AI-based score
+    else:
+        st.markdown("### Manual Scoring (based on sub-indicator evidence)")
+        # Manual scoring based on checkboxes
+        s1 = st.checkbox("Project proposals are well developed and aligned with climate finance needs")
+        s2 = st.checkbox("A pipeline of climate projects is available for financing")
+        s3 = st.checkbox("There is easy access to finance for climate-related projects")
+        s4 = st.checkbox("Stakeholder engagement is integral to project development")
 
-# AI recommendations based on manual scores
-if st.button(f"✅ Entries complete – Generate AI Recommendations for {dimension}"):
-    if any(score < 3 for score in [strategy_score, policy_score, enforcement_score, consultation_score]):
-        combined_notes = f"""Strategy notes: {notes_strategy}
-        Policy notes: {notes_policy}
-        Enforcement notes: {notes_enforcement}
-        Consultation notes: {notes_consultation}"""
-        ai_prompt_manual = f"""
-        You are a climate finance advisor. The user has manually assessed maturity scores as follows:
-        - Strategy: {strategy_score}/3
-        - Policy: {policy_score}/3
-        - Enforcement: {enforcement_score}/3
-        - Stakeholder Consultation: {consultation_score}/3
+        # Compute score for Finance Seekers
+        finance_seekers_score = sum([s1, s2, s3, s4])
+        dimension_scores["Finance Seekers"] = finance_seekers_score
 
-        The user also provided these notes:
-        {combined_notes}
+        st.markdown(f"**Score for Finance Seekers:** {finance_seekers_score}/4")
 
-        Please provide 3-5 concrete, prioritized action recommendations to improve any sub-component that scored below 3.
-        """
-        with st.spinner(f"Generating AI-based action recommendations for {dimension}..."):
-            ai_actions = get_ai_score(ai_prompt_manual, "")
-        st.markdown(f"**AI Recommendations for {dimension}:**")
-        st.markdown(ai_actions)
+# --- Floating Sidebar with Scores ---
+st.sidebar.markdown("## Scores Overview")
+for dimension, score in dimension_scores.items():
+    st.sidebar.markdown(f"**{dimension}**: {score}/4")
 
-# Floating live score always shown
-if total_score is not None:
-    st.markdown(f"""
-    <div class="bottom-box {score_class}" style="bottom: 60px; right: 30px; position: fixed;">
-        <strong>Live {dimension} Score:</strong><br> {total_score}/3
-    </div>
-    """, unsafe_allow_html=True)
+combined_score = calculate_combined_score()
+st.sidebar.markdown(f"**Combined Score**: {combined_score}/4")
 
-# Footer at the bottom
+# Footer
 st.markdown("""
 <style>
 .footer-fixed {
