@@ -160,6 +160,15 @@ elif selected_tab == "Enabling Environment":
     use_ai_ee = st.checkbox("Use AI to score Enabling Environment", value=False)
     if use_ai_ee:
         narrative_ee = st.text_area("Provide a narrative description of the enabling environment:", height=300)
+        document_ee = st.file_uploader("Upload a document for AI analysis", type=["pdf", "docx"], key="enabling_environment")
+        if document_ee:
+            file_content = document_ee.read()
+            st.text("Document uploaded successfully, AI will analyze it.")
+            # Here you would extract the text from the document (e.g., using PyPDF2 or python-docx)
+            # For simplicity, this will be a placeholder for actual text extraction logic
+            document_text = str(file_content)  # Placeholder for text extraction logic
+            narrative_ee += document_text  # Append document text to user input
+        
         if narrative_ee:
             with st.spinner("Analyzing with AI..."):
                 prompt = (
@@ -191,6 +200,14 @@ elif selected_tab == "Ecosystem Infrastructure":
     use_ai_ecosystem = st.checkbox("Use AI to score Ecosystem Infrastructure", value=False)
     if use_ai_ecosystem:
         narrative_ecosystem = st.text_area("Provide a narrative description of the ecosystem infrastructure:", height=300)
+        document_ecosystem = st.file_uploader("Upload a document for AI analysis", type=["pdf", "docx"], key="ecosystem_infrastructure")
+        if document_ecosystem:
+            file_content = document_ecosystem.read()
+            st.text("Document uploaded successfully, AI will analyze it.")
+            # Placeholder for text extraction logic
+            document_text = str(file_content)
+            narrative_ecosystem += document_text
+        
         if narrative_ecosystem:
             with st.spinner("Analyzing with AI..."):
                 prompt = (
@@ -221,6 +238,14 @@ elif selected_tab == "Finance Providers":
     use_ai_finance_providers = st.checkbox("Use AI to score Finance Providers", value=False)
     if use_ai_finance_providers:
         narrative_finance_providers = st.text_area("Provide a narrative description of the finance providers:", height=300)
+        document_finance_providers = st.file_uploader("Upload a document for AI analysis", type=["pdf", "docx"], key="finance_providers")
+        if document_finance_providers:
+            file_content = document_finance_providers.read()
+            st.text("Document uploaded successfully, AI will analyze it.")
+            # Placeholder for text extraction logic
+            document_text = str(file_content)
+            narrative_finance_providers += document_text
+        
         if narrative_finance_providers:
             with st.spinner("Analyzing with AI..."):
                 prompt = (
@@ -251,6 +276,14 @@ elif selected_tab == "Finance Seekers":
     use_ai_finance_seekers = st.checkbox("Use AI to score Finance Seekers", value=False)
     if use_ai_finance_seekers:
         narrative_finance_seekers = st.text_area("Provide a narrative description of the finance seekers:", height=300)
+        document_finance_seekers = st.file_uploader("Upload a document for AI analysis", type=["pdf", "docx"], key="finance_seekers")
+        if document_finance_seekers:
+            file_content = document_finance_seekers.read()
+            st.text("Document uploaded successfully, AI will analyze it.")
+            # Placeholder for text extraction logic
+            document_text = str(file_content)
+            narrative_finance_seekers += document_text
+        
         if narrative_finance_seekers:
             with st.spinner("Analyzing with AI..."):
                 prompt = (
@@ -295,4 +328,11 @@ st.markdown("""
     color: white;
     text-align: center;
     padding: 10px;
-    font-size: 13px
+    font-size: 13px;
+    z-index: 1000;
+}
+</style>
+<div class='footer-fixed'>
+    © 2025 Chemonics International Inc. | Contact: Climate Finance Team
+</div>
+""", unsafe_allow_html=True)
