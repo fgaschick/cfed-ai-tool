@@ -3,7 +3,6 @@ from openai import OpenAI
 import os
 from PyPDF2 import PdfReader
 import docx
-import io
 
 # Set OpenAI API key using environment variable, as in original working script
 api_key = os.getenv("OPENAI_API_KEY")
@@ -52,43 +51,17 @@ def handle_file_upload(uploaded_file):
             return None
     return None
 
-st.set_page_config(page_title="Climate Finance Ecosystem Diagnostic (CFED)", layout="wide")
-
-# Custom header and footer with logo
-import streamlit.components.v1 as components
-
-components.html("""
-    <style>
-    .sidebar .sidebar-content {
-        background-color: #005670;
-        color: white;
-        padding: 10px;
-    }
-    .sidebar .sidebar-content h2, .sidebar .sidebar-content h3, .sidebar .sidebar-content p {
-        color: white;
-    }
-    </style>
-""", height=0)
-
-# Title
-st.title("Climate Finance Ecosystem Diagnostic (CFED) - AI-Assisted Climate Finance Ecosystem Maturity Scoring Tool")
-
-# Track score separately so it can be rendered globally
-total_score = 0
-score_class = ""
-
-# Sidebar layout
+# Sidebar content with logo and title
 with st.sidebar:
     st.image("https://raw.githubusercontent.com/fgaschick/cfed-ai-tool/main/Chemonics_RGB_Horizontal_BLUE-WHITE.png", width=200)
     st.markdown("### Climate Finance Ecosystem Diagnostic (CFED)")
     st.markdown("AI-Assisted Climate Finance Ecosystem Maturity Scoring Tool – Prototype")
-
-    # Display the tabs in the sidebar
+    
     dimension = st.radio("Select Dimension", ["Enabling Environment", "Ecosystem Infrastructure", "Finance Providers", "Finance Seekers"])
 
     use_ai = st.checkbox("Use AI to score", value=False)
 
-    # File upload section
+    # File upload section, visible only when AI checkbox is selected
     uploaded_file = None
     if use_ai:
         uploaded_file = st.file_uploader("Upload a document for AI analysis", type=["pdf", "docx"])
@@ -99,7 +72,7 @@ with st.sidebar:
                 st.text_area("Extracted Document Text", value=text_from_file, height=200)
 
     st.markdown("---")
-    st.markdown(f"**Total Score:** {total_score}/4")
+    st.markdown(f"**Total Score:** 0/4")
 
 # Main content based on selected dimension
 if dimension == "Enabling Environment":
@@ -116,8 +89,6 @@ if dimension == "Enabling Environment":
         st.markdown("### AI-Generated Assessment and Recommendations:")
         st.write(result)
         
-        total_score = 3  # Use the result of AI scoring (can be refined later based on AI output)
-        score_class = "score-high"  # Update this based on AI scoring result
     else:
         # Manual Scoring based on checkboxes
         st.markdown("#### Strategy")
@@ -127,34 +98,26 @@ if dimension == "Enabling Environment":
         s4 = st.checkbox("There is a national climate finance strategy or roadmap")
         notes_strategy = st.text_area("Notes for Strategy:", key="notes_strategy")
 
-        # Policy Section
+        # Manual scoring logic
+        strategy_score = sum([s1, s2, s3, s4])
+
         st.markdown("#### Policy")
         p1 = st.checkbox("Sectoral policies (energy, land use, etc.) integrate climate objectives")
         p2 = st.checkbox("Policies include clear implementation mechanisms")
         p3 = st.checkbox("Private sector is consulted or involved in policy development")
         notes_policy = st.text_area("Notes for Policy:", key="notes_policy")
 
-        # Other sections follow similar pattern
-
-        # Assign score
-        strategy_score = sum([s1, s2, s3, s4])
+        # Manual scoring logic
         policy_score = sum([p1, p2, p3])
+
+        # Combine scores
         total_score = (strategy_score + policy_score) / 2
-        score_class = "score-medium"  # Update this based on score
+        st.markdown(f"**Total Manual Score for Enabling Environment:** {total_score}/4")
+        
+# Similarly, apply the structure above for the other dimensions:
+# "Ecosystem Infrastructure", "Finance Providers", "Finance Seekers"
 
-        st.markdown(f"**Total Manual Score for Enabling Environment:** {total_score}/3")
-    
-# Other dimensions can follow similar logic, repeat the structure above for the "Ecosystem Infrastructure", "Finance Providers", and "Finance Seekers" dimensions.
-
-# Floating score box always shown
-if total_score is not None:
-    st.markdown(f"""
-    <div class="bottom-box {score_class}" style="bottom: 60px; right: 30px; position: fixed;">
-        <strong>Live Score for {dimension}:</strong><br> {total_score}/3
-    </div>
-    """, unsafe_allow_html=True)
-
-# Summary and Recommendations tab, AI-based recommendations
+# Sidebar shows AI-generated summary or recommendations based on selections
 with st.sidebar:
     if st.button("Generate Recommendations"):
         st.write("### AI-Based Recommendations")
@@ -163,6 +126,14 @@ with st.sidebar:
         st.write(recommendations)
         
         st.download_button("Download Recommendations", recommendations, "recommendations.txt")
+
+# Floating score box always shown
+if total_score is not None:
+    st.markdown(f"""
+    <div class="bottom-box {score_class}" style="bottom: 60px; right: 30px; position: fixed;">
+        <strong>Live Score for {dimension}:</strong><br> {total_score}/4
+    </div>
+    """, unsafe_allow_html=True)
 
 # Footer
 st.markdown("""
