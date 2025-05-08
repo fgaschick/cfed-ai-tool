@@ -6,6 +6,7 @@ import pandas as pd
 from fpdf import FPDF
 import PyPDF2
 import docx
+from io import BytesIO
 
 # Set OpenAI API key using environment variable
 api_key = os.getenv("OPENAI_API_KEY")
@@ -66,7 +67,7 @@ components.html("""
         z-index: 1001;
     }
     .header-bar img {
-        max-height: 10px;
+        max-height: 30px;
     }
     .footer-fixed {
         position: fixed;
@@ -197,10 +198,18 @@ elif selected_tab == "Summary & Recommendations":
     for recommendation in recommendations:
         pdf.multi_cell(0, 10, recommendation)
 
-    pdf_output = pdf.output(dest='S', format='pdf')
-    b64_pdf = base64.b64encode(pdf_output.encode()).decode('utf-8')
-    href = f'<a href="data:application/pdf;base64,{b64_pdf}" download="recommendations.pdf">Download as PDF</a>'
-    st.markdown(href, unsafe_allow_html=True)
+    # Save PDF to memory
+    pdf_output = BytesIO()
+    pdf.output(pdf_output)
+    pdf_output.seek(0)
+
+    # Use Streamlit to provide a download button for the PDF
+    st.download_button(
+        label="Download Recommendations as PDF",
+        data=pdf_output,
+        file_name="recommendations.pdf",
+        mime="application/pdf"
+    )
 
 # --- Enabling Environment Dimension ---
 elif selected_tab == "Enabling Environment":
@@ -343,39 +352,4 @@ elif selected_tab == "Finance Seekers":
         s1 = st.checkbox("Project proposals are well developed and aligned with climate finance needs")
         s2 = st.checkbox("A pipeline of climate projects is available for financing")
         s3 = st.checkbox("There is easy access to finance for climate-related projects")
-        s4 = st.checkbox("Stakeholder engagement is integral to project development")
-
-        # Compute score for Finance Seekers
-        finance_seekers_score = sum([s1, s2, s3, s4])
-        st.session_state.dimension_scores["Finance Seekers"] = finance_seekers_score
-
-        st.markdown(f"**Score for Finance Seekers:** {finance_seekers_score}/4")
-
-# --- Floating Sidebar with Scores ---
-st.sidebar.markdown("## Scores Overview")
-for dimension, score in st.session_state.dimension_scores.items():
-    st.sidebar.markdown(f"**{dimension}**: {score}/4")
-
-combined_score = calculate_combined_score()
-st.sidebar.markdown(f"**Combined Score**: {combined_score}/4")
-
-# Footer
-st.markdown("""
-<style>
-.footer-fixed {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100vw;
-    background-color: #005670;
-    color: white;
-    text-align: center;
-    padding: 10px;
-    font-size: 13px;
-    z-index: 1000;
-}
-</style>
-<div class='footer-fixed'>
-    © 2025 Chemonics International Inc. | Contact: Climate Finance Team
-</div>
-""", unsafe_allow_html=True)
+        s4 = st.checkbox
