@@ -1,3 +1,4 @@
+
 import streamlit as st
 from openai import OpenAI
 import os
@@ -352,4 +353,39 @@ elif selected_tab == "Finance Seekers":
         s1 = st.checkbox("Project proposals are well developed and aligned with climate finance needs")
         s2 = st.checkbox("A pipeline of climate projects is available for financing")
         s3 = st.checkbox("There is easy access to finance for climate-related projects")
-        s4 = st.checkbox
+        s4 = st.checkbox("Stakeholder engagement is integral to project development")
+
+        # Compute score for Finance Seekers
+        finance_seekers_score = sum([s1, s2, s3, s4])
+        st.session_state.dimension_scores["Finance Seekers"] = finance_seekers_score
+
+        st.markdown(f"**Score for Finance Seekers:** {finance_seekers_score}/4")
+
+# --- Floating Sidebar with Scores ---
+st.sidebar.markdown("## Scores Overview")
+for dimension, score in st.session_state.dimension_scores.items():
+    st.sidebar.markdown(f"**{dimension}**: {score}/4")
+
+combined_score = calculate_combined_score()
+st.sidebar.markdown(f"**Combined Score**: {combined_score}/4")
+
+# Footer
+st.markdown("""
+<style>
+.footer-fixed {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100vw;
+    background-color: #005670;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    font-size: 13px;
+    z-index: 1000;
+}
+</style>
+<div class='footer-fixed'>
+    © 2025 Chemonics International Inc. | Contact: Climate Finance Team
+</div>
+""", unsafe_allow_html=True)
