@@ -3,6 +3,7 @@ from openai import OpenAI
 import os
 import base64
 import pandas as pd
+from fpdf import FPDF
 import PyPDF2
 import docx
 
@@ -65,7 +66,7 @@ components.html("""
         z-index: 1001;
     }
     .header-bar img {
-        max-height: 30px;
+        max-height: 10px;
     }
     .footer-fixed {
         position: fixed;
@@ -160,13 +161,23 @@ elif selected_tab == "Summary & Recommendations":
     for recommendation in recommendations:
         st.markdown(recommendation)
 
-    st.markdown("### Download Recommendations as CSV")
-    # Download the AI recommendations as CSV
-    data = {"Dimension": list(st.session_state.dimension_scores.keys()), "Score": list(st.session_state.dimension_scores.values()), "Recommendations": recommendations}
-    df = pd.DataFrame(data)
-    csv = df.to_csv(index=False)
-    b64 = base64.b64encode(csv.encode()).decode()  # encoding as base64
-    href = f'<a href="data:file/csv;base64,{b64}" download="recommendations.csv">Download as CSV</a>'
+    st.markdown("### Download Recommendations as PDF")
+    # Generate PDF for the recommendations
+    pdf = FPDF()
+    pdf.set_auto_page_break(auto=True, margin=15)
+    pdf.add_page()
+    pdf.set_font("Arial", size=12)
+
+    # Add title
+    pdf.cell(200, 10, txt="AI-Based Recommendations for Action", ln=True, align="C")
+    pdf.ln(10)
+
+    for recommendation in recommendations:
+        pdf.multi_cell(0, 10, recommendation)
+
+    pdf_output = pdf.output(dest='S', format='pdf')
+    b64_pdf = base64.b64encode(pdf_output.encode()).decode('utf-8')
+    href = f'<a href="data:application/pdf;base64,{b64_pdf}" download="recommendations.pdf">Download as PDF</a>'
     st.markdown(href, unsafe_allow_html=True)
 
 # --- Enabling Environment Dimension ---
