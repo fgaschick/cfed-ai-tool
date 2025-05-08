@@ -135,18 +135,40 @@ def calculate_combined_score():
 # --- Instructions Tab ---
 if selected_tab == "Instructions":
     st.markdown("""
-        ## Instructions
-        This tool helps to assess the maturity of a country's climate finance ecosystem. 
-        There are four main dimensions that need to be scored: 
-        - Enabling Environment
-        - Ecosystem Infrastructure
-        - Finance Providers
-        - Finance Seekers
+        ## Instructions: How to Use the Tool
+
+        Welcome to the **Climate Finance Ecosystem Diagnostic (CFED)** tool! This tool helps you assess the maturity of a country's climate finance ecosystem by evaluating key dimensions and subcomponents of climate finance. 
+        The tool uses **both manual scoring** and **AI-based analysis** to provide a comprehensive overview of the climate finance landscape in your country. 
+
+        ### Tool Structure:
+        The tool is structured into four main dimensions, each with its respective subcomponents and indicators. These dimensions are:
+        1. **Enabling Environment**
+        2. **Ecosystem Infrastructure**
+        3. **Finance Providers**
+        4. **Finance Seekers**
+
+        ### How to Use the Tool:
+        - **AI-Based Scoring**: You can choose to use **AI-based scoring** by providing a **narrative description** of each dimension. When you select this option, the tool will ask for detailed information about your country's climate finance system. 
+        - **Document Upload**: Along with the narrative, you can upload **relevant documents** (PDF/Word) that provide more in-depth information on the dimension you're scoring. The AI will analyze both the narrative and the document to generate a score and recommendations.
+        - **Manual Scoring**: If you prefer, you can manually score the dimension by selecting checkboxes for the provided indicators and subcomponents. This will allow you to evaluate the maturity of each dimension based on specific questions. Each indicator corresponds to an element of the climate finance ecosystem, such as policies, infrastructure, or finance flows.
         
-        You can use either **AI-based scoring** (by providing a narrative description) or **manual scoring** (based on checkboxes). 
-        In each dimension, after scoring, you will receive an overall score for that dimension and prioritized recommendations for improvement.
-        
-        After completing all dimensions, you can see the **Summary & Recommendations** tab where you will find AI-based suggestions for improvements based on your inputs.
+        ### Key Notes for AI Scoring:
+        - **Accuracy of Information**: The AI tool requires accurate and well-researched information to generate relevant analysis and recommendations. The more comprehensive and detailed your inputs (both narrative and document uploads), the more accurate the AI’s responses will be.
+        - **Relevance of Documents**: When uploading documents, ensure that they are **directly relevant** to the specific dimension you are scoring. For instance, when scoring **Enabling Environment**, documents related to national climate policies, NDCs (Nationally Determined Contributions), and other policy frameworks will help the AI assess the maturity of this dimension more effectively.
+        - **Providing Complete Information**: It is important that the narrative description and the documents you provide clearly address the key components and subcomponents of each dimension. The better the quality and relevance of the information, the more useful the AI-based recommendations will be.
+
+        ### Scoring and Results:
+        - After completing the scoring for each dimension (whether using AI or manual input), you will see the **score for each dimension** displayed on the sidebar.
+        - The **combined score** is automatically calculated based on the individual dimension scores.
+        - **AI-based recommendations** will be provided in the **Summary & Recommendations** tab, which will help you identify areas for improvement in the climate finance ecosystem.
+
+        ### Downloading Results:
+        Once all dimensions have been scored and recommendations are provided, you will be able to **download the recommendations as a PDF** for your records. 
+
+        #### Important Reminder:
+        The AI analysis depends on the quality and relevance of the data you input. Please ensure that the narrative is well-informed and the documents are relevant to each dimension for the most accurate and useful recommendations.
+
+        Thank you for using the CFED tool, and we hope it helps you assess and improve your country’s climate finance ecosystem!
     """)
 
 # --- Summary & Recommendations Tab ---
