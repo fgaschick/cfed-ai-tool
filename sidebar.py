@@ -199,24 +199,24 @@ def ai_scoring_tab(title, prompt, key):
             ]
         elif title == "Ecosystem Infrastructure":
             keys_labels = [
-                (f"{key}_infra_s1", "Physical infrastructure for climate adaptation and mitigation exists"),
-                (f"{key}_infra_s2", "There is a national or regional data infrastructure for monitoring climate impacts"),
-                (f"{key}_infra_s3", "Climate-related digital platforms are available for stakeholders"),
-                (f"{key}_infra_s4", "Regulatory frameworks for climate finance and development are in place")
+                (f"{key}_infra_s1", "Physical infrastructure for climate adaptation and mitigation exists", "Infrastructure such as sea walls, renewable energy plants, or forest buffers are operational."),
+                (f"{key}_infra_s2", "There is a national or regional data infrastructure for monitoring climate impacts", "Data systems exist to track climate vulnerabilities, emissions, or adaptation needs."),
+                (f"{key}_infra_s3", "Climate-related digital platforms are available for stakeholders", "Platforms share climate data or facilitate finance access for implementers."),
+                (f"{key}_infra_s4", "Regulatory frameworks for climate finance and development are in place", "Climate finance and low-carbon development are supported by enforceable regulations.")
             ]
         elif title == "Finance Providers":
             keys_labels = [
-                (f"{key}_prov_s1", "Public finance providers are operational and engaged in climate finance"),
-                (f"{key}_prov_s2", "Private finance providers are actively engaged in climate finance"),
-                (f"{key}_prov_s3", "Development finance institutions provide substantial climate finance"),
-                (f"{key}_prov_s4", "Multilateral development banks are active in the climate finance ecosystem")
+                (f"{key}_prov_s1", "Public finance providers are operational and engaged in climate finance", "Government ministries or national funds disburse climate-targeted finance."),
+                (f"{key}_prov_s2", "Private finance providers are actively engaged in climate finance", "Commercial banks or private investors participate in climate-aligned investments."),
+                (f"{key}_prov_s3", "Development finance institutions provide substantial climate finance", "Institutions like regional or bilateral DFIs fund adaptation or mitigation projects."),
+                (f"{key}_prov_s4", "Multilateral development banks are active in the climate finance ecosystem", "MDBs such as the World Bank or ADB provide loans or grants for climate action.")
             ]
         elif title == "Finance Seekers":
             keys_labels = [
-                (f"{key}_seek_s1", "Project proposals are well developed and aligned with climate finance needs"),
-                (f"{key}_seek_s2", "A pipeline of climate projects is available for financing"),
-                (f"{key}_seek_s3", "There is easy access to finance for climate-related projects"),
-                (f"{key}_seek_s4", "Stakeholder engagement is integral to project development")
+                (f"{key}_seek_s1", "Project proposals are well developed and aligned with climate finance needs", "Proposals are technically sound and reflect country or sectoral climate goals."),
+                (f"{key}_seek_s2", "A pipeline of climate projects is available for financing", "There is a prioritized list of climate projects ready for donor or investor review."),
+                (f"{key}_seek_s3", "There is easy access to finance for climate-related projects", "Barriers to entry for communities or local governments are minimal."),
+                (f"{key}_seek_s4", "Stakeholder engagement is integral to project development", "Project beneficiaries are consulted and reflected in design and implementation.")
             ]
 
         for k, label, tip in keys_labels:
