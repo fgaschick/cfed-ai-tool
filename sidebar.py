@@ -33,15 +33,17 @@ def get_ai_score(prompt, user_input):
 
 # More reliable score extraction
 def extract_avg_score(output):
-    """
-    Extract scores from lines like: (1) Label: 2
-    Return average if any scores found, else None.
-    """
-    score_lines = re.findall(r"\(\d\)\s*[^:\n]+:\s*(\d)", output)
-    scores = [int(s) for s in score_lines if s.isdigit()]
-    if scores:
-        return round(sum(scores) / len(scores), 2)
-    return None
+    # Try structured pattern first
+    matches = re.findall(r"\(\d\)\s*[^:\n]+:\s*(\d)", output)
+    scores = [int(m) for m in matches if m.isdigit() and 0 <= int(m) <= 4]
+
+    # Fallback: find all individual valid digits (0–4) as separate tokens
+    if len(scores) < 4:
+        fallback = re.findall(r"\b[0-4]\b", output)
+        scores = [int(f) for f in fallback]
+
+    return round(sum(scores) / len(scores), 2) if scores else None
+
 
 # Function to extract text from uploaded file
 def extract_text_from_file(uploaded_file):
