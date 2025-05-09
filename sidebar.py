@@ -51,7 +51,6 @@ def extract_text_from_file(uploaded_file):
 
 # Function to generate a downloadable PDF
 def generate_pdf_from_recommendations(recommendations):
-    from urllib.request import urlopen
     import tempfile
     from PIL import Image
     import os
@@ -59,81 +58,23 @@ def generate_pdf_from_recommendations(recommendations):
     pdf = FPDF()
     pdf.set_auto_page_break(auto=True, margin=15)
     pdf.add_page()
-
-    # Header with Chemonics logo and dark blue background
-    logo_url = "https://raw.githubusercontent.com/fgaschick/cfed-ai-tool/main/Chemonics_RGB_Horizontal_BLUE-WHITE.png"
-    logo_temp_path = os.path.join(tempfile.gettempdir(), "chemonics_logo.png")
-    with urlopen(logo_url) as response, open(logo_temp_path, 'wb') as out_file:
-        out_file.write(response.read())
-
-    pdf.set_fill_color(0, 86, 112)  # Dark blue
-    pdf.rect(0, 0, 210, 30, 'F')
-    pdf.image(logo_temp_path, x=10, y=5, w=60)
-    pdf.set_text_color(255, 255, 255)
-    pdf.set_font("Arial", "B", 14)
-    pdf.set_xy(70, 10)
-    pdf.cell(130, 10, "Climate Finance Ecosystem Recommendations", ln=True, align="R")
-    pdf.set_text_color(0, 0, 0)
-    pdf.ln(20)
-
-    pdf.set_font("Arial", "B", 12)
-    pdf.cell(0, 10, txt="Summary of Recommendations", ln=True, align="L")
+    pdf.set_font("Arial", size=12)
+    pdf.cell(200, 10, txt="AI-Based Recommendations for Action", ln=True, align="C")
     pdf.ln(10)
 
-    # Scoring summary section
-    pdf.set_font("Arial", "B", 12)
-    pdf.cell(0, 10, txt="Scoring Summary", ln=True, align="L")
-    pdf.ln(5)
-    for dim, score in st.session_state.dimension_scores.items():
-        tier = "Low"
-        if score >= 2.5:
-            tier = "High"
-        elif score >= 1.5:
-            tier = "Medium"
-        pdf.set_font("Arial", style="B", size=11)
-        pdf.cell(0, 10, f"{dim}: {score}/4 – {tier} Maturity", ln=True)
-        justification = st.session_state.get(f"text_{dim.lower().replace(' ', '_')}", "No narrative provided.")
-        pdf.set_font("Arial", size=10)
-        pdf.multi_cell(0, 10, justification)
-        pdf.ln(2)
-
     # Add recommendations text
-    pdf.set_font("Arial", "B", 12)
-    pdf.cell(0, 10, txt="Recommendations", ln=True, align="L")
-    pdf.ln(5)
     for recommendation in recommendations:
         pdf.multi_cell(0, 10, recommendation)
 
-    pdf_bytes = pdf.output(dest='S').encode('latin1', 'replace')
+    
+
+    pdf_bytes = pdf.output(dest='S').encode('latin1')
     return BytesIO(pdf_bytes)
 
 # Page setup
 st.set_page_config(page_title="Climate Finance Maturity Tool", layout="wide")
 
 # Sidebar and navigation
-st.sidebar.image("https://raw.githubusercontent.com/fgaschick/cfed-ai-tool/main/Chemonics_RGB_Horizontal_BLUE-WHITE.png", use_container_width=True)
-st.sidebar.markdown("""
-    <style>
-[data-testid="stSidebar"] > div:first-child {
-    background-color: #005670;
-    padding-top: 1rem;
-    color: white;
-}
-/* Sidebar labels */
-[data-testid="stSidebar"] *,
-[data-testid="stSidebar"] input[type="radio"] + div div {
-    color: white !important;
-}
-}
-/* Main area labels */
-section.main label span,
-section.main div[class^="st"] label span,
-section.main input[type="checkbox"] + div div,
-section.main input[type="radio"] + div div {
-    color: black !important;
-}
-</style>
-""", unsafe_allow_html=True)
 st.sidebar.title("Climate Finance Ecosystem Diagnostic (CFED)")
 st.sidebar.subheader("AI-Assisted Maturity Scoring Tool")
 tabs = ["Instructions", "Enabling Environment", "Ecosystem Infrastructure", "Finance Providers", "Finance Seekers", "Summary & Recommendations"]
@@ -145,14 +86,6 @@ if "dimension_scores" not in st.session_state:
         "Ecosystem Infrastructure": 0,
         "Finance Providers": 0,
         "Finance Seekers": 0
-    }
-
-if "confirmation_flags" not in st.session_state:
-    st.session_state.confirmation_flags = {
-        "Enabling Environment": False,
-        "Ecosystem Infrastructure": False,
-        "Finance Providers": False,
-        "Finance Seekers": False
     }
 
 # Tab: Instructions
@@ -226,13 +159,9 @@ def ai_scoring_tab(title, prompt, key):
             s2 = st.checkbox("A pipeline of climate projects is available for financing", key=f"{key}_seek_s2")
             s3 = st.checkbox("There is easy access to finance for climate-related projects", key=f"{key}_seek_s3")
             s4 = st.checkbox("Stakeholder engagement is integral to project development", key=f"{key}_seek_s4")
-                score = sum([s1, s2, s3, s4])
-        st.session_state[f"score_{key}"] = score
+        score = sum([s1, s2, s3, s4])
         st.session_state.dimension_scores[title] = score
-        st.session_state[f"score_{key}"] = score
         st.markdown(f"**Score for {title}:** {score}/4")
-        st.checkbox("I confirm that I have completed this dimension.", key=f"confirm_{key}")
-        st.session_state.confirmation_flags[title] = st.session_state.get(f"confirm_{key}", False)
 # Tabs for each dimension
 if selected_tab == "Enabling Environment":
     ai_scoring_tab("Enabling Environment",
@@ -255,9 +184,6 @@ elif selected_tab == "Finance Seekers":
         "seekers")
 
 elif selected_tab == "Summary & Recommendations":
-    if not all(st.session_state.confirmation_flags.values()):
-        st.warning("⚠️ Please complete and confirm all dimension assessments before accessing recommendations.")
-        st.stop()
     st.title("Summary & Recommendations")
     recommendations = []
     for dim, score in st.session_state.dimension_scores.items():
@@ -283,18 +209,6 @@ elif combined_score >= 1.5:
     tier = "Medium"
     color = "#fdd835"
 st.sidebar.markdown(f"**Combined Score**: <span style='color:{color}'>{combined_score}/4 – {tier} Maturity</span>", unsafe_allow_html=True)
-
-# Reset button
-if st.sidebar.button("Reset Scores"):
-    st.session_state.dimension_scores = {
-        "Enabling Environment": 0,
-        "Ecosystem Infrastructure": 0,
-        "Finance Providers": 0,
-        "Finance Seekers": 0
-    }
-    for key in list(st.session_state.keys()):
-        if key.startswith("ai_") or key.startswith("text_") or key.startswith("file_") or key.endswith(('_s1', '_s2', '_s3', '_s4')):
-            del st.session_state[key]
 
 # Footer styling
 st.markdown("""
