@@ -114,6 +114,14 @@ if "dimension_inputs" not in st.session_state:
 if "reset_triggered" not in st.session_state:
     st.session_state.reset_triggered = False
 
+st.sidebar.markdown("""
+    <style>
+    div[data-testid="baseButton-secondary"] button {
+        color: #2196F3 !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 if st.sidebar.button("🔁 Reset All Inputs"):
     st.session_state.reset_triggered = True
     st.experimental_rerun()
