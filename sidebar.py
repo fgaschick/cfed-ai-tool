@@ -78,14 +78,17 @@ st.set_page_config(page_title="Climate Finance Maturity Tool", layout="wide")
 st.sidebar.image("https://raw.githubusercontent.com/fgaschick/cfed-ai-tool/main/Chemonics_RGB_Horizontal_BLUE-WHITE.png", use_container_width=True)
 st.sidebar.markdown("""
     <style>
-    [data-testid="stSidebar"] > div:first-child {
-        background-color: #005670;
-        padding-top: 1rem;
-        color: white;
-    }
-        label, .st-bw, .st-b8, .st-b7, .st-c4, .st-c3 {
-        color: white !important;
-    }
+[data-testid="stSidebar"] > div:first-child {
+    background-color: #005670;
+    padding-top: 1rem;
+    color: white;
+}
+label, .st-bw, .st-b8, .st-b7, .st-c4, .st-c3 {
+    color: white !important;
+}
+section.main label, section.main div[class^="st"] {
+    color: black !important;
+}
 </style>
 """, unsafe_allow_html=True)
 st.sidebar.title("Climate Finance Ecosystem Diagnostic (CFED)")
