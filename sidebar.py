@@ -93,12 +93,6 @@ st.sidebar.subheader("AI-Assisted Maturity Scoring Tool")
 
 # Handle early reset before anything renders
 if "reset_triggered" in st.session_state and st.session_state.reset_triggered:
-    reset_keys = [
-        k for k in list(st.session_state.keys())
-        if k.startswith("text_") or k.startswith("file_") or k.startswith("ai_") or k.endswith("_s1") or k.endswith("_s2") or k.endswith("_s3") or k.endswith("_s4")
-    ]
-    for k in reset_keys:
-        del st.session_state[k]
     st.session_state.dimension_inputs = {}
     st.session_state.dimension_scores = {
         "Enabling Environment": 0,
@@ -108,7 +102,7 @@ if "reset_triggered" in st.session_state and st.session_state.reset_triggered:
     }
     st.session_state.selected_tab = "Instructions"
     st.session_state.reset_triggered = False
-    st.experimental_rerun()
+    st.rerun()
 
 # Reset and session state setup
 if "dimension_scores" not in st.session_state:
