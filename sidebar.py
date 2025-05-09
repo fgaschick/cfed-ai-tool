@@ -162,35 +162,7 @@ def ai_scoring_tab(title, prompt, key):
                             score = sum([s1, s2, s3, s4])
                             st.session_state.dimension_scores[title] = score
                             st.markdown(f"**Score for {title}:** {score}/4")
-        sub_scores = {
-            "Enabling Environment": [
-                ("Country has submitted an NDC", s1),
-                ("NDC is linked to investment or implementation plans", s2),
-                ("NDC or strategy includes financing targets or mechanisms", s3),
-                ("There is a national climate finance strategy or roadmap", s4),
-            ],
-            "Ecosystem Infrastructure": [
-                ("Physical infrastructure for climate adaptation and mitigation exists", s1),
-                ("There is a national or regional data infrastructure for monitoring climate impacts", s2),
-                ("Climate-related digital platforms are available for stakeholders", s3),
-                ("Regulatory frameworks for climate finance and development are in place", s4),
-            ],
-            "Finance Providers": [
-                ("Public finance providers are operational and engaged in climate finance", s1),
-                ("Private finance providers are actively engaged in climate finance", s2),
-                ("Development finance institutions provide substantial climate finance", s3),
-                ("Multilateral development banks are active in the climate finance ecosystem", s4),
-            ],
-            "Finance Seekers": [
-                ("Project proposals are well developed and aligned with climate finance needs", s1),
-                ("A pipeline of climate projects is available for financing", s2),
-                ("There is easy access to finance for climate-related projects", s3),
-                ("Stakeholder engagement is integral to project development", s4),
-            ],
-        }
-        st.markdown("#### Subcomponent Scores")
-        for label, val in sub_scores.get(title, []):
-            st.markdown(f"- {label}: {'✅' if val else '❌'}")
+
         
 
 # Tabs for each dimension
