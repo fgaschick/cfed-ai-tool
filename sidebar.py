@@ -182,7 +182,7 @@ def ai_scoring_tab(title, prompt, key):
             "providers": "Upload reports showing participation of public/private finance institutions or MDB/DFI engagement.",
             "seekers": "Upload project concept notes, funding proposals, or stakeholder engagement reports."
         }
-        uploaded_file = st.file_uploader("Upload document (PDF/DOCX)", type=["pdf", "docx"], key=f"file_{key}", help=upload_help_text.get(key, "Upload supporting evidence.")) that provide evidence for this dimension.")
+        uploaded_file = st.file_uploader("Upload document (PDF/DOCX)", type=["pdf", "docx"], key=f"file_{key}", help=upload_help_text.get(key, "Upload supporting evidence."))
         if uploaded_file:
             file_text = extract_text_from_file(uploaded_file)
             narrative += file_text
