@@ -148,7 +148,9 @@ def ai_scoring_tab(title, prompt, key):
     st.title(f"{title} Scoring")
     use_ai = st.checkbox(f"Use AI to score {title}", value=False, key=f"ai_{key}")
     if use_ai:
-        narrative = st.text_area("Enter narrative description:", height=300, key=f"text_{key}", value=st.session_state.get(f"text_{key}", ""))
+        narrative = st.session_state.dimension_inputs.setdefault(f"text_{key}", "")
+narrative = st.text_area("Enter narrative description:", height=300, value=st.session_state.dimension_inputs[f"text_{key}"])
+st.session_state.dimension_inputs[f"text_{key}"] = narrative
         uploaded_file = st.file_uploader("Upload document (PDF/DOCX)", type=["pdf", "docx"], key=f"file_{key}")
         if uploaded_file:
             narrative += extract_text_from_file(uploaded_file)
@@ -168,7 +170,9 @@ def ai_scoring_tab(title, prompt, key):
         checkbox_list = []
         if title == "Enabling Environment":
             checkbox_list = [
-                st.checkbox("Country has submitted an NDC", value=st.session_state.get(f"{key}_env_s1", False), key=f"{key}_env_s1"),
+                st.session_state.dimension_inputs.setdefault(f"{key}_env_s1", False)
+                val = st.checkbox("Country has submitted an NDC", value=st.session_state.dimension_inputs[f"{key}_env_s1"], key=f"{key}_env_s1")
+                st.session_state.dimension_inputs[f"{key}_env_s1"] = val,
                 st.checkbox("NDC is linked to investment or implementation plans", value=st.session_state.get(f"{key}_env_s2", False), key=f"{key}_env_s2"),
                 st.checkbox("NDC or strategy includes financing targets or mechanisms", value=st.session_state.get(f"{key}_env_s3", False), key=f"{key}_env_s3"),
                 st.checkbox("There is a national climate finance strategy or roadmap", value=st.session_state.get(f"{key}_env_s4", False), key=f"{key}_env_s4")
