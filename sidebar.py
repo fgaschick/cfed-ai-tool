@@ -91,14 +91,10 @@ st.sidebar.subheader("AI-Assisted Maturity Scoring Tool")
 
 # Handle early reset before anything renders
 if "reset_triggered" in st.session_state and st.session_state.reset_triggered:
-    st.session_state.dimension_inputs = {}
-    st.session_state.dimension_scores = {
-        "Enabling Environment": 0,
-        "Ecosystem Infrastructure": 0,
-        "Finance Providers": 0,
-        "Finance Seekers": 0
-    }
     st.session_state.reset_triggered = False
+    st.session_state.pop("dimension_inputs", None)
+    st.session_state.pop("dimension_scores", None)
+    st.toast("Inputs have been reset.", icon="🔄")
     st.experimental_rerun()
 
 # Reset and session state setup
@@ -115,11 +111,12 @@ if "reset_triggered" not in st.session_state:
     st.session_state.reset_triggered = False
 
 st.sidebar.markdown("""
-    <style>
-    div[data-testid="baseButton-secondary"] button {
-        color: #2196F3 !important;
-    }
-    </style>
+<style>
+section[data-testid="stSidebar"] button {
+    color: #2196F3 !important;
+    border-color: #2196F3 !important;
+}
+</style>
 """, unsafe_allow_html=True)
 
 if st.sidebar.button("🔁 Reset All Inputs"):
