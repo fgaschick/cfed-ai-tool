@@ -192,7 +192,15 @@ st.sidebar.markdown("## Scores Overview")
 for dim, score in st.session_state.dimension_scores.items():
     st.sidebar.markdown(f"**{dim}**: {score}/4")
 combined_score = round(sum(st.session_state.dimension_scores.values()) / 4, 2)
-st.sidebar.markdown(f"**Combined Score**: {combined_score}/4")
+tier = "Low"
+color = "#e57373"
+if combined_score >= 2.5:
+    tier = "High"
+    color = "#81c784"
+elif combined_score >= 1.5:
+    tier = "Medium"
+    color = "#fdd835"
+st.sidebar.markdown(f"**Combined Score**: <span style='color:{color}'>{combined_score}/4 – {tier} Maturity</span>", unsafe_allow_html=True)
 
 # Footer styling
 st.markdown("""
