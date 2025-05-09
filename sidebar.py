@@ -56,9 +56,9 @@ def generate_pdf_from_recommendations(recommendations):
     from PIL import Image
     import os
 
-        pdf = FPDF()
+    pdf = FPDF()
     pdf.set_auto_page_break(auto=True, margin=15)
-        pdf.add_page()
+    pdf.add_page()
 
     # Header with Chemonics logo and dark blue background
     logo_url = "https://raw.githubusercontent.com/fgaschick/cfed-ai-tool/main/Chemonics_RGB_Horizontal_BLUE-WHITE.png"
@@ -75,8 +75,8 @@ def generate_pdf_from_recommendations(recommendations):
     pdf.cell(130, 10, "Climate Finance Ecosystem Recommendations", ln=True, align="R")
     pdf.set_text_color(0, 0, 0)
     pdf.ln(20)
-    pdf.set_font("Arial", size=12)
-        pdf.set_font("Arial", "B", 12)
+
+    pdf.set_font("Arial", "B", 12)
     pdf.cell(0, 10, txt="Summary of Recommendations", ln=True, align="L")
     pdf.ln(10)
 
@@ -103,8 +103,6 @@ def generate_pdf_from_recommendations(recommendations):
     pdf.ln(5)
     for recommendation in recommendations:
         pdf.multi_cell(0, 10, recommendation)
-
-    
 
     pdf_bytes = pdf.output(dest='S').encode('latin1')
     return BytesIO(pdf_bytes)
