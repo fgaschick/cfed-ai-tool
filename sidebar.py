@@ -87,7 +87,7 @@ label, .st-bw, .st-b8, .st-b7, .st-c4, .st-c3 {
     color: white !important;
 }
 section.main label, section.main div[class^="st"] {
-    color: black !important;
+    color: black !important !important;
 }
 </style>
 """, unsafe_allow_html=True)
