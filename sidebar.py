@@ -51,18 +51,56 @@ def extract_text_from_file(uploaded_file):
 
 # Function to generate a downloadable PDF
 def generate_pdf_from_recommendations(recommendations):
+    from urllib.request import urlopen
     import tempfile
     from PIL import Image
     import os
 
-    pdf = FPDF()
+        pdf = FPDF()
     pdf.set_auto_page_break(auto=True, margin=15)
-    pdf.add_page()
+        pdf.add_page()
+
+    # Header with Chemonics logo and dark blue background
+    logo_url = "https://raw.githubusercontent.com/fgaschick/cfed-ai-tool/main/Chemonics_RGB_Horizontal_BLUE-WHITE.png"
+    logo_temp_path = os.path.join(tempfile.gettempdir(), "chemonics_logo.png")
+    with urlopen(logo_url) as response, open(logo_temp_path, 'wb') as out_file:
+        out_file.write(response.read())
+
+    pdf.set_fill_color(0, 86, 112)  # Dark blue
+    pdf.rect(0, 0, 210, 30, 'F')
+    pdf.image(logo_temp_path, x=10, y=5, w=60)
+    pdf.set_text_color(255, 255, 255)
+    pdf.set_font("Arial", "B", 14)
+    pdf.set_xy(70, 10)
+    pdf.cell(130, 10, "Climate Finance Ecosystem Recommendations", ln=True, align="R")
+    pdf.set_text_color(0, 0, 0)
+    pdf.ln(20)
     pdf.set_font("Arial", size=12)
-    pdf.cell(200, 10, txt="AI-Based Recommendations for Action", ln=True, align="C")
+        pdf.set_font("Arial", "B", 12)
+    pdf.cell(0, 10, txt="Summary of Recommendations", ln=True, align="L")
     pdf.ln(10)
 
+    # Scoring summary section
+    pdf.set_font("Arial", "B", 12)
+    pdf.cell(0, 10, txt="Scoring Summary", ln=True, align="L")
+    pdf.ln(5)
+    for dim, score in st.session_state.dimension_scores.items():
+        tier = "Low"
+        if score >= 2.5:
+            tier = "High"
+        elif score >= 1.5:
+            tier = "Medium"
+        pdf.set_font("Arial", style="B", size=11)
+        pdf.cell(0, 10, f"{dim}: {score}/4 – {tier} Maturity", ln=True)
+        justification = st.session_state.get(f"text_{dim.lower().replace(' ', '_')}", "No narrative provided.")
+        pdf.set_font("Arial", size=10)
+        pdf.multi_cell(0, 10, justification)
+        pdf.ln(2)
+
     # Add recommendations text
+    pdf.set_font("Arial", "B", 12)
+    pdf.cell(0, 10, txt="Recommendations", ln=True, align="L")
+    pdf.ln(5)
     for recommendation in recommendations:
         pdf.multi_cell(0, 10, recommendation)
 
@@ -84,7 +122,8 @@ st.sidebar.markdown("""
     color: white;
 }
 /* Sidebar labels */
-[data-testid="stSidebar"] * {
+[data-testid="stSidebar"] *,
+[data-testid="stSidebar"] input[type="radio"] + div div {
     color: white !important;
 }
 }
