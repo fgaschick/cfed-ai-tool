@@ -59,10 +59,8 @@ def generate_pdf_from_recommendations(recommendations):
     pdf.ln(10)
     for recommendation in recommendations:
         pdf.multi_cell(0, 10, recommendation)
-    pdf_buffer = BytesIO()
-    pdf.output(pdf_buffer, 'F')
-    pdf_buffer.seek(0)
-    return pdf_buffer
+    pdf_bytes = pdf.output(dest='S').encode('latin1')
+    return BytesIO(pdf_bytes)
 
 # Page setup
 st.set_page_config(page_title="Climate Finance Maturity Tool", layout="wide")
