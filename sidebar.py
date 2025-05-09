@@ -122,7 +122,7 @@ def ai_scoring_tab(title, prompt, key):
     st.title(f"{title} Scoring")
     use_ai = st.checkbox(f"Use AI to score {title}", value=False, key=f"ai_{key}")
     if use_ai:
-        narrative = st.text_area("Enter narrative description:", height=300, key=f"text_{key}")
+        narrative = st.text_area("Enter narrative description:", height=300, key=f"text_{key}", value=st.session_state.get(f"text_{key}", ""))
         uploaded_file = st.file_uploader("Upload document (PDF/DOCX)", type=["pdf", "docx"], key=f"file_{key}")
         if uploaded_file:
             narrative += extract_text_from_file(uploaded_file)
@@ -140,25 +140,25 @@ def ai_scoring_tab(title, prompt, key):
     else:
         st.markdown("### Manual Scoring (based on sub-indicator evidence)")
         if title == "Enabling Environment":
-            s1 = st.checkbox("Country has submitted an NDC", key=f"{key}_env_s1")
-            s2 = st.checkbox("NDC is linked to investment or implementation plans", key=f"{key}_env_s2")
-            s3 = st.checkbox("NDC or strategy includes financing targets or mechanisms", key=f"{key}_env_s3")
-            s4 = st.checkbox("There is a national climate finance strategy or roadmap", key=f"{key}_env_s4")
+            s1 = st.checkbox("Country has submitted an NDC", key=f"{key}_env_s1", value=st.session_state.get(f"{key}_s1", False), key=f"{key}_s1")
+            s2 = st.checkbox("NDC is linked to investment or implementation plans", key=f"{key}_env_s2", value=st.session_state.get(f"{key}_s2", False), key=f"{key}_s2")
+            s3 = st.checkbox("NDC or strategy includes financing targets or mechanisms", key=f"{key}_env_s3", value=st.session_state.get(f"{key}_s3", False), key=f"{key}_s3")
+            s4 = st.checkbox("There is a national climate finance strategy or roadmap", key=f"{key}_env_s4", value=st.session_state.get(f"{key}_s4", False), key=f"{key}_s4")
         elif title == "Ecosystem Infrastructure":
-            s1 = st.checkbox("Physical infrastructure for climate adaptation and mitigation exists", key=f"{key}_infra_s1")
-            s2 = st.checkbox("There is a national or regional data infrastructure for monitoring climate impacts", key=f"{key}_infra_s2")
-            s3 = st.checkbox("Climate-related digital platforms are available for stakeholders", key=f"{key}_infra_s3")
-            s4 = st.checkbox("Regulatory frameworks for climate finance and development are in place", key=f"{key}_infra_s4")
+            s1 = st.checkbox("Physical infrastructure for climate adaptation and mitigation exists", key=f"{key}_infra_s1", value=st.session_state.get(f"{key}_s1", False), key=f"{key}_s1")
+            s2 = st.checkbox("There is a national or regional data infrastructure for monitoring climate impacts", key=f"{key}_infra_s2", value=st.session_state.get(f"{key}_s2", False), key=f"{key}_s2")
+            s3 = st.checkbox("Climate-related digital platforms are available for stakeholders", key=f"{key}_infra_s3", value=st.session_state.get(f"{key}_s3", False), key=f"{key}_s3")
+            s4 = st.checkbox("Regulatory frameworks for climate finance and development are in place", key=f"{key}_infra_s4", value=st.session_state.get(f"{key}_s4", False), key=f"{key}_s4")
         elif title == "Finance Providers":
-            s1 = st.checkbox("Public finance providers are operational and engaged in climate finance", key=f"{key}_prov_s1")
-            s2 = st.checkbox("Private finance providers are actively engaged in climate finance", key=f"{key}_prov_s2")
-            s3 = st.checkbox("Development finance institutions provide substantial climate finance", key=f"{key}_prov_s3")
-            s4 = st.checkbox("Multilateral development banks are active in the climate finance ecosystem", key=f"{key}_prov_s4")
+            s1 = st.checkbox("Public finance providers are operational and engaged in climate finance", key=f"{key}_prov_s1", value=st.session_state.get(f"{key}_s1", False), key=f"{key}_s1")
+            s2 = st.checkbox("Private finance providers are actively engaged in climate finance", key=f"{key}_prov_s2", value=st.session_state.get(f"{key}_s2", False), key=f"{key}_s2")
+            s3 = st.checkbox("Development finance institutions provide substantial climate finance", key=f"{key}_prov_s3", value=st.session_state.get(f"{key}_s3", False), key=f"{key}_s3")
+            s4 = st.checkbox("Multilateral development banks are active in the climate finance ecosystem", key=f"{key}_prov_s4", value=st.session_state.get(f"{key}_s4", False), key=f"{key}_s4")
         elif title == "Finance Seekers":
-            s1 = st.checkbox("Project proposals are well developed and aligned with climate finance needs", key=f"{key}_seek_s1")
-            s2 = st.checkbox("A pipeline of climate projects is available for financing", key=f"{key}_seek_s2")
-            s3 = st.checkbox("There is easy access to finance for climate-related projects", key=f"{key}_seek_s3")
-            s4 = st.checkbox("Stakeholder engagement is integral to project development", key=f"{key}_seek_s4")
+            s1 = st.checkbox("Project proposals are well developed and aligned with climate finance needs", key=f"{key}_seek_s1", value=st.session_state.get(f"{key}_s1", False), key=f"{key}_s1")
+            s2 = st.checkbox("A pipeline of climate projects is available for financing", key=f"{key}_seek_s2", value=st.session_state.get(f"{key}_s2", False), key=f"{key}_s2")
+            s3 = st.checkbox("There is easy access to finance for climate-related projects", key=f"{key}_seek_s3", value=st.session_state.get(f"{key}_s3", False), key=f"{key}_s3")
+            s4 = st.checkbox("Stakeholder engagement is integral to project development", key=f"{key}_seek_s4", value=st.session_state.get(f"{key}_s4", False), key=f"{key}_s4")
         score = sum([s1, s2, s3, s4])
         st.session_state.dimension_scores[title] = score
         st.markdown(f"**Score for {title}:** {score}/4")
