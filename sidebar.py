@@ -245,8 +245,8 @@ if selected_tab == "Summary & Recommendations":
         if score < 3:
             rec_prompt = f"Provide 3–5 recommendations for improving {dim} with a current score of {score}."
             ai_output = get_ai_score(rec_prompt, "")
-            recommendations.append(f"### {dim} 
-" + ai_output)
+            recommendations.append(f"### {dim}
+{ai_output}")
 
     if not recommendations:
         st.info("All dimensions scored high. No improvement recommendations necessary.")
