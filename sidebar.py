@@ -29,9 +29,9 @@ def get_ai_score(prompt, user_input):
         )
         return response["choices"][0]["message"]["content"].strip()
     except openai.OpenAIError as oe:
-        return f"OpenAI API error: {oe.user_message}"
+        return f"OpenAI API error: {str(oe)}"
     except Exception as e:
-        return "An unexpected error occurred. Please retry or check your API key."
+        return f"Unexpected error: {str(e)}"
 
 # More reliable score extraction from AI output
 def extract_avg_score(output):
