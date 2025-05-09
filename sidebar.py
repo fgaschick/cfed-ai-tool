@@ -89,6 +89,18 @@ section.main input[type="radio"] + div div {
 st.sidebar.title("Climate Finance Ecosystem Diagnostic (CFED)")
 st.sidebar.subheader("AI-Assisted Maturity Scoring Tool")
 
+# Handle early reset before anything renders
+if "reset_triggered" in st.session_state and st.session_state.reset_triggered:
+    st.session_state.dimension_inputs = {}
+    st.session_state.dimension_scores = {
+        "Enabling Environment": 0,
+        "Ecosystem Infrastructure": 0,
+        "Finance Providers": 0,
+        "Finance Seekers": 0
+    }
+    st.session_state.reset_triggered = False
+    st.experimental_rerun()
+
 # Reset and session state setup
 if "dimension_scores" not in st.session_state:
     st.session_state.dimension_scores = {
@@ -99,11 +111,11 @@ if "dimension_scores" not in st.session_state:
     }
 if "dimension_inputs" not in st.session_state:
     st.session_state.dimension_inputs = {}
+if "reset_triggered" not in st.session_state:
+    st.session_state.reset_triggered = False
 
 if st.sidebar.button("🔁 Reset All Inputs"):
-    st.session_state.dimension_inputs.clear()
-    for key in st.session_state.dimension_scores:
-        st.session_state.dimension_scores[key] = 0
+    st.session_state.reset_triggered = True
     st.experimental_rerun()
 
 # Tab setup
