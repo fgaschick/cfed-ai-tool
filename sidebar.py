@@ -8,6 +8,7 @@ import PyPDF2
 import docx
 from io import BytesIO
 import re
+import time
 
 # Set OpenAI API key using environment variable
 api_key = os.getenv("OPENAI_API_KEY")
@@ -92,9 +93,15 @@ st.sidebar.subheader("AI-Assisted Maturity Scoring Tool")
 # Handle early reset before anything renders
 if "reset_triggered" in st.session_state and st.session_state.reset_triggered:
     st.session_state.reset_triggered = False
-    st.session_state.pop("dimension_inputs", None)
-    st.session_state.pop("dimension_scores", None)
-    st.toast("Inputs have been reset.", icon="🔄")
+    keys_to_clear = [
+        "dimension_inputs",
+        "dimension_scores",
+        *(k for k in st.session_state.keys() if k.startswith("ai_") or k.startswith("text_"))
+    ]
+    for k in keys_to_clear:
+        st.session_state.pop(k, None)
+    st.toast("Inputs have been reset. Please wait...", icon="🔄")
+    time.sleep(0.2)
     st.experimental_rerun()
 
 # Reset and session state setup
