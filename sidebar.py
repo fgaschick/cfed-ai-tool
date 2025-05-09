@@ -168,9 +168,21 @@ def ai_scoring_tab(title, prompt, key):
     use_ai = st.checkbox(f"Use AI to score {title}", value=False, key=f"ai_{key}")
     if use_ai:
         narrative = st.session_state.dimension_inputs.setdefault(f"text_{key}", "")
-        narrative = st.text_area("Enter narrative description:", height=300, value=narrative, help="Please describe the current state of this dimension using the same categories found in the manual scoring checkboxes.")
+        narrative_help_text = {
+            "env": "Describe national climate strategies, policy commitments, financing targets, and stakeholder consultation practices.",
+            "infra": "Describe physical infrastructure, climate data systems, digital platforms, and regulatory frameworks supporting climate goals.",
+            "providers": "Describe the role and engagement of public, private, DFI, and multilateral actors in providing climate finance.",
+            "seekers": "Describe quality of project proposals, project pipelines, accessibility of finance, and stakeholder inclusion in project development."
+        }
+        narrative = st.text_area("Enter narrative description:", height=300, value=narrative, help=narrative_help_text.get(key, "Provide relevant information."))
         st.session_state.dimension_inputs[f"text_{key}"] = narrative
-        uploaded_file = st.file_uploader("Upload document (PDF/DOCX)", type=["pdf", "docx"], key=f"file_{key}", help="Upload any document that includes evidence for this dimension, such as NDCs, national strategies, policy frameworks, or project pipelines.")
+        upload_help_text = {
+            "env": "Upload relevant documents such as NDCs, national climate policies, and climate finance strategies.",
+            "infra": "Upload documents such as infrastructure assessments, digital platform documentation, or data monitoring reports.",
+            "providers": "Upload reports showing participation of public/private finance institutions or MDB/DFI engagement.",
+            "seekers": "Upload project concept notes, funding proposals, or stakeholder engagement reports."
+        }
+        uploaded_file = st.file_uploader("Upload document (PDF/DOCX)", type=["pdf", "docx"], key=f"file_{key}", help=upload_help_text.get(key, "Upload supporting evidence.")) that provide evidence for this dimension.")
         if uploaded_file:
             file_text = extract_text_from_file(uploaded_file)
             narrative += file_text
