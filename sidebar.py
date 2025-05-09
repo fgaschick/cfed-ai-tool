@@ -83,11 +83,13 @@ st.sidebar.markdown("""
     padding-top: 1rem;
     color: white;
 }
-/* Sidebar labels (radio) */
-label[data-testid="stSidebarLabel"], .sidebar-content label, .stRadio > div {
+/* Sidebar labels */
+[data-testid="stSidebar"] label,
+[data-testid="stSidebar"] .stRadio > div,
+[data-testid="stSidebar"] span {
     color: white !important;
 }
-/* Main area checkbox and radio labels */
+/* Main area labels */
 section.main label span,
 section.main div[class^="st"] label span,
 section.main input[type="checkbox"] + div div,
