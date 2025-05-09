@@ -82,9 +82,30 @@ if "dimension_scores" not in st.session_state:
 # Tab: Instructions
 if selected_tab == "Instructions":
     st.markdown("""
-        ## Instructions
-        This tool helps assess the maturity of a country’s climate finance ecosystem.
-        You can either manually score each dimension using checkboxes or use the AI to analyze uploaded documents and narratives.
+        ## Instructions: How to Use the Tool
+
+        Welcome to the **Climate Finance Ecosystem Diagnostic (CFED)** tool! This tool helps you assess the maturity of a country's climate finance ecosystem by evaluating key dimensions and subcomponents of climate finance. 
+        The tool uses **both manual scoring** and **AI-based analysis** to provide a comprehensive overview of the climate finance landscape in your country. 
+
+        ### Tool Structure:
+        The tool is structured into four main dimensions, each with its respective subcomponents and indicators. These dimensions are:
+        1. **Enabling Environment**
+        2. **Ecosystem Infrastructure**
+        3. **Finance Providers**
+        4. **Finance Seekers**
+
+        ### How to Use the Tool:
+        - **AI-Based Scoring**: You can choose to use **AI-based scoring** by providing a **narrative description** of each dimension. When you select this option, the tool will ask for detailed information about your country's climate finance system. 
+        - **Document Upload**: Along with the narrative, you can upload **relevant documents** (PDF/Word) that provide more in-depth information on the dimension you're scoring. The AI will analyze both the narrative and the document to generate a score and recommendations.
+        - **Manual Scoring**: If you prefer, you can manually score the dimension by selecting checkboxes for the provided indicators and subcomponents. This will allow you to evaluate the maturity of each dimension based on specific questions. Each indicator corresponds to an element of the climate finance ecosystem, such as policies, infrastructure, or finance flows.
+
+        ### Scoring and Results:
+        - After completing the scoring for each dimension (whether using AI or manual input), you will see the **score for each dimension** displayed on the sidebar.
+        - The **combined score** is automatically calculated based on the individual dimension scores.
+        - **AI-based recommendations** will be provided in the **Summary & Recommendations** tab, which will help you identify areas for improvement in the climate finance ecosystem.
+
+        ### Downloading Results:
+        Once all dimensions have been scored and recommendations are provided, you will be able to **download the recommendations as a PDF** for your records. 
     """)
 
 # Shared function for AI scoring tabs
@@ -108,7 +129,14 @@ def ai_scoring_tab(title, prompt, key):
                     st.warning("Could not extract scores. Defaulting to 2.")
                     st.session_state.dimension_scores[title] = 2
     else:
-        st.write("Manual scoring not shown here. Expand to implement.")
+        st.markdown("### Manual Scoring (based on sub-indicator evidence)")
+        s1 = st.checkbox("Sub-indicator 1 present", key=f"{key}_s1")
+        s2 = st.checkbox("Sub-indicator 2 present", key=f"{key}_s2")
+        s3 = st.checkbox("Sub-indicator 3 present", key=f"{key}_s3")
+        s4 = st.checkbox("Sub-indicator 4 present", key=f"{key}_s4")
+        score = sum([s1, s2, s3, s4])
+        st.session_state.dimension_scores[title] = score
+        st.markdown(f"**Score for {title}:** {score}/4")
 
 # Tabs for each dimension
 if selected_tab == "Enabling Environment":
