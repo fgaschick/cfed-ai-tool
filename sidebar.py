@@ -8,6 +8,8 @@ import PyPDF2
 import docx
 from io import BytesIO
 import re
+import matplotlib.pyplot as plt
+import numpy as np
 
 # Set OpenAI API key using environment variable
 api_key = os.getenv("OPENAI_API_KEY")
@@ -52,8 +54,6 @@ def extract_text_from_file(uploaded_file):
 # Function to generate a downloadable PDF
 def generate_pdf_from_recommendations(recommendations):
     import tempfile
-    import matplotlib.pyplot as plt
-    import numpy as np
     from PIL import Image
     import os
 
