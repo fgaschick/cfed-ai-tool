@@ -84,10 +84,9 @@ st.sidebar.markdown("""
     color: white;
 }
 /* Sidebar labels */
-[data-testid="stSidebar"] label,
-[data-testid="stSidebar"] .stRadio > div,
-[data-testid="stSidebar"] span {
+[data-testid="stSidebar"] * {
     color: white !important;
+}
 }
 /* Main area labels */
 section.main label span,
