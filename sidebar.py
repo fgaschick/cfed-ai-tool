@@ -107,6 +107,14 @@ if "dimension_scores" not in st.session_state:
         "Finance Seekers": 0
     }
 
+if "confirmed" not in st.session_state:
+    st.session_state.confirmed = {
+        "Enabling Environment": False,
+        "Ecosystem Infrastructure": False,
+        "Finance Providers": False,
+        "Finance Seekers": False
+    }
+
 # Tab: Instructions
 if selected_tab == "Instructions":
     st.markdown("""
@@ -180,7 +188,9 @@ def ai_scoring_tab(title, prompt, key):
             s4 = st.checkbox("Stakeholder engagement is integral to project development", key=f"{key}_seek_s4")
         score = sum([s1, s2, s3, s4])
         st.session_state.dimension_scores[title] = score
-        st.markdown(f"**Score for {title}:** {score}/4")
+                st.markdown(f"**Score for {title}:** {score}/4")
+        st.checkbox("I confirm that I have completed this dimension.", key=f"confirm_{key}")
+        st.session_state.confirmed[title] = st.session_state.get(f"confirm_{key}", False)
 # Tabs for each dimension
 if selected_tab == "Enabling Environment":
     ai_scoring_tab("Enabling Environment",
@@ -203,6 +213,9 @@ elif selected_tab == "Finance Seekers":
         "seekers")
 
 elif selected_tab == "Summary & Recommendations":
+    if not all(st.session_state.confirmed.values()):
+        st.warning("⚠️ Please complete and confirm all dimension assessments before accessing recommendations.")
+        st.stop()
     st.title("Summary & Recommendations")
     recommendations = []
     for dim, score in st.session_state.dimension_scores.items():
@@ -228,6 +241,23 @@ elif combined_score >= 1.5:
     tier = "Medium"
     color = "#fdd835"
 st.sidebar.markdown(f"**Combined Score**: <span style='color:{color}'>{combined_score}/4 – {tier} Maturity</span>", unsafe_allow_html=True)
+
+if st.sidebar.button("Reset Scores"):
+    st.session_state.dimension_scores = {
+        "Enabling Environment": 0,
+        "Ecosystem Infrastructure": 0,
+        "Finance Providers": 0,
+        "Finance Seekers": 0
+    }
+    st.session_state.confirmed = {
+        "Enabling Environment": False,
+        "Ecosystem Infrastructure": False,
+        "Finance Providers": False,
+        "Finance Seekers": False
+    }
+    for key in list(st.session_state.keys()):
+        if key.startswith("ai_") or key.startswith("text_") or key.startswith("file_") or key.startswith("confirm_") or key.endswith(('_s1', '_s2', '_s3', '_s4')):
+            del st.session_state[key]
 
 # Footer styling
 st.markdown("""
