@@ -114,7 +114,13 @@ st.sidebar.markdown("""
 <style>
 section[data-testid="stSidebar"] button {
     color: #2196F3 !important;
-    border-color: #2196F3 !important;
+    border: 1px solid #2196F3 !important;
+    background-color: transparent !important;
+}
+section[data-testid="stSidebar"] button:hover {
+    background-color: #e3f2fd !important;
+    color: #1565c0 !important;
+    border-color: #1565c0 !important;
 }
 </style>
 """, unsafe_allow_html=True)
