@@ -104,7 +104,7 @@ def generate_pdf_from_recommendations(recommendations):
     for recommendation in recommendations:
         pdf.multi_cell(0, 10, recommendation)
 
-    pdf_bytes = pdf.output(dest='S').encode('latin1')
+    pdf_bytes = pdf.output(dest='S').encode('latin1', 'replace')
     return BytesIO(pdf_bytes)
 
 # Page setup
