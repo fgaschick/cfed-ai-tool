@@ -83,7 +83,10 @@ st.sidebar.markdown("""
         padding-top: 1rem;
         color: white;
     }
-    </style>
+        label, .st-bw, .st-b8, .st-b7, .st-c4, .st-c3 {
+        color: white !important;
+    }
+</style>
 """, unsafe_allow_html=True)
 st.sidebar.title("Climate Finance Ecosystem Diagnostic (CFED)")
 st.sidebar.subheader("AI-Assisted Maturity Scoring Tool")
