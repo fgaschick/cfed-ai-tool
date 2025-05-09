@@ -194,7 +194,7 @@ elif selected_tab == "Ecosystem Infrastructure":
 elif selected_tab == "Finance Providers":
     ai_scoring_tab("Finance Providers", "You are a climate finance expert. Assess: (1) Public, (2) Private, (3) DFIs, (4) MDBs. Score 0–3.", "providers")
 elif selected_tab == "Finance Seekers":
-    ai_scoring_tab("Finance Seekers", "You are a climate finance expert. Assess: (1) Proposals, (2) Pipeline, (3) Access to finance, (4) Stakeholder engagement.", "seekers")...: <render the respective tab>
+    ai_scoring_tab("Finance Seekers", "You are a climate finance expert. Assess: (1) Proposals, (2) Pipeline, (3) Access to finance, (4) Stakeholder engagement.", "seekers")
 
 # Summary & Recommendations tab
 if selected_tab == "Summary & Recommendations":
