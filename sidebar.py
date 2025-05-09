@@ -223,6 +223,18 @@ elif combined_score >= 1.5:
     color = "#fdd835"
 st.sidebar.markdown(f"**Combined Score**: <span style='color:{color}'>{combined_score}/4 – {tier} Maturity</span>", unsafe_allow_html=True)
 
+# Reset button
+if st.sidebar.button("Reset Scores"):
+    st.session_state.dimension_scores = {
+        "Enabling Environment": 0,
+        "Ecosystem Infrastructure": 0,
+        "Finance Providers": 0,
+        "Finance Seekers": 0
+    }
+    for key in list(st.session_state.keys()):
+        if key.startswith("ai_") or key.startswith("text_") or key.startswith("file_") or key.endswith(('_s1', '_s2', '_s3', '_s4')):
+            del st.session_state[key]
+
 # Footer styling
 st.markdown("""
 <style>
