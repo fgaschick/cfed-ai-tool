@@ -155,9 +155,9 @@ def ai_scoring_tab(title, prompt, key):
             s3 = st.checkbox("Development finance institutions provide substantial climate finance", key=f"{key}_prov_s3")
             s4 = st.checkbox("Multilateral development banks are active in the climate finance ecosystem", key=f"{key}_prov_s4")
         elif title == "Finance Seekers":
-            s1 = st.checkbox("Project proposals are well developed and aligned with climate finance needs", key=f"{key}_seek_s1")
-            s2 = st.checkbox("A pipeline of climate projects is available for financing", key=f"{key}_seek_s2")
-                    s3 = st.checkbox("There is easy access to finance for climate-related projects", key=f"{key}_seek_s3")
+        s1 = st.checkbox("Project proposals are well developed and aligned with climate finance needs", key=f"{key}_seek_s1")
+        s2 = st.checkbox("A pipeline of climate projects is available for financing", key=f"{key}_seek_s2")
+        s3 = st.checkbox("There is easy access to finance for climate-related projects", key=f"{key}_seek_s3")
         s4 = st.checkbox("Stakeholder engagement is integral to project development", key=f"{key}_seek_s4")
         score = sum([s1, s2, s3, s4])
         st.session_state.dimension_scores[title] = score
