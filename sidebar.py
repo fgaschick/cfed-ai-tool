@@ -159,9 +159,9 @@ def ai_scoring_tab(title, prompt, key):
             s2 = st.checkbox("A pipeline of climate projects is available for financing", key=f"{key}_seek_s2")
             s3 = st.checkbox("There is easy access to finance for climate-related projects", key=f"{key}_seek_s3")
             s4 = st.checkbox("Stakeholder engagement is integral to project development", key=f"{key}_seek_s4")
-                        score = sum([s1, s2, s3, s4])
-                st.session_state.dimension_scores[title] = score
-                        st.markdown(f"**Score for {title}:** {score}/4")
+                score = sum([s1, s2, s3, s4])
+        st.session_state.dimension_scores[title] = score
+        st.markdown(f"**Score for {title}:** {score}/4")
         sub_scores = {
             "Enabling Environment": [
                 ("Country has submitted an NDC", s1),
