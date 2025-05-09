@@ -152,9 +152,29 @@ if selected_tab == "Instructions":
     st.markdown("""
     ## Instructions: How to Use the Tool
 
-    This tool assesses the maturity of a country's climate finance ecosystem.
-    You can score each dimension manually (checkboxes) or with AI (narrative + file upload).
-    Once all dimensions are scored, you’ll see summary and recommendations you can export.
+    Welcome to the **Climate Finance Ecosystem Diagnostic (CFED)** tool of Chemonics International! This tool helps you assess the maturity of a country's climate finance ecosystem by evaluating key dimensions and subcomponents of climate finance. 
+    The tool uses **both manual scoring** and **AI-based analysis** to provide a comprehensive overview of the climate finance landscape in your country. 
+
+    ### Tool Structure:
+    The tool is structured into four main dimensions, each with its respective subcomponents and indicators. These dimensions are:
+    1. **Enabling Environment**
+    2. **Ecosystem Infrastructure**
+    3. **Finance Providers**
+    4. **Finance Seekers**
+
+    ### How to Use the Tool:
+    - **AI-Based Scoring**: You can choose to use **AI-based scoring** by providing a **narrative description** of each dimension. When you select this option, the tool will ask for detailed information about your country's climate finance system. 
+    - **Document Upload**: Along with the narrative, you can upload **relevant documents** (PDF/Word) that provide more in-depth information on the dimension you're scoring. The AI will analyze both the narrative and the document to generate a score and recommendations.
+    - **Manual Scoring**: If you prefer, you can manually score the dimension by selecting checkboxes for the provided indicators and subcomponents. This will allow you to evaluate the maturity of each dimension based on specific questions. Each indicator corresponds to an element of the climate finance ecosystem, such as policies, infrastructure, or finance flows.
+
+    ### Scoring and Results:
+    - After completing the scoring for each dimension (whether using AI or manual input), you will see the **score for each dimension** displayed on the sidebar.
+    - The **combined score** is automatically calculated based on the individual dimension scores.
+    - Once all dimensions are marked as finalized, the **Summary & Recommendations** tab becomes available.
+    - **AI-based recommendations** will be provided in the **Summary & Recommendations** tab, which will help you identify areas for improvement in the climate finance ecosystem.
+
+    ### Downloading Results:
+    Once all dimensions have been scored and recommendations are provided, you will be able to **download the recommendations as a PDF** for your records.
     """)
 
 # Colored score display
@@ -247,15 +267,18 @@ def ai_scoring_tab(title, prompt, key):
         st.session_state.dimension_scores[title] = score
         colored_score, maturity_label = get_colored_score(score)
         st.markdown(f"**Score for {title}:** {colored_score}/4 – _{maturity_label}_", unsafe_allow_html=True)
-        if key in ["env", "infra", "providers", "seekers"]:
-            flag_map = {
-                "env": "env_done",
-                "infra": "infra_done",
-                "providers": "providers_done",
-                "seekers": "seekers_done"
-            }
+
+        flag_map = {
+            "env": "env_done",
+            "infra": "infra_done",
+            "providers": "providers_done",
+            "seekers": "seekers_done"
+        }
+        if key in flag_map:
             flag = flag_map[key]
-            st.session_state[flag] = st.checkbox("✅ I have finalized this dimension", value=st.session_state.get(flag, False))
+            st.session_state[flag] = st.checkbox(f"✅ I have finalized inputs for {title}",
+                                                value=st.session_state.get(flag, False),
+                                                key=f"{flag}_box")
 
 
 # Dimension Tabs
