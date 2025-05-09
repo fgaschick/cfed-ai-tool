@@ -168,29 +168,14 @@ def ai_scoring_tab(title, prompt, key):
     else:
         st.markdown("### Manual Scoring (based on sub-indicator evidence)")
         checkbox_list = []
+
         if title == "Enabling Environment":
-            
-            for k, label in keys_labels:
-                st.session_state.dimension_inputs.setdefault(k, False)
-                val = st.checkbox(label, value=st.session_state.dimension_inputs[k], key=k)
-                st.session_state.dimension_inputs[k] = val
-                checkbox_list.append(val)
-        for k, label in keys_labels:
-            st.session_state.dimension_inputs.setdefault(k, False)
-            val = st.checkbox(label, value=st.session_state.dimension_inputs[k], key=k)
-            st.session_state.dimension_inputs[k] = val
-            checkbox_list.append(val)
-        keys_labels = [
-            (f"{key}_env_s1", "Country has submitted an NDC"),
-            (f"{key}_env_s2", "NDC is linked to investment or implementation plans"),
-            (f"{key}_env_s3", "NDC or strategy includes financing targets or mechanisms"),
-            (f"{key}_env_s4", "There is a national climate finance strategy or roadmap")
-        ]
-        for k, label in keys_labels:
-            st.session_state.dimension_inputs.setdefault(k, False)
-            val = st.checkbox(label, value=st.session_state.dimension_inputs[k], key=k)
-            st.session_state.dimension_inputs[k] = val
-            checkbox_list.append(val)
+            keys_labels = [
+                (f"{key}_env_s1", "Country has submitted an NDC"),
+                (f"{key}_env_s2", "NDC is linked to investment or implementation plans"),
+                (f"{key}_env_s3", "NDC or strategy includes financing targets or mechanisms"),
+                (f"{key}_env_s4", "There is a national climate finance strategy or roadmap")
+            ]
         elif title == "Ecosystem Infrastructure":
             keys_labels = [
                 (f"{key}_infra_s1", "Physical infrastructure for climate adaptation and mitigation exists"),
@@ -198,16 +183,6 @@ def ai_scoring_tab(title, prompt, key):
                 (f"{key}_infra_s3", "Climate-related digital platforms are available for stakeholders"),
                 (f"{key}_infra_s4", "Regulatory frameworks for climate finance and development are in place")
             ]
-            for k, label in keys_labels:
-                st.session_state.dimension_inputs.setdefault(k, False)
-                val = st.checkbox(label, value=st.session_state.dimension_inputs[k], key=k)
-                st.session_state.dimension_inputs[k] = val
-                checkbox_list.append(val)
-        for k, label in keys_labels:
-            st.session_state.dimension_inputs.setdefault(k, False)
-            val = st.checkbox(label, value=st.session_state.dimension_inputs[k], key=k)
-            st.session_state.dimension_inputs[k] = val
-            checkbox_list.append(val)
         elif title == "Finance Providers":
             keys_labels = [
                 (f"{key}_prov_s1", "Public finance providers are operational and engaged in climate finance"),
@@ -215,16 +190,6 @@ def ai_scoring_tab(title, prompt, key):
                 (f"{key}_prov_s3", "Development finance institutions provide substantial climate finance"),
                 (f"{key}_prov_s4", "Multilateral development banks are active in the climate finance ecosystem")
             ]
-            for k, label in keys_labels:
-                st.session_state.dimension_inputs.setdefault(k, False)
-                val = st.checkbox(label, value=st.session_state.dimension_inputs[k], key=k)
-                st.session_state.dimension_inputs[k] = val
-                checkbox_list.append(val)
-        for k, label in keys_labels:
-            st.session_state.dimension_inputs.setdefault(k, False)
-            val = st.checkbox(label, value=st.session_state.dimension_inputs[k], key=k)
-            st.session_state.dimension_inputs[k] = val
-            checkbox_list.append(val)
         elif title == "Finance Seekers":
             keys_labels = [
                 (f"{key}_seek_s1", "Project proposals are well developed and aligned with climate finance needs"),
@@ -232,17 +197,14 @@ def ai_scoring_tab(title, prompt, key):
                 (f"{key}_seek_s3", "There is easy access to finance for climate-related projects"),
                 (f"{key}_seek_s4", "Stakeholder engagement is integral to project development")
             ]
-            for k, label in keys_labels:
-                st.session_state.dimension_inputs.setdefault(k, False)
-                val = st.checkbox(label, value=st.session_state.dimension_inputs[k], key=k)
-                st.session_state.dimension_inputs[k] = val
-                checkbox_list.append(val)
+
         for k, label in keys_labels:
             st.session_state.dimension_inputs.setdefault(k, False)
             val = st.checkbox(label, value=st.session_state.dimension_inputs[k], key=k)
             st.session_state.dimension_inputs[k] = val
             checkbox_list.append(val)
-        score = sum(checkbox_list)
+
+        score = sum([int(bool(x)) for x in checkbox_list])
         st.session_state.dimension_scores[title] = score
         st.markdown(f"**Score for {title}:** {score}/4")
 
