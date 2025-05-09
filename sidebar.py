@@ -93,18 +93,22 @@ st.sidebar.subheader("AI-Assisted Maturity Scoring Tool")
 
 # Handle early reset before anything renders
 if "reset_triggered" in st.session_state and st.session_state.reset_triggered:
-    st.session_state.clear()
-    st.session_state.reset_triggered = False
+    reset_keys = [
+        k for k in list(st.session_state.keys())
+        if k.startswith("text_") or k.startswith("file_") or k.startswith("ai_") or k.endswith("_s1") or k.endswith("_s2") or k.endswith("_s3") or k.endswith("_s4")
+    ]
+    for k in reset_keys:
+        del st.session_state[k]
+    st.session_state.dimension_inputs = {}
     st.session_state.dimension_scores = {
         "Enabling Environment": 0,
         "Ecosystem Infrastructure": 0,
         "Finance Providers": 0,
         "Finance Seekers": 0
     }
-    st.session_state.dimension_inputs = {}
     st.session_state.selected_tab = "Instructions"
-    st.toast("Inputs have been reset. Returning to instructions...", icon="🔄")
-    st.stop()
+    st.session_state.reset_triggered = False
+    st.experimental_rerun()
 
 # Reset and session state setup
 if "dimension_scores" not in st.session_state:
@@ -135,20 +139,7 @@ section[data-testid="stSidebar"] button:hover {
 """, unsafe_allow_html=True)
 
 if st.sidebar.button("🔁 Reset All Inputs"):
-    reset_keys = [
-        k for k in st.session_state.keys()
-        if k.startswith("text_") or k.startswith("file_") or k.startswith("ai_") or k.endswith("_s1") or k.endswith("_s2") or k.endswith("_s3") or k.endswith("_s4")
-    ]
-    for k in reset_keys:
-        del st.session_state[k]
-    st.session_state.dimension_inputs = {}
-    st.session_state.dimension_scores = {
-        "Enabling Environment": 0,
-        "Ecosystem Infrastructure": 0,
-        "Finance Providers": 0,
-        "Finance Seekers": 0
-    }
-    st.session_state.selected_tab = "Instructions"
+    st.session_state.reset_triggered = True
     st.experimental_rerun()
 
 # Tab setup
