@@ -51,14 +51,47 @@ def extract_text_from_file(uploaded_file):
 
 # Function to generate a downloadable PDF
 def generate_pdf_from_recommendations(recommendations):
+    import tempfile
+    import matplotlib.pyplot as plt
+    import numpy as np
+    from PIL import Image
+    import os
+
     pdf = FPDF()
     pdf.set_auto_page_break(auto=True, margin=15)
     pdf.add_page()
     pdf.set_font("Arial", size=12)
     pdf.cell(200, 10, txt="AI-Based Recommendations for Action", ln=True, align="C")
     pdf.ln(10)
+
+    # Add recommendations text
     for recommendation in recommendations:
         pdf.multi_cell(0, 10, recommendation)
+
+    # Generate radar charts for each dimension if scores are available
+    for title, score in st.session_state.dimension_scores.items():
+        if isinstance(score, (int, float)) and score > 0:
+            labels = ["Component 1", "Component 2", "Component 3", "Component 4"]
+            values = [1, 1, 1, 1]  # use dummy equal scores to represent radar shape visually
+            values += values[:1]
+            angles = np.linspace(0, 2 * np.pi, len(labels), endpoint=False).tolist()
+            angles += angles[:1]
+
+            fig, ax = plt.subplots(figsize=(3, 3), subplot_kw=dict(polar=True))
+            ax.fill(angles, values, color='skyblue', alpha=0.4)
+            ax.plot(angles, values, color='blue', linewidth=2)
+            ax.set_yticklabels([])
+            ax.set_xticks(angles[:-1])
+            ax.set_xticklabels(labels)
+            plt.title(title, size=10)
+
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as tmpfile:
+                plt.savefig(tmpfile.name, bbox_inches='tight')
+                pdf.add_page()
+                pdf.image(tmpfile.name, x=30, y=40, w=150)
+                plt.close(fig)
+                os.unlink(tmpfile.name)
+
     pdf_bytes = pdf.output(dest='S').encode('latin1')
     return BytesIO(pdf_bytes)
 
@@ -153,8 +186,23 @@ def ai_scoring_tab(title, prompt, key):
         score = sum([s1, s2, s3, s4])
         st.session_state.dimension_scores[title] = score
         st.markdown(f"**Score for {title}:** {score}/4")
+        # Display radar chart
+        labels = ["Component 1", "Component 2", "Component 3", "Component 4"]
+        values = [s1, s2, s3, s4]
+        values += values[:1]  # Close the loop
+        angles = np.linspace(0, 2 * np.pi, len(labels), endpoint=False).tolist()
+        angles += angles[:1]
+        fig, ax = plt.subplots(figsize=(4, 4), subplot_kw=dict(polar=True))
+        ax.fill(angles, values, color='skyblue', alpha=0.4)
+        ax.plot(angles, values, color='blue', linewidth=2)
+        ax.set_yticklabels([])
+        ax.set_xticks(angles[:-1])
+        ax.set_xticklabels(labels)
+        st.pyplot(fig)
 
 # Tabs for each dimension
+import matplotlib.pyplot as plt
+import numpy as np
 if selected_tab == "Enabling Environment":
     ai_scoring_tab("Enabling Environment",
         "You are a climate finance expert. Assess the enabling environment using: (1) Strategy, (2) Policy, (3) Enforcement, (4) Stakeholder consultation. Assign a score 0-3 for each and justify.",
