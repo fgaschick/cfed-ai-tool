@@ -246,14 +246,14 @@ def ai_scoring_tab(title, prompt, key):
         colored_score, maturity_label = get_colored_score(score)
         st.markdown(f"**Score for {title}:** {colored_score}/4 – _{maturity_label}_", unsafe_allow_html=True)
         if key in ["env", "infra", "providers", "seekers"]:
-        flag_map = {
-            "env": "env_done",
-            "infra": "infra_done",
-            "providers": "providers_done",
-            "seekers": "seekers_done"
-        }
-        flag = flag_map[key]
-        st.session_state[flag] = st.checkbox("✅ I have finalized this dimension", value=st.session_state.get(flag, False))
+            flag_map = {
+                "env": "env_done",
+                "infra": "infra_done",
+                "providers": "providers_done",
+                "seekers": "seekers_done"
+            }
+            flag = flag_map[key]
+            st.session_state[flag] = st.checkbox("✅ I have finalized this dimension", value=st.session_state.get(flag, False)))
 
 
 # Dimension Tabs
