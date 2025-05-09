@@ -16,12 +16,12 @@ if not api_key:
     st.error("OPENAI_API_KEY environment variable not set.")
     st.stop()
 
-client = openai.OpenAI(api_key=api_key)
+openai.api_key = api_key
 
 # AI scoring function with refined prompt and error handling
 def get_ai_score(prompt, user_input):
     try:
-        response = client.chat.completions.create(
+        response = openai.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": prompt},
@@ -180,8 +180,7 @@ elif selected_tab == "Summary & Recommendations":
         if score < 3:
             prompt = f"Provide 3–5 targeted recommendations to improve the '{dim}' dimension, currently scored {score}/4."
             recs = get_ai_score(prompt, "")
-            recommendations.append(f"### {dim}
-{recs}")
+            recommendations.append(f"### {dim}\n{recs}")
     for rec in recommendations:
         st.markdown(rec)
     pdf_output = generate_pdf_from_recommendations(recommendations)
