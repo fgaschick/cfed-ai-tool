@@ -92,17 +92,18 @@ st.sidebar.subheader("AI-Assisted Maturity Scoring Tool")
 
 # Handle early reset before anything renders
 if "reset_triggered" in st.session_state and st.session_state.reset_triggered:
+    # Delay rerun to avoid race condition
     st.session_state.reset_triggered = False
-    keys_to_clear = [
-        "dimension_inputs",
-        "dimension_scores",
-        *(k for k in st.session_state.keys() if k.startswith("ai_") or k.startswith("text_"))
-    ]
-    for k in keys_to_clear:
-        st.session_state.pop(k, None)
+    time.sleep(0.1)
+    st.session_state.dimension_inputs = {}
+    st.session_state.dimension_scores = {
+        "Enabling Environment": 0,
+        "Ecosystem Infrastructure": 0,
+        "Finance Providers": 0,
+        "Finance Seekers": 0
+    }
     st.toast("Inputs have been reset. Please wait...", icon="🔄")
-    time.sleep(0.2)
-    st.experimental_rerun()
+    st.stop()
 
 # Reset and session state setup
 if "dimension_scores" not in st.session_state:
