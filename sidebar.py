@@ -149,8 +149,8 @@ def ai_scoring_tab(title, prompt, key):
     use_ai = st.checkbox(f"Use AI to score {title}", value=False, key=f"ai_{key}")
     if use_ai:
         narrative = st.session_state.dimension_inputs.setdefault(f"text_{key}", "")
-narrative = st.text_area("Enter narrative description:", height=300, value=st.session_state.dimension_inputs[f"text_{key}"])
-st.session_state.dimension_inputs[f"text_{key}"] = narrative
+        narrative = st.text_area("Enter narrative description:", height=300, value=narrative)
+        st.session_state.dimension_inputs[f"text_{key}"] = narrative
         uploaded_file = st.file_uploader("Upload document (PDF/DOCX)", type=["pdf", "docx"], key=f"file_{key}")
         if uploaded_file:
             narrative += extract_text_from_file(uploaded_file)
@@ -169,9 +169,18 @@ st.session_state.dimension_inputs[f"text_{key}"] = narrative
         st.markdown("### Manual Scoring (based on sub-indicator evidence)")
         checkbox_list = []
         if title == "Enabling Environment":
-            checkbox_list = [
-                st.session_state.dimension_inputs.setdefault(f"{key}_env_s1", False)
-                val = st.checkbox("Country has submitted an NDC", value=st.session_state.dimension_inputs[f"{key}_env_s1"], key=f"{key}_env_s1")
+            checkbox_list = []
+        keys_labels = [
+            (f"{key}_env_s1", "Country has submitted an NDC"),
+            (f"{key}_env_s2", "NDC is linked to investment or implementation plans"),
+            (f"{key}_env_s3", "NDC or strategy includes financing targets or mechanisms"),
+            (f"{key}_env_s4", "There is a national climate finance strategy or roadmap")
+        ]
+        for k, label in keys_labels:
+            st.session_state.dimension_inputs.setdefault(k, False)
+            val = st.checkbox(label, value=st.session_state.dimension_inputs[k], key=k)
+            st.session_state.dimension_inputs[k] = val
+            checkbox_list.append(val), key=f"{key}_env_s1")
                 st.session_state.dimension_inputs[f"{key}_env_s1"] = val,
                 st.checkbox("NDC is linked to investment or implementation plans", value=st.session_state.get(f"{key}_env_s2", False), key=f"{key}_env_s2"),
                 st.checkbox("NDC or strategy includes financing targets or mechanisms", value=st.session_state.get(f"{key}_env_s3", False), key=f"{key}_env_s3"),
