@@ -101,6 +101,14 @@ if "dimension_scores" not in st.session_state:
         "Finance Seekers": 0
     }
 
+if "confirmation_flags" not in st.session_state:
+    st.session_state.confirmation_flags = {
+        "Enabling Environment": False,
+        "Ecosystem Infrastructure": False,
+        "Finance Providers": False,
+        "Finance Seekers": False
+    }
+
 # Tab: Instructions
 if selected_tab == "Instructions":
     st.markdown("""
@@ -175,6 +183,8 @@ def ai_scoring_tab(title, prompt, key):
         score = sum([s1, s2, s3, s4])
         st.session_state.dimension_scores[title] = score
         st.markdown(f"**Score for {title}:** {score}/4")
+        st.checkbox("I confirm that I have completed this dimension.", key=f"confirm_{key}")
+        st.session_state.confirmation_flags[title] = st.session_state.get(f"confirm_{key}", False)
 # Tabs for each dimension
 if selected_tab == "Enabling Environment":
     ai_scoring_tab("Enabling Environment",
@@ -197,6 +207,9 @@ elif selected_tab == "Finance Seekers":
         "seekers")
 
 elif selected_tab == "Summary & Recommendations":
+    if not all(st.session_state.confirmation_flags.values()):
+        st.warning("⚠️ Please complete and confirm all dimension assessments before accessing recommendations.")
+        st.stop()
     st.title("Summary & Recommendations")
     recommendations = []
     for dim, score in st.session_state.dimension_scores.items():
