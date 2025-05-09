@@ -15,23 +15,22 @@ api_key = os.getenv("OPENAI_API_KEY")
 if not api_key:
     st.error("OPENAI_API_KEY environment variable not set.")
     st.stop()
-openai.api_key = api_key
+
+client = openai.OpenAI(api_key=api_key)
 
 # AI scoring function with refined prompt and error handling
 def get_ai_score(prompt, user_input):
     try:
-        response = openai.ChatCompletion.create(
+        response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": prompt},
                 {"role": "user", "content": user_input}
             ]
         )
-        return response["choices"][0]["message"]["content"].strip()
-    except openai.OpenAIError as oe:
-        return f"OpenAI API error: {str(oe)}"
+        return response.choices[0].message.content.strip()
     except Exception as e:
-        return f"Unexpected error: {str(e)}"
+        return f"OpenAI API error: {str(e)}"
 
 # More reliable score extraction from AI output
 def extract_avg_score(output):
@@ -53,7 +52,6 @@ def extract_text_from_file(uploaded_file):
     return text
 
 # PDF generation
-
 def generate_pdf_from_recommendations(recommendations):
     pdf = FPDF()
     pdf.set_auto_page_break(auto=True, margin=15)
@@ -166,7 +164,7 @@ def ai_scoring_tab(title, prompt, key):
         st.session_state.dimension_scores[title] = score
         st.markdown(f"**Score: {score}/4**")
 
-# Tabs
+# Tabs logic
 if selected_tab == "Enabling Environment":
     ai_scoring_tab("Enabling Environment", "Assess strategy, policy, enforcement, and stakeholder consultation (0–3 each). Format: (1) Strategy: x ... (4) Stakeholder: x.", "env")
 elif selected_tab == "Ecosystem Infrastructure":
@@ -182,7 +180,8 @@ elif selected_tab == "Summary & Recommendations":
         if score < 3:
             prompt = f"Provide 3–5 targeted recommendations to improve the '{dim}' dimension, currently scored {score}/4."
             recs = get_ai_score(prompt, "")
-            recommendations.append(f"### {dim}\n{recs}")
+            recommendations.append(f"### {dim}
+{recs}")
     for rec in recommendations:
         st.markdown(rec)
     pdf_output = generate_pdf_from_recommendations(recommendations)
