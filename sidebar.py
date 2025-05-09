@@ -87,7 +87,12 @@ label, .st-bw, .st-b8, .st-b7, .st-c4, .st-c3 {
     color: white !important;
 }
 section.main label, section.main div[class^="st"] {
-    color: black !important !important;
+    color: black !important;
+}
+input[type="checkbox"] + div span,
+input[type="radio"] + div span,
+label[data-testid="stMarkdownContainer"] {
+    color: black !important;
 }
 </style>
 """, unsafe_allow_html=True)
