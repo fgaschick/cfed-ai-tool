@@ -138,7 +138,7 @@ if st.sidebar.button("🔁 Reset All Inputs"):
     st.session_state.clear()
     st.session_state.selected_tab = "Instructions"
     st.toast("Inputs have been reset. Returning to instructions...", icon="🔄")
-    st.experimental_set_query_params()
+    st.query_params.clear()
     st.stop()
 
 # Tab setup
