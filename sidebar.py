@@ -83,17 +83,15 @@ st.sidebar.markdown("""
     padding-top: 1rem;
     color: white;
 }
-label, .st-bw, .st-b8, .st-b7, .st-c4, .st-c3 {
+/* Sidebar labels (radio) */
+label[data-testid="stSidebarLabel"], .sidebar-content label, .stRadio > div {
     color: white !important;
 }
-section.main label, section.main div[class^="st"] {
-    color: black !important;
-}
-input[type="checkbox"] + label span,
-input[type="checkbox"] + div div,
-input[type="radio"] + label span,
-input[type="radio"] + div div,
-label[data-testid="stMarkdownContainer"] {
+/* Main area checkbox and radio labels */
+section.main label span,
+section.main div[class^="st"] label span,
+section.main input[type="checkbox"] + div div,
+section.main input[type="radio"] + div div {
     color: black !important;
 }
 </style>
