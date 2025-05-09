@@ -75,7 +75,7 @@ def generate_pdf_from_recommendations(recommendations):
 st.set_page_config(page_title="Climate Finance Maturity Tool", layout="wide")
 
 # Sidebar and navigation
-st.sidebar.image("https://raw.githubusercontent.com/fgaschick/cfed-ai-tool/main/Chemonics_RGB_Horizontal_BLUE-WHITE.png", use_column_width=True)
+st.sidebar.image("https://raw.githubusercontent.com/fgaschick/cfed-ai-tool/main/Chemonics_RGB_Horizontal_BLUE-WHITE.png", use_container_width=True)
 st.sidebar.markdown("""
     <style>
     [data-testid="stSidebar"] > div:first-child {
