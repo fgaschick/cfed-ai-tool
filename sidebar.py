@@ -102,6 +102,8 @@ if "reset_triggered" in st.session_state and st.session_state.reset_triggered:
     }
     st.session_state.selected_tab = "Instructions"
     st.session_state.reset_triggered = False
+    for flag in ["env_done", "infra_done", "providers_done", "seekers_done"]:
+        st.session_state[flag] = False
     st.rerun()
 
 # Reset and session state setup
