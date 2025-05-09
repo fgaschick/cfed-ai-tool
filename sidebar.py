@@ -246,14 +246,12 @@ if selected_tab == "Summary & Recommendations":
             rec_prompt = f"Provide 3–5 recommendations for improving {dim} with a current score of {score}."
             ai_output = get_ai_score(rec_prompt, "")
             recommendations.append(f"### {dim}
-{ai_output}")
+{ai_output.strip()}")
 
     if not recommendations:
         st.info("All dimensions scored high. No improvement recommendations necessary.")
     else:
         for rec in recommendations:
-            st.markdown(rec)
-    for rec in recommendations:
         st.markdown(rec)
     pdf_output = generate_pdf_from_recommendations(recommendations)
     st.download_button("Download PDF", data=pdf_output, file_name="recommendations.pdf", mime="application/pdf")
