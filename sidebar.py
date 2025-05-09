@@ -168,9 +168,9 @@ def ai_scoring_tab(title, prompt, key):
     use_ai = st.checkbox(f"Use AI to score {title}", value=False, key=f"ai_{key}")
     if use_ai:
         narrative = st.session_state.dimension_inputs.setdefault(f"text_{key}", "")
-        narrative = st.text_area("Enter narrative description:", height=300, value=narrative)
+        narrative = st.text_area("Enter narrative description:", height=300, value=narrative, help="Please describe the current state of this dimension using the same categories found in the manual scoring checkboxes.")
         st.session_state.dimension_inputs[f"text_{key}"] = narrative
-        uploaded_file = st.file_uploader("Upload document (PDF/DOCX)", type=["pdf", "docx"], key=f"file_{key}")
+        uploaded_file = st.file_uploader("Upload document (PDF/DOCX)", type=["pdf", "docx"], key=f"file_{key}", help="Upload any document that includes evidence for this dimension, such as NDCs, national strategies, policy frameworks, or project pipelines.")
         if uploaded_file:
             file_text = extract_text_from_file(uploaded_file)
             narrative += file_text
