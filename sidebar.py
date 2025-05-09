@@ -137,7 +137,11 @@ if st.sidebar.button("🔁 Reset All Inputs"):
     st.rerun()
 
 # Tab setup
-tabs = ["Instructions", "Enabling Environment", "Ecosystem Infrastructure", "Finance Providers", "Finance Seekers", "Summary & Recommendations"]
+tabs = ["Instructions", "Enabling Environment", "Ecosystem Infrastructure", "Finance Providers", "Finance Seekers"]
+if all(st.session_state.get(done_flag, False) for done_flag in ["env_done", "infra_done", "providers_done", "seekers_done"]):
+    tabs.append("Summary & Recommendations")
+if not all(st.session_state.get(done_flag, False) for done_flag in ["env_done", "infra_done", "providers_done", "seekers_done"]):
+    st.sidebar.info("🔒 Summary & Recommendations will unlock once all dimensions are marked as complete.")
 selected_tab = st.sidebar.radio("Choose a tab", tabs, index=tabs.index(st.session_state.get("selected_tab", "Instructions")))
 st.session_state.selected_tab = selected_tab
 
@@ -239,9 +243,18 @@ def ai_scoring_tab(title, prompt, key):
 
         score = sum([int(bool(x)) for x in checkbox_list])
         st.session_state.dimension_scores[title] = score
-        st.markdown(f"**Score for {title}:** {score}/4")
+        colored_score, maturity_label = get_colored_score(score)
+        st.markdown(f"**Score for {title}:** {colored_score}/4 – _{maturity_label}_", unsafe_allow_html=True)
+st.session_state[completion_flags[title]] = st.checkbox("✅ I have finalized this dimension", value=st.session_state.get(completion_flags[title], False))
 
 # Dimension Tabs
+completion_flags = {
+    "Enabling Environment": "env_done",
+    "Ecosystem Infrastructure": "infra_done",
+    "Finance Providers": "providers_done",
+    "Finance Seekers": "seekers_done"
+}
+
 if selected_tab == "Enabling Environment":
     ai_scoring_tab("Enabling Environment", "You are a climate finance expert. Assess the enabling environment using: (1) Strategy, (2) Policy, (3) Enforcement, (4) Stakeholder consultation. Assign a score 0–3 for each.", "env")
 elif selected_tab == "Ecosystem Infrastructure":
