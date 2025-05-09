@@ -95,7 +95,7 @@ st.sidebar.subheader("AI-Assisted Maturity Scoring Tool")
 if "reset_triggered" in st.session_state and st.session_state.reset_triggered:
     st.session_state.clear()
     st.session_state.selected_tab = "Instructions"
-    st.toast("Inputs have been reset. Please wait...", icon="🔄")
+    st.toast("Inputs have been reset. Returning to instructions...", icon="🔄")
     st.experimental_rerun()
 
 # Reset and session state setup
