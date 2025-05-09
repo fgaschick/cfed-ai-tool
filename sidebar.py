@@ -192,10 +192,10 @@ def ai_scoring_tab(title, prompt, key):
 
         if title == "Enabling Environment":
             keys_labels = [
-                (f"{key}_env_s1", "Country has submitted an NDC"),
-                (f"{key}_env_s2", "NDC is linked to investment or implementation plans"),
-                (f"{key}_env_s3", "NDC or strategy includes financing targets or mechanisms"),
-                (f"{key}_env_s4", "There is a national climate finance strategy or roadmap")
+                (f"{key}_env_s1", "Country has submitted an NDC", "The country has formally submitted its Nationally Determined Contribution to the UNFCCC."),
+                (f"{key}_env_s2", "NDC is linked to investment or implementation plans", "The NDC includes clear links to how implementation or financing will be achieved."),
+                (f"{key}_env_s3", "NDC or strategy includes financing targets or mechanisms", "The document outlines financial goals, instruments, or specific funding mechanisms."),
+                (f"{key}_env_s4", "There is a national climate finance strategy or roadmap", "A dedicated national plan or roadmap guides domestic and international climate finance efforts.")
             ]
         elif title == "Ecosystem Infrastructure":
             keys_labels = [
@@ -219,9 +219,9 @@ def ai_scoring_tab(title, prompt, key):
                 (f"{key}_seek_s4", "Stakeholder engagement is integral to project development")
             ]
 
-        for k, label in keys_labels:
+        for k, label, tip in keys_labels:
             st.session_state.dimension_inputs.setdefault(k, False)
-            val = st.checkbox(label, value=st.session_state.dimension_inputs[k], key=k)
+            val = st.checkbox(label, value=st.session_state.dimension_inputs[k], key=k, help=tip)
             st.session_state.dimension_inputs[k] = val
             checkbox_list.append(val)
 
