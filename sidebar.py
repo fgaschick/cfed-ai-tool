@@ -8,8 +8,6 @@ import PyPDF2
 import docx
 from io import BytesIO
 import re
-import matplotlib.pyplot as plt
-import numpy as np
 
 # Set OpenAI API key using environment variable
 api_key = os.getenv("OPENAI_API_KEY")
