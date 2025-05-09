@@ -75,6 +75,25 @@ def generate_pdf_from_recommendations(recommendations):
 st.set_page_config(page_title="Climate Finance Maturity Tool", layout="wide")
 
 # Sidebar and navigation
+st.sidebar.image("https://raw.githubusercontent.com/fgaschick/cfed-ai-tool/main/Chemonics_RGB_Horizontal_BLUE-WHITE.png", use_container_width=True)
+st.sidebar.markdown("""
+<style>
+[data-testid="stSidebar"] > div:first-child {
+    background-color: #005670;
+    padding-top: 1rem;
+    color: white;
+}
+[data-testid="stSidebar"] * {
+    color: white !important;
+}
+section.main label span,
+section.main div[class^="st"] label span,
+section.main input[type="checkbox"] + div div,
+section.main input[type="radio"] + div div {
+    color: black !important;
+}
+</style>
+""", unsafe_allow_html=True)
 st.sidebar.title("Climate Finance Ecosystem Diagnostic (CFED)")
 st.sidebar.subheader("AI-Assisted Maturity Scoring Tool")
 tabs = ["Instructions", "Enabling Environment", "Ecosystem Infrastructure", "Finance Providers", "Finance Seekers", "Summary & Recommendations"]
