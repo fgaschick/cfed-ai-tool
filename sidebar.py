@@ -253,7 +253,7 @@ def ai_scoring_tab(title, prompt, key):
                 "seekers": "seekers_done"
             }
             flag = flag_map[key]
-            st.session_state[flag] = st.checkbox("✅ I have finalized this dimension", value=st.session_state.get(flag, False)))
+            st.session_state[flag] = st.checkbox("✅ I have finalized this dimension", value=st.session_state.get(flag, False))
 
 
 # Dimension Tabs
