@@ -75,25 +75,6 @@ def generate_pdf_from_recommendations(recommendations):
 st.set_page_config(page_title="Climate Finance Maturity Tool", layout="wide")
 
 # Sidebar and navigation
-st.sidebar.image("https://raw.githubusercontent.com/fgaschick/cfed-ai-tool/main/Chemonics_RGB_Horizontal_BLUE-WHITE.png", use_container_width=True)
-st.sidebar.markdown("""
-<style>
-[data-testid="stSidebar"] > div:first-child {
-    background-color: #005670;
-    padding-top: 1rem;
-    color: white;
-}
-[data-testid="stSidebar"] * {
-    color: white !important;
-}
-section.main label span,
-section.main div[class^="st"] label span,
-section.main input[type="checkbox"] + div div,
-section.main input[type="radio"] + div div {
-    color: black !important;
-}
-</style>
-""", unsafe_allow_html=True)
 st.sidebar.title("Climate Finance Ecosystem Diagnostic (CFED)")
 st.sidebar.subheader("AI-Assisted Maturity Scoring Tool")
 tabs = ["Instructions", "Enabling Environment", "Ecosystem Infrastructure", "Finance Providers", "Finance Seekers", "Summary & Recommendations"]
@@ -106,8 +87,6 @@ if "dimension_scores" not in st.session_state:
         "Finance Providers": 0,
         "Finance Seekers": 0
     }
-
-
 
 # Tab: Instructions
 if selected_tab == "Instructions":
@@ -176,14 +155,13 @@ def ai_scoring_tab(title, prompt, key):
             s3 = st.checkbox("Development finance institutions provide substantial climate finance", key=f"{key}_prov_s3")
             s4 = st.checkbox("Multilateral development banks are active in the climate finance ecosystem", key=f"{key}_prov_s4")
         elif title == "Finance Seekers":
-                            s1 = st.checkbox("Project proposals are well developed and aligned with climate finance needs", key=f"{key}_seek_s1")
+            s1 = st.checkbox("Project proposals are well developed and aligned with climate finance needs", key=f"{key}_seek_s1")
             s2 = st.checkbox("A pipeline of climate projects is available for financing", key=f"{key}_seek_s2")
             s3 = st.checkbox("There is easy access to finance for climate-related projects", key=f"{key}_seek_s3")
             s4 = st.checkbox("Stakeholder engagement is integral to project development", key=f"{key}_seek_s4")
-            score = sum([s1, s2, s3, s4])
-            st.session_state.dimension_scores[title] = score
-            st.markdown(f"**Score for {title}:** {score}/4")
-        
+        score = sum([s1, s2, s3, s4])
+        st.session_state.dimension_scores[title] = score
+        st.markdown(f"**Score for {title}:** {score}/4")
 # Tabs for each dimension
 if selected_tab == "Enabling Environment":
     ai_scoring_tab("Enabling Environment",
@@ -206,7 +184,6 @@ elif selected_tab == "Finance Seekers":
         "seekers")
 
 elif selected_tab == "Summary & Recommendations":
-    
     st.title("Summary & Recommendations")
     recommendations = []
     for dim, score in st.session_state.dimension_scores.items():
@@ -232,9 +209,6 @@ elif combined_score >= 1.5:
     tier = "Medium"
     color = "#fdd835"
 st.sidebar.markdown(f"**Combined Score**: <span style='color:{color}'>{combined_score}/4 – {tier} Maturity</span>", unsafe_allow_html=True)
-
-
-    
 
 # Footer styling
 st.markdown("""
