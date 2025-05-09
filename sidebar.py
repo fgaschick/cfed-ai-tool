@@ -102,7 +102,9 @@ if "reset_triggered" in st.session_state and st.session_state.reset_triggered:
     }
     st.session_state.selected_tab = "Instructions"
     st.session_state.reset_triggered = False
-    st.rerun()
+    import streamlit.runtime.scriptrunner.script_run_context as context
+from streamlit.runtime.scriptrunner import RerunException
+raise RerunException(context.get_script_run_ctx())
 
 # Reset and session state setup
 if "dimension_scores" not in st.session_state:
@@ -134,7 +136,7 @@ section[data-testid="stSidebar"] button:hover {
 
 if st.sidebar.button("🔁 Reset All Inputs"):
     st.session_state.reset_triggered = True
-    st.experimental_rerun()
+    st.rerun()
 
 # Tab setup
 tabs = ["Instructions", "Enabling Environment", "Ecosystem Infrastructure", "Finance Providers", "Finance Seekers", "Summary & Recommendations"]
