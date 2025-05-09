@@ -169,7 +169,17 @@ def ai_scoring_tab(title, prompt, key):
         st.markdown("### Manual Scoring (based on sub-indicator evidence)")
         checkbox_list = []
         if title == "Enabling Environment":
-            checkbox_list = []
+            
+            for k, label in keys_labels:
+                st.session_state.dimension_inputs.setdefault(k, False)
+                val = st.checkbox(label, value=st.session_state.dimension_inputs[k], key=k)
+                st.session_state.dimension_inputs[k] = val
+                checkbox_list.append(val)
+        for k, label in keys_labels:
+            st.session_state.dimension_inputs.setdefault(k, False)
+            val = st.checkbox(label, value=st.session_state.dimension_inputs[k], key=k)
+            st.session_state.dimension_inputs[k] = val
+            checkbox_list.append(val)
         keys_labels = [
             (f"{key}_env_s1", "Country has submitted an NDC"),
             (f"{key}_env_s2", "NDC is linked to investment or implementation plans"),
@@ -180,33 +190,58 @@ def ai_scoring_tab(title, prompt, key):
             st.session_state.dimension_inputs.setdefault(k, False)
             val = st.checkbox(label, value=st.session_state.dimension_inputs[k], key=k)
             st.session_state.dimension_inputs[k] = val
-            checkbox_list.append(val), key=f"{key}_env_s1")
-                st.session_state.dimension_inputs[f"{key}_env_s1"] = val,
-                st.checkbox("NDC is linked to investment or implementation plans", value=st.session_state.get(f"{key}_env_s2", False), key=f"{key}_env_s2"),
-                st.checkbox("NDC or strategy includes financing targets or mechanisms", value=st.session_state.get(f"{key}_env_s3", False), key=f"{key}_env_s3"),
-                st.checkbox("There is a national climate finance strategy or roadmap", value=st.session_state.get(f"{key}_env_s4", False), key=f"{key}_env_s4")
-            ]
+            checkbox_list.append(val)
         elif title == "Ecosystem Infrastructure":
-            checkbox_list = [
-                st.checkbox("Physical infrastructure for climate adaptation and mitigation exists", value=st.session_state.get(f"{key}_infra_s1", False), key=f"{key}_infra_s1"),
-                st.checkbox("There is a national or regional data infrastructure for monitoring climate impacts", value=st.session_state.get(f"{key}_infra_s2", False), key=f"{key}_infra_s2"),
-                st.checkbox("Climate-related digital platforms are available for stakeholders", value=st.session_state.get(f"{key}_infra_s3", False), key=f"{key}_infra_s3"),
-                st.checkbox("Regulatory frameworks for climate finance and development are in place", value=st.session_state.get(f"{key}_infra_s4", False), key=f"{key}_infra_s4")
+            keys_labels = [
+                (f"{key}_infra_s1", "Physical infrastructure for climate adaptation and mitigation exists"),
+                (f"{key}_infra_s2", "There is a national or regional data infrastructure for monitoring climate impacts"),
+                (f"{key}_infra_s3", "Climate-related digital platforms are available for stakeholders"),
+                (f"{key}_infra_s4", "Regulatory frameworks for climate finance and development are in place")
             ]
+            for k, label in keys_labels:
+                st.session_state.dimension_inputs.setdefault(k, False)
+                val = st.checkbox(label, value=st.session_state.dimension_inputs[k], key=k)
+                st.session_state.dimension_inputs[k] = val
+                checkbox_list.append(val)
+        for k, label in keys_labels:
+            st.session_state.dimension_inputs.setdefault(k, False)
+            val = st.checkbox(label, value=st.session_state.dimension_inputs[k], key=k)
+            st.session_state.dimension_inputs[k] = val
+            checkbox_list.append(val)
         elif title == "Finance Providers":
-            checkbox_list = [
-                st.checkbox("Public finance providers are operational and engaged in climate finance", value=st.session_state.get(f"{key}_prov_s1", False), key=f"{key}_prov_s1"),
-                st.checkbox("Private finance providers are actively engaged in climate finance", value=st.session_state.get(f"{key}_prov_s2", False), key=f"{key}_prov_s2"),
-                st.checkbox("Development finance institutions provide substantial climate finance", value=st.session_state.get(f"{key}_prov_s3", False), key=f"{key}_prov_s3"),
-                st.checkbox("Multilateral development banks are active in the climate finance ecosystem", value=st.session_state.get(f"{key}_prov_s4", False), key=f"{key}_prov_s4")
+            keys_labels = [
+                (f"{key}_prov_s1", "Public finance providers are operational and engaged in climate finance"),
+                (f"{key}_prov_s2", "Private finance providers are actively engaged in climate finance"),
+                (f"{key}_prov_s3", "Development finance institutions provide substantial climate finance"),
+                (f"{key}_prov_s4", "Multilateral development banks are active in the climate finance ecosystem")
             ]
+            for k, label in keys_labels:
+                st.session_state.dimension_inputs.setdefault(k, False)
+                val = st.checkbox(label, value=st.session_state.dimension_inputs[k], key=k)
+                st.session_state.dimension_inputs[k] = val
+                checkbox_list.append(val)
+        for k, label in keys_labels:
+            st.session_state.dimension_inputs.setdefault(k, False)
+            val = st.checkbox(label, value=st.session_state.dimension_inputs[k], key=k)
+            st.session_state.dimension_inputs[k] = val
+            checkbox_list.append(val)
         elif title == "Finance Seekers":
-            checkbox_list = [
-                st.checkbox("Project proposals are well developed and aligned with climate finance needs", value=st.session_state.get(f"{key}_seek_s1", False), key=f"{key}_seek_s1"),
-                st.checkbox("A pipeline of climate projects is available for financing", value=st.session_state.get(f"{key}_seek_s2", False), key=f"{key}_seek_s2"),
-                st.checkbox("There is easy access to finance for climate-related projects", value=st.session_state.get(f"{key}_seek_s3", False), key=f"{key}_seek_s3"),
-                st.checkbox("Stakeholder engagement is integral to project development", value=st.session_state.get(f"{key}_seek_s4", False), key=f"{key}_seek_s4")
+            keys_labels = [
+                (f"{key}_seek_s1", "Project proposals are well developed and aligned with climate finance needs"),
+                (f"{key}_seek_s2", "A pipeline of climate projects is available for financing"),
+                (f"{key}_seek_s3", "There is easy access to finance for climate-related projects"),
+                (f"{key}_seek_s4", "Stakeholder engagement is integral to project development")
             ]
+            for k, label in keys_labels:
+                st.session_state.dimension_inputs.setdefault(k, False)
+                val = st.checkbox(label, value=st.session_state.dimension_inputs[k], key=k)
+                st.session_state.dimension_inputs[k] = val
+                checkbox_list.append(val)
+        for k, label in keys_labels:
+            st.session_state.dimension_inputs.setdefault(k, False)
+            val = st.checkbox(label, value=st.session_state.dimension_inputs[k], key=k)
+            st.session_state.dimension_inputs[k] = val
+            checkbox_list.append(val)
         score = sum(checkbox_list)
         st.session_state.dimension_scores[title] = score
         st.markdown(f"**Score for {title}:** {score}/4")
