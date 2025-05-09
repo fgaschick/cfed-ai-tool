@@ -135,11 +135,19 @@ section[data-testid="stSidebar"] button:hover {
 """, unsafe_allow_html=True)
 
 if st.sidebar.button("🔁 Reset All Inputs"):
-    st.session_state.clear()
+    for key in list(st.session_state.keys()):
+        if key.startswith("text_") or key.startswith("file_") or key.startswith("ai_") or key.endswith("_s1") or key.endswith("_s2") or key.endswith("_s3") or key.endswith("_s4"):
+            del st.session_state[key]
+    st.session_state.dimension_inputs = {}
+    st.session_state.dimension_scores = {
+        "Enabling Environment": 0,
+        "Ecosystem Infrastructure": 0,
+        "Finance Providers": 0,
+        "Finance Seekers": 0
+    }
     st.session_state.selected_tab = "Instructions"
     st.toast("Inputs have been reset. Returning to instructions...", icon="🔄")
-    st.query_params.clear()
-    st.stop()
+    st.experimental_rerun()
 
 # Tab setup
 tabs = ["Instructions", "Enabling Environment", "Ecosystem Infrastructure", "Finance Providers", "Finance Seekers", "Summary & Recommendations"]
