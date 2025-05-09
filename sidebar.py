@@ -180,9 +180,9 @@ def ai_scoring_tab(title, prompt, key):
             s2 = st.checkbox("A pipeline of climate projects is available for financing", key=f"{key}_seek_s2")
             s3 = st.checkbox("There is easy access to finance for climate-related projects", key=f"{key}_seek_s3")
             s4 = st.checkbox("Stakeholder engagement is integral to project development", key=f"{key}_seek_s4")
-        score = sum([s1, s2, s3, s4])
+                score = sum([s1, s2, s3, s4])
         st.session_state.dimension_scores[title] = score
-                st.markdown(f"**Score for {title}:** {score}/4")
+        st.markdown(f"**Score for {title}:** {score}/4")
         
 # Tabs for each dimension
 if selected_tab == "Enabling Environment":
@@ -234,15 +234,7 @@ elif combined_score >= 1.5:
 st.sidebar.markdown(f"**Combined Score**: <span style='color:{color}'>{combined_score}/4 – {tier} Maturity</span>", unsafe_allow_html=True)
 
 
-    st.session_state.confirmed = {
-        "Enabling Environment": False,
-        "Ecosystem Infrastructure": False,
-        "Finance Providers": False,
-        "Finance Seekers": False
-    }
-    for key in list(st.session_state.keys()):
-        if key.startswith("ai_") or key.startswith("text_") or key.startswith("file_") or key.startswith("confirm_") or key.endswith(('_s1', '_s2', '_s3', '_s4')):
-            del st.session_state[key]
+    
 
 # Footer styling
 st.markdown("""
