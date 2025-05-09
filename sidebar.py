@@ -14,6 +14,7 @@ import time
 api_key = os.getenv("OPENAI_API_KEY")
 if not api_key:
     st.error("OPENAI_API_KEY environment variable not set.")
+    st.session_state.selected_tab = "Instructions"
     st.stop()
 
 client = OpenAI(api_key=api_key)
@@ -139,7 +140,8 @@ if st.sidebar.button("🔁 Reset All Inputs"):
 
 # Tab setup
 tabs = ["Instructions", "Enabling Environment", "Ecosystem Infrastructure", "Finance Providers", "Finance Seekers", "Summary & Recommendations"]
-selected_tab = st.sidebar.radio("Choose a tab", tabs)
+selected_tab = st.session_state.get("selected_tab", "Instructions")
+st.session_state.selected_tab = st.sidebar.radio("Choose a tab", tabs, index=tabs.index(selected_tab))
 
 # Instructions tab
 if selected_tab == "Instructions":
