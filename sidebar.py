@@ -144,17 +144,26 @@ def ai_scoring_tab(title, prompt, key):
             s2 = st.checkbox("NDC is linked to investment or implementation plans", key=f"{key}_env_s2")
             s3 = st.checkbox("NDC or strategy includes financing targets or mechanisms", key=f"{key}_env_s3")
             s4 = st.checkbox("There is a national climate finance strategy or roadmap", key=f"{key}_env_s4")
-        elif title == "Ecosystem Infrastructure":
+            score = sum([s1, s2, s3, s4])
+            st.session_state.dimension_scores[title] = score
+            st.markdown(f"**Score for {title}:** {score}/4")
+                elif title == "Ecosystem Infrastructure":
             s1 = st.checkbox("Physical infrastructure for climate adaptation and mitigation exists", key=f"{key}_infra_s1")
             s2 = st.checkbox("There is a national or regional data infrastructure for monitoring climate impacts", key=f"{key}_infra_s2")
             s3 = st.checkbox("Climate-related digital platforms are available for stakeholders", key=f"{key}_infra_s3")
             s4 = st.checkbox("Regulatory frameworks for climate finance and development are in place", key=f"{key}_infra_s4")
+            score = sum([s1, s2, s3, s4])
+            st.session_state.dimension_scores[title] = score
+            st.markdown(f"**Score for {title}:** {score}/4")
                 elif title == "Finance Providers":
             s1 = st.checkbox("Public finance providers are operational and engaged in climate finance", key=f"{key}_prov_s1")
             s2 = st.checkbox("Private finance providers are actively engaged in climate finance", key=f"{key}_prov_s2")
             s3 = st.checkbox("Development finance institutions provide substantial climate finance", key=f"{key}_prov_s3")
             s4 = st.checkbox("Multilateral development banks are active in the climate finance ecosystem", key=f"{key}_prov_s4")
-        elif title == "Finance Seekers":
+            score = sum([s1, s2, s3, s4])
+            st.session_state.dimension_scores[title] = score
+            st.markdown(f"**Score for {title}:** {score}/4")
+                elif title == "Finance Seekers":
             s1 = st.checkbox("Project proposals are well developed and aligned with climate finance needs", key=f"{key}_seek_s1")
             s2 = st.checkbox("A pipeline of climate projects is available for financing", key=f"{key}_seek_s2")
             s3 = st.checkbox("There is easy access to finance for climate-related projects", key=f"{key}_seek_s3")
