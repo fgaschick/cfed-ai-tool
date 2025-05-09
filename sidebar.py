@@ -140,10 +140,10 @@ def ai_scoring_tab(title, prompt, key):
     else:
         st.markdown("### Manual Scoring (based on sub-indicator evidence)")
         if title == "Enabling Environment":
-            s1 = st.checkbox("Country has submitted an NDC", key=f"{key}_env_s1", value=st.session_state.get(f"{key}_s1", False), key=f"{key}_s1")
-            s2 = st.checkbox("NDC is linked to investment or implementation plans", key=f"{key}_env_s2", value=st.session_state.get(f"{key}_s2", False), key=f"{key}_s2")
-            s3 = st.checkbox("NDC or strategy includes financing targets or mechanisms", key=f"{key}_env_s3", value=st.session_state.get(f"{key}_s3", False), key=f"{key}_s3")
-            s4 = st.checkbox("There is a national climate finance strategy or roadmap", key=f"{key}_env_s4", value=st.session_state.get(f"{key}_s4", False), key=f"{key}_s4")
+            s1 = st.checkbox("Country has submitted an NDC", key=f"{key}_env_s1", value=st.session_state.get(f"{key}_s1", False))
+            s2 = st.checkbox("NDC is linked to investment or implementation plans", key=f"{key}_env_s2", value=st.session_state.get(f"{key}_s2", False))
+            s3 = st.checkbox("NDC or strategy includes financing targets or mechanisms", key=f"{key}_env_s3", value=st.session_state.get(f"{key}_s3", False))
+            s4 = st.checkbox("There is a national climate finance strategy or roadmap", key=f"{key}_env_s4", value=st.session_state.get(f"{key}_s4", False))
         elif title == "Ecosystem Infrastructure":
             s1 = st.checkbox("Physical infrastructure for climate adaptation and mitigation exists", key=f"{key}_infra_s1", value=st.session_state.get(f"{key}_s1", False), key=f"{key}_s1")
             s2 = st.checkbox("There is a national or regional data infrastructure for monitoring climate impacts", key=f"{key}_infra_s2", value=st.session_state.get(f"{key}_s2", False), key=f"{key}_s2")
