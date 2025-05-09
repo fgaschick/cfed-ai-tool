@@ -135,7 +135,7 @@ section[data-testid="stSidebar"] button:hover {
 
 if st.sidebar.button("🔁 Reset All Inputs"):
     st.session_state.reset_triggered = True
-    st.experimental_rerun()
+    st.stop()
 
 # Tab setup
 tabs = ["Instructions", "Enabling Environment", "Ecosystem Infrastructure", "Finance Providers", "Finance Seekers", "Summary & Recommendations"]
@@ -172,7 +172,9 @@ def ai_scoring_tab(title, prompt, key):
         st.session_state.dimension_inputs[f"text_{key}"] = narrative
         uploaded_file = st.file_uploader("Upload document (PDF/DOCX)", type=["pdf", "docx"], key=f"file_{key}")
         if uploaded_file:
-            narrative += extract_text_from_file(uploaded_file)
+            file_text = extract_text_from_file(uploaded_file)
+            narrative += file_text
+            st.session_state.dimension_inputs[f"text_{key}"] = narrative
         if narrative:
             with st.spinner("Analyzing with AI..."):
                 output = get_ai_score(prompt, narrative)
@@ -246,13 +248,13 @@ if selected_tab == "Summary & Recommendations":
             rec_prompt = f"Provide 3–5 recommendations for improving {dim} with a current score of {score}."
             ai_output = get_ai_score(rec_prompt, "")
             recommendations.append(f"### {dim}
-{ai_output.strip()}")
+" + ai_output.strip())
 
     if not recommendations:
         st.info("All dimensions scored high. No improvement recommendations necessary.")
     else:
         for rec in recommendations:
-        st.markdown(rec)
+            st.markdown(rec)
     pdf_output = generate_pdf_from_recommendations(recommendations)
     st.download_button("Download PDF", data=pdf_output, file_name="recommendations.pdf", mime="application/pdf")
 
