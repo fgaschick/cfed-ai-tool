@@ -246,8 +246,9 @@ if selected_tab == "Summary & Recommendations":
     for dim, score in st.session_state.dimension_scores.items():
         if score < 3:
             rec_prompt = f"Provide 3–5 recommendations for improving {dim} with a current score of {score}."
-            ai_output = get_ai_score(rec_prompt, "")
-            recommendations.append(f"### {dim}\n" + ai_output.strip())
+            ai_output = str(get_ai_score(rec_prompt, "")).strip()
+            recommendations.append(f"### {dim}
+{ai_output}")
 
     if not recommendations:
         st.info("All dimensions scored high. No improvement recommendations necessary.")
