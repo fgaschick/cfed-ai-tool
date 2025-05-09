@@ -1,4 +1,4 @@
-import streamlit as st
+import streamlit as st 
 from openai import OpenAI
 import os
 import base64
@@ -33,10 +33,6 @@ def get_ai_score(prompt, user_input):
 
 # More reliable score extraction
 def extract_avg_score(output):
-    """
-    Extract scores from lines like: (1) Label: 2
-    Return average if any scores found, else None.
-    """
     score_lines = re.findall(r"\(\d\)\s*[^:\n]+:\s*(\d)", output)
     scores = [int(s) for s in score_lines if s.isdigit()]
     if scores:
@@ -93,10 +89,7 @@ section.main input[type="radio"] + div div {
 st.sidebar.title("Climate Finance Ecosystem Diagnostic (CFED)")
 st.sidebar.subheader("AI-Assisted Maturity Scoring Tool")
 
-tabs = ["Instructions", "Enabling Environment", "Ecosystem Infrastructure", "Finance Providers", "Finance Seekers", "Summary & Recommendations"]
-selected_tab = st.sidebar.radio("Choose a tab", tabs)
-
-# Score storage
+# Reset and session state setup
 if "dimension_scores" not in st.session_state:
     st.session_state.dimension_scores = {
         "Enabling Environment": 0,
@@ -104,36 +97,40 @@ if "dimension_scores" not in st.session_state:
         "Finance Providers": 0,
         "Finance Seekers": 0
     }
+if "dimension_inputs" not in st.session_state:
+    st.session_state.dimension_inputs = {}
 
-# Instructions Tab
+if st.sidebar.button("🔁 Reset All Inputs"):
+    st.session_state.dimension_inputs.clear()
+    for key in st.session_state.dimension_scores:
+        st.session_state.dimension_scores[key] = 0
+    st.experimental_rerun()
+
+# Tab setup
+tabs = ["Instructions", "Enabling Environment", "Ecosystem Infrastructure", "Finance Providers", "Finance Seekers", "Summary & Recommendations"]
+selected_tab = st.sidebar.radio("Choose a tab", tabs)
+
+# Instructions tab
 if selected_tab == "Instructions":
     st.markdown("""
-        ## Instructions: How to Use the Tool
+    ## Instructions: How to Use the Tool
 
-        Welcome to the **Climate Finance Ecosystem Diagnostic (CFED)** tool! This tool helps you assess the maturity of a country's climate finance ecosystem by evaluating key dimensions and subcomponents of climate finance. 
-        The tool uses **both manual scoring** and **AI-based analysis** to provide a comprehensive overview of the climate finance landscape in your country. 
-
-        ### Tool Structure:
-        The tool is structured into four main dimensions, each with its respective subcomponents and indicators. These dimensions are:
-        1. **Enabling Environment**
-        2. **Ecosystem Infrastructure**
-        3. **Finance Providers**
-        4. **Finance Seekers**
-
-        ### How to Use the Tool:
-        - **AI-Based Scoring**: You can choose to use **AI-based scoring** by providing a **narrative description** of each dimension. When you select this option, the tool will ask for detailed information about your country's climate finance system. 
-        - **Document Upload**: Along with the narrative, you can upload **relevant documents** (PDF/Word) that provide more in-depth information on the dimension you're scoring. The AI will analyze both the narrative and the document to generate a score and recommendations.
-        - **Manual Scoring**: If you prefer, you can manually score the dimension by selecting checkboxes for the provided indicators and subcomponents. This will allow you to evaluate the maturity of each dimension based on specific questions. Each indicator corresponds to an element of the climate finance ecosystem, such as policies, infrastructure, or finance flows.
-
-        ### Scoring and Results:
-        - After completing the scoring for each dimension (whether using AI or manual input), you will see the **score for each dimension** displayed on the sidebar.
-        - The **combined score** is automatically calculated based on the individual dimension scores.
-        - **AI-based recommendations** will be provided in the **Summary & Recommendations** tab, which will help you identify areas for improvement in the climate finance ecosystem.
-
-        ### Downloading Results:
-        Once all dimensions have been scored and recommendations are provided, you will be able to **download the recommendations as a PDF** for your records. 
+    This tool assesses the maturity of a country's climate finance ecosystem.
+    You can score each dimension manually (checkboxes) or with AI (narrative + file upload).
+    Once all dimensions are scored, you’ll see summary and recommendations you can export.
     """)
 
+# Colored score display
+def get_colored_score(score):
+    if score <= 1:
+        return f"<span style='color:#e57373; font-weight:bold;'>{score}</span>", "Nascent – Early-stage systems with significant gaps."
+    elif score == 2:
+        return f"<span style='color:#fdd835; font-weight:bold;'>{score}</span>", "Emerging – Some key structures exist, but inconsistent or weak."
+    elif score >= 3:
+        return f"<span style='color:#81c784; font-weight:bold;'>{score}</span>", "Mature – Robust, inclusive, and sustainable systems in place."
+    return str(score), "Unknown maturity"
+
+# Dimension Tabs (Reusing your existing scoring logic placeholder here)
 # AI/Manual scoring tab function
 def ai_scoring_tab(title, prompt, key):
     st.title(f"{title} Scoring")
@@ -197,10 +194,10 @@ elif selected_tab == "Ecosystem Infrastructure":
 elif selected_tab == "Finance Providers":
     ai_scoring_tab("Finance Providers", "You are a climate finance expert. Assess: (1) Public, (2) Private, (3) DFIs, (4) MDBs. Score 0–3.", "providers")
 elif selected_tab == "Finance Seekers":
-    ai_scoring_tab("Finance Seekers", "You are a climate finance expert. Assess: (1) Proposals, (2) Pipeline, (3) Access to finance, (4) Stakeholder engagement.", "seekers")
+    ai_scoring_tab("Finance Seekers", "You are a climate finance expert. Assess: (1) Proposals, (2) Pipeline, (3) Access to finance, (4) Stakeholder engagement.", "seekers")...: <render the respective tab>
 
-# Summary & Recommendations
-elif selected_tab == "Summary & Recommendations":
+# Summary & Recommendations tab
+if selected_tab == "Summary & Recommendations":
     st.title("Summary & Recommendations")
     recommendations = []
     for dim, score in st.session_state.dimension_scores.items():
@@ -212,10 +209,12 @@ elif selected_tab == "Summary & Recommendations":
     pdf_output = generate_pdf_from_recommendations(recommendations)
     st.download_button("Download PDF", data=pdf_output, file_name="recommendations.pdf", mime="application/pdf")
 
-# Sidebar Score Overview
+# Sidebar scores overview
 st.sidebar.markdown("## Scores Overview")
 for dim, score in st.session_state.dimension_scores.items():
-    st.sidebar.markdown(f"**{dim}**: {score}/4")
+    colored, _ = get_colored_score(score)
+    st.sidebar.markdown(f"**{dim}**: {colored}/4", unsafe_allow_html=True)
+
 combined_score = round(sum(st.session_state.dimension_scores.values()) / 4, 2)
 tier = "Low"
 color = "#e57373"
