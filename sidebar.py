@@ -245,7 +245,9 @@ def ai_scoring_tab(title, prompt, key):
         st.session_state.dimension_scores[title] = score
         colored_score, maturity_label = get_colored_score(score)
         st.markdown(f"**Score for {title}:** {colored_score}/4 – _{maturity_label}_", unsafe_allow_html=True)
-st.session_state[completion_flags[title]] = st.checkbox("✅ I have finalized this dimension", value=st.session_state.get(completion_flags[title], False))
+        if title in completion_flags:
+            st.session_state[completion_flags[title]] = st.checkbox("✅ I have finalized this dimension", value=st.session_state.get(completion_flags[title], False))
+
 
 # Dimension Tabs
 completion_flags = {
