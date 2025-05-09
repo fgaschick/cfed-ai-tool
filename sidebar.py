@@ -81,6 +81,7 @@ st.sidebar.markdown("""
     [data-testid="stSidebar"] > div:first-child {
         background-color: #005670;
         padding-top: 1rem;
+        color: white;
     }
     </style>
 """, unsafe_allow_html=True)
