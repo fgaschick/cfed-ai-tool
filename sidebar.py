@@ -303,7 +303,7 @@ if selected_tab == "Summary & Recommendations":
     st.title("Summary & Recommendations")
     recommendations = []
     for dim, score in st.session_state.dimension_scores.items():
-        if score < 3:
+        if score < 4:
             rec_prompt = f"Provide 3–5 recommendations for improving {dim} with a current score of {score}."
             ai_output = str(get_ai_score(rec_prompt, "")).strip()
             recommendations.append(f"### {dim}\n{ai_output}")
