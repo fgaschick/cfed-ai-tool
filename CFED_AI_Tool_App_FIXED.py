@@ -63,7 +63,9 @@ def generate_pdf_from_recommendations(recommendations):
     pdf.cell(200, 10, txt="AI-Based Recommendations for Action", ln=True, align="C")
     pdf.ln(10)
     for recommendation in recommendations:
-        pdf.multi_cell(0, 10, recommendation)
+        # Ensure text is safe for latin1 encoding
+        safe_text = recommendation.encode('latin1', 'replace').decode('latin1')
+        pdf.multi_cell(0, 10, safe_text)
     pdf_bytes = pdf.output(dest='S').encode('latin1', 'replace')
     return BytesIO(pdf_bytes)
 
