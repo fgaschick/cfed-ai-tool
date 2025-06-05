@@ -56,6 +56,9 @@ def extract_text_from_file(uploaded_file):
 
 # PDF generation
 def generate_pdf_from_recommendations(recommendations):
+    def safe_latin1(text):
+        return text.encode('latin1', 'replace').decode('latin1')
+
     pdf = FPDF()
     pdf.set_auto_page_break(auto=True, margin=15)
     pdf.add_page()
@@ -63,9 +66,7 @@ def generate_pdf_from_recommendations(recommendations):
     pdf.cell(200, 10, txt="AI-Based Recommendations for Action", ln=True, align="C")
     pdf.ln(10)
     for recommendation in recommendations:
-        # Ensure text is safe for latin1 encoding
-        safe_text = recommendation.encode('latin1', 'replace').decode('latin1')
-        pdf.multi_cell(0, 10, safe_text)
+        pdf.multi_cell(0, 10, safe_latin1(recommendation))
     pdf_bytes = pdf.output(dest='S').encode('latin1', 'replace')
     return BytesIO(pdf_bytes)
 
